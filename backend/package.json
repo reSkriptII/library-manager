@@ -5,15 +5,18 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "lint": "eslint ./src/* --ext .js,.ts,.tsx ."
+    "lint": "eslint ./src/* --ext .js,.ts,.tsx .",
+    "createdb": "node ./config/createdb.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "mime-types": "^3.0.1"
+    "mime-types": "^3.0.1",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.37.0",
@@ -21,6 +24,7 @@
     "@types/express": "^5.0.3",
     "@types/mime-types": "^3.0.1",
     "@types/node": "^24.7.1",
+    "@types/pg": "^8.15.5",
     "eslint": "^9.37.0",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
