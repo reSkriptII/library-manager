@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 type millisecond = number;
 
@@ -7,6 +7,11 @@ export function useDebounce(
   delay: millisecond,
 ): () => void {
   const timeoutRef = useRef<number | null>(null);
+  const fnRef = useRef(fn);
+
+  useEffect(() => {
+    fnRef.current = fn;
+  }, [fn]);
 
   return useCallback(
     (...args) => {
@@ -15,8 +20,8 @@ export function useDebounce(
       }
 
       timeoutRef.current = setTimeout(() => {
-        fn(...args);
-      });
+        fnRef.current(...args);
+      }, delay);
     },
     [delay],
   );

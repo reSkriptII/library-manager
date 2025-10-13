@@ -31,12 +31,14 @@ export function HomePage() {
   const { data, searchField, availableOnly } = searchOption;
   useEffect(
     useDebounce(async () => {
+      const params = {
+        search: data,
+        field: searchField,
+        availableOnly: availableOnly || null,
+      };
+      console.log(params);
       const booksResult = await axios.get(window.api + "/book", {
-        params: {
-          search: data,
-          field: searchField,
-          availableOnly: availableOnly || null,
-        },
+        params,
       });
 
       setBooks(booksResult.data);
@@ -54,6 +56,7 @@ export function HomePage() {
           onChange={handleSearchOptionChange}
         />
         <BookList books={books} />
+        <div>{JSON.stringify(searchOption)}</div>
       </div>
     </>
   );
