@@ -20,7 +20,7 @@ export function HomePage() {
 
   function handleSearchOptionChange(
     option: "data" | "searchField" | "availableOnly",
-    value: string,
+    value: string | boolean,
   ): void {
     setSearchOption({
       ...searchOption,
@@ -32,8 +32,13 @@ export function HomePage() {
   useEffect(
     useDebounce(async () => {
       const booksResult = await axios.get(window.api + "/book", {
-        params: { search: data, field: searchField, available: availableOnly },
+        params: {
+          search: data,
+          field: searchField,
+          availableOnly: availableOnly || null,
+        },
       });
+
       setBooks(booksResult.data);
     }, 500),
     [data, searchField, availableOnly],

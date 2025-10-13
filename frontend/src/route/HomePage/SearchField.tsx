@@ -4,7 +4,7 @@ type args = {
   searchOption: booksSearchOption;
   onChange: (
     option: "data" | "searchField" | "availableOnly",
-    value: string,
+    value: string | boolean,
   ) => void;
 };
 
@@ -67,7 +67,7 @@ function AvailableOnlyCheckbox({ searchOption, onChange }: args) {
         name="availablenoly"
         id="avaialbleonly"
         checked={searchOption.availableOnly}
-        onChange={(e) => onChange("availableOnly", e.target.value)}
+        onChange={() => onChange("availableOnly", !searchOption.availableOnly)}
       />
     </label>
   );
