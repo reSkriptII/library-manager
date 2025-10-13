@@ -1,16 +1,27 @@
 import type { booksData } from "./type";
 
 export function BookList({ books }: { books: booksData }) {
-  return <div>{JSON.stringify(books)}</div>;
-  // return (
-  //   <div>
-  //     {books.map((book) => {
-  //       return (
-  //         <div>
-  //           <img alt="book cover" src={window.api + `book/${book.id}/cover`} />
-  //         </div>
-  //       );
-  //     })}
-  //   </div>
-  // );
+  return (
+    <div className="flex flex-wrap justify-between">
+      {books.map((book) => {
+        return (
+          <div className="relative p-2 text-center" key={book.id}>
+            <img
+              alt="book cover"
+              src={window.api + `/book/${book.id}/cover`}
+              className="h-72 w-auto"
+            />
+            <p className="text-2xl">{book.title}</p>
+            <p>{book.author}</p>
+
+            <a
+              className="absolute top-0 left-0 z-20 size-full rounded-lg hover:bg-black/10"
+              href={"./book/" + book.id}
+              target="_blank"
+            ></a>
+          </div>
+        );
+      })}
+    </div>
+  );
 }
