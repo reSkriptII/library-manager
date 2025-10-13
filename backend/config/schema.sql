@@ -7,6 +7,6 @@ CREATE TABLE books (
     title TEXT,
     author TEXT,
     availability BOOLEAN DEFAULT TRUE
-)
+);
 
 COMMIT;

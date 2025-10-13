@@ -1,29 +1,29 @@
 import { Request, Response } from "express";
+import { psqlPool } from "@util/db.js";
 
-const books = [
-  {
-    id: 1,
-    title: "bookTitle",
-    author: "Jonh Doe",
-    genre: ["genre1", "genre2"],
-    available: true,
-  },
-  {
-    id: 2,
-    title: "bookTitle2",
-    author: "Steve A",
-    genre: ["genre3", "genre4"],
-    available: true,
-  },
-  {
-    id: 3,
-    title: "Title 3",
-    author: "me",
-    genre: ["genre5", "genre6"],
-    available: false,
-  },
-];
+type reqBody = {
+  data: string;
+  searchField: "title" | "author" | "genre";
+  availableOnly: boolean;
+};
 
-export function sendBooks(req: Request, res: Response) {
-  res.json(books);
+export async function sendBooks(
+  req: Request<any, any, reqBody>,
+  res: Response
+) {
+  const queryResult = await psqlPool.query(
+    "SELECT book_id, title, author, availability FROM books"
+  );
+  const booksData = queryResult.rows;
+
+  res.json(
+    booksData.map((book) => {
+      return {
+        id: book.book_id,
+        title: book.title,
+        author: book.author,
+        available: book.availablility,
+      };
+    })
+  );
 }
