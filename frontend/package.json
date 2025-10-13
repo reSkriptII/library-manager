@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "imports": {
+    "#hook/*": "./src/hook/*"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

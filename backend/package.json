@@ -13,6 +13,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "mime-types": "^3.0.1",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@eslint/js": "^9.37.0",
     "@tsconfig/node24": "^24.0.1",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/mime-types": "^3.0.1",
     "@types/node": "^24.7.1",

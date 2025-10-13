@@ -1,7 +1,12 @@
-export type booksSearchField = "title" | "author" | "genre";
-
 export type booksSearchOption = {
   data: string;
-  searchField: booksSearchField;
+  searchField: "title" | "author" | "genre";
   availableOnly: boolean;
 };
+
+export type booksData = {
+  id: number;
+  title: string;
+  author: string;
+  available: boolean;
+}[];

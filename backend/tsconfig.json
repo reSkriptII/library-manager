@@ -8,7 +8,6 @@
       "@util/*": ["util/*"]
     }
   },
-  "include": ["src**/*.ts"],
-  "exclude": ["dist"],
-  "types": "../types/types.d.ts"
+  "include": ["src**/*.ts", "src/util/db.ts"],
+  "exclude": ["dist"]
 }

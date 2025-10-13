@@ -8,6 +8,14 @@ import { LoginPage } from "./route/LoginPage/LoginPage.jsx";
 import { BookPage } from "./route/BookPage/BookPage.js";
 import { Dashboard } from "./route/Dashboard/DashBoard.js";
 
+declare global {
+  interface Window {
+    api: string;
+  }
+}
+
+window.api = "http://localhost:5000";
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>

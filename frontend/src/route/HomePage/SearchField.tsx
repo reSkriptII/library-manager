@@ -1,4 +1,4 @@
-import type { booksSearchOption, booksSearchField } from "./type";
+import type { booksSearchOption } from "./type";
 
 type args = {
   searchOption: booksSearchOption;
