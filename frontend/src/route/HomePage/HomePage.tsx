@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDebounce } from "#hook/useDebounce.ts";
 
-// import { HeaderBar } from "@component/HeaderBar/HeaderBar.jsx";
+import { HeaderBar } from "#component/HeaderBar/HeaderBar.jsx";
 import { SearchField } from "./SearchField.jsx";
 import type { booksData, booksSearchOption } from "./type.ts";
 import { BookList } from "./BookList.tsx";
@@ -48,7 +48,7 @@ export function HomePage() {
 
   return (
     <>
-      {/* <HeaderBar /> */}
+      <HeaderBar />
       <div>
         <h2>Book</h2>
         <SearchField
@@ -56,7 +56,6 @@ export function HomePage() {
           onChange={handleSearchOptionChange}
         />
         <BookList books={books} />
-        <div>{JSON.stringify(searchOption)}</div>
       </div>
     </>
   );
