@@ -3,13 +3,15 @@ dotenv.config();
 
 import express from "express";
 import cors from "cors";
-import { bookRoute } from "./route/bookRoute/bookRoute.js";
+import { bookRoute } from "./route/book/bookRoute.js";
+import { authRoute } from "./route/auth/authRoute.js";
 
 const app = express();
 
 app.use(cors());
-app.get("/", (req, res) => res.send("test"));
+app.use(express.json());
 
 app.use("/book", bookRoute);
+app.use("/auth", authRoute);
 
 app.listen(5000);

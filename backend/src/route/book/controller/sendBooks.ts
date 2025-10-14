@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
-import { psqlPool } from "@util/db.js";
-import { lutimes } from "fs";
-import { off } from "process";
+import { psqlPool } from "#util/db.js";
 import type { QueryResult } from "pg";
 
 type searchField = "title" | "author" | "genre";
