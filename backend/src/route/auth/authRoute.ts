@@ -6,7 +6,7 @@ import { login } from "./controller/login.js";
 
 const authRoute = express.Router();
 
-authRoute.get("/me", me);
+authRoute.get("/me", authenticate, me);
 authRoute.post("/login", login);
 // authRoute.post("/logout");
 authRoute.post("/register", registerUser);

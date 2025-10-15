@@ -19,12 +19,11 @@ export async function login(req: Request<any, any, reqBody>, res: Response) {
       WHERE email = $1`,
       [email]
     );
-
-    if (queryResult.rows.length <= 0) {
+    const userData = queryResult.rows[0];
+    if (userData == undefined) {
       return sendResponse(res, false, 401, "user not found");
     }
 
-    const userData = queryResult.rows[0];
     const hashedPassword = userData.hashed_password;
     const isCorrectPassword = bcrypt.compare(password, hashedPassword);
 
