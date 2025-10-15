@@ -1,4 +1,5 @@
 import express from "express";
+import { authenticate } from "#util/authenticate.js";
 import { me } from "./controller/me.js";
 import { registerUser } from "./controller/registerUser.js";
 import { login } from "./controller/login.js";

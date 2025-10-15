@@ -8,6 +8,6 @@
       "@util/*": ["util/*"]
     }
   },
-  "include": ["src**/*.ts", "src/util/db.ts"],
+  "inclued": ["src"],
   "exclude": ["dist"]
 }
