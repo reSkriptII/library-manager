@@ -1,9 +1,19 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
+import { UserContext } from "#hook/UseProvider.tsx";
 
 export function LoginPage() {
+  const context = useContext(UserContext);
+  if (!context) throw new Error("userContext not found");
+  const { user, setUser } = context;
+
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
+
+  useEffect(() => {
+    if (user) window.location.href = "/";
+  });
+
   async function handleLogin(e: any) {
     e.preventDefault();
 
@@ -21,7 +31,11 @@ export function LoginPage() {
     //TODO: login result notification
 
     if ((result.data.status = "success")) {
-      alert("log in");
+      const userResult = await axios.get(window.api + "/auth/me", {
+        withCredentials: true,
+      });
+      setUser(userResult.data.data);
+
       window.location.href = "/";
     } else {
       //window.location.href = "./";

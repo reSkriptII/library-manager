@@ -1,12 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { Routes, Route, BrowserRouter } from "react-router";
+import { BrowserRouter } from "react-router";
 
+import App from "./App.jsx";
 import "./index.css";
-import { HomePage } from "./route/HomePage/HomePage.jsx";
-import { LoginPage } from "./route/LoginPage/LoginPage.jsx";
-import { BookPage } from "./route/BookPage/BookPage.js";
-import { Dashboard } from "./route/Dashboard/DashBoard.js";
 
 declare global {
   interface Window {
@@ -19,12 +16,7 @@ window.api = "http://localhost:5000";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/book/:id" element={<BookPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
+      <App />
     </BrowserRouter>
   </StrictMode>,
 );

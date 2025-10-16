@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "imports": {
+    "#root/*": "./src/*",
     "#hook/*": "./src/hook/*",
     "#component/*": "./src/component/*"
   },

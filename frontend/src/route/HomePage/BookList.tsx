@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import type { booksData } from "./type";
 
 export function BookList({ books }: { books: booksData }) {
@@ -14,11 +15,11 @@ export function BookList({ books }: { books: booksData }) {
             <p className="text-2xl">{book.title}</p>
             <p>{book.author}</p>
 
-            <a
+            <Link
               className="absolute top-0 left-0 z-20 size-full rounded-lg hover:bg-black/10"
-              href={"./book/" + book.id}
+              to={"./book/" + book.id}
               target="_blank"
-            ></a>
+            ></Link>
           </div>
         );
       })}

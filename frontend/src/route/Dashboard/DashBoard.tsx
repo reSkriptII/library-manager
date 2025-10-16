@@ -1,13 +1,15 @@
+import { Outlet } from "react-router";
 import { HeaderBar } from "../../component/HeaderBar/HeaderBar";
+import { DashBoardNav } from "./DashBoardNav";
 
 export function Dashboard() {
   return (
     <>
       <HeaderBar />
-      <aside>
-        <button>Funtion subpage</button>
-      </aside>
-      <div>Subpage body</div>
+      <DashBoardNav />
+      <div>
+        <Outlet />
+      </div>
     </>
   );
 }
