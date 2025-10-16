@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
-import { accessSync } from "fs";
 import { sendResponse } from "./sendResponse.js";
 
 export function authenticate(req: Request, res: Response, next: NextFunction) {

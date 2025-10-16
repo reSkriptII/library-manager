@@ -31,7 +31,6 @@ export async function login(req: Request<any, any, reqBody>, res: Response) {
       return sendResponse(res, false, 401, "password incorrect");
     }
 
-    const now = Date.now();
     const accessToken = jwt.sign(
       { sub: userData.user_id },
       String(process.env.ACCESS_TOKEN_SECRET),
