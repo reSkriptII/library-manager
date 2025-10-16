@@ -20,24 +20,31 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
       throw err;
     }
   } else if (refresh_token) {
+    console.log("refauth");
     try {
       const payload = jwt.verify(
         refresh_token,
         String(process.env.REFRESH_TOKEN_SECRET)
       );
+      const userId = payload.sub;
 
-      req.user = { id: payload.sub };
+      req.user = { id: userId };
       const newAccessToken = jwt.sign(
-        payload,
-        String(process.env.ACCESS_TOKEN_SECRT)
+        { sub: userId },
+        String(process.env.ACCESS_TOKEN_SECRET),
+        { expiresIn: 10 * 60 * 1000 }
       );
 
-      res.cookie("access_token", newAccessToken);
-      next();
+      res.cookie("access_token", newAccessToken, {
+        expires: new Date(Date.now() + 10 * 60 * 1000),
+      });
+      return next();
     } catch (err) {
       if (err instanceof jwt.JsonWebTokenError) {
         return sendResponse(res, false, 401, "token malformed");
       }
+      console.log(err);
+      return next(err);
     }
   }
 

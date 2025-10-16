@@ -21,22 +21,22 @@ export default function Profile() {
     };
   }, []);
   return (
-    <div className="relative">
+    <div className="relative mr-8">
       <ProfileButton
         user={user}
         onClick={() => {
           setIsMenuCollasped(!isMenuCollasped);
         }}
       />
-      <div className="absolute">
-        <ProfileMenu hidden={isMenuCollasped} />
+      <div className="absolute top-14 -right-4">
+        <ProfileMenu hidden={isMenuCollasped} user={user} />
       </div>
     </div>
   );
 }
 
-type ProfileButtonArgs = { user: user | null; onClick: () => void };
-function ProfileButton({ user, onClick }: ProfileButtonArgs) {
+type ProfileButtonProps = { user: user | null; onClick: () => void };
+function ProfileButton({ user, onClick }: ProfileButtonProps) {
   const profilePicUrl = user
     ? window.api + `/user/${user.id}/profileimg`
     : "/profile.svg";

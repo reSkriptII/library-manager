@@ -39,14 +39,20 @@ export async function login(req: Request<any, any, reqBody>, res: Response) {
     );
     const refreshToken = jwt.sign(
       { sub: userData.user_id },
-      String(process.env.ACCESS_TOKEN_SECRET),
+      String(process.env.REFRESH_TOKEN_SECRET),
       { expiresIn: 48 * 60 * 60 * 1000 }
     );
 
     // TODO: add refresh token in database
 
-    res.cookie("access_token", accessToken, { httpOnly: true });
-    res.cookie("refresh_token", refreshToken, { httpOnly: true });
+    res.cookie("access_token", accessToken, {
+      httpOnly: true,
+      expires: new Date(Date.now() + 10 * 60 * 1000),
+    });
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      expires: new Date(Date.now() + 48 * 60 * 60 * 1000),
+    });
     return sendResponse(res, true);
   } catch (err) {
     console.log(err);
