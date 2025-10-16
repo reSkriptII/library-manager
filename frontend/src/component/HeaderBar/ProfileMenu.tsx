@@ -1,4 +1,3 @@
-import { Link } from "react-router";
 import type { user } from "../../type";
 
 type props = { hidden: boolean; user: user | null };

@@ -7,7 +7,7 @@ export function Dashboard() {
     <>
       <HeaderBar />
       <DashBoardNav />
-      <div>
+      <div className="ml-50">
         <Outlet />
       </div>
     </>
