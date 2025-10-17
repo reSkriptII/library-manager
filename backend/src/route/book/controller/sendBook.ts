@@ -7,7 +7,7 @@ export async function sendBook(req: Request, res: Response) {
 
   try {
     const result = await psqlPool.query(
-      `SELECT title, author, availability 
+      `SELECT title, availability 
         FROM books
         WHERE book_id = $1`,
       [bookId]
@@ -21,7 +21,6 @@ export async function sendBook(req: Request, res: Response) {
     return sendResponse(res, true, {
       id: bookId,
       title: bookData.title,
-      author: bookData.author,
       available: bookData.availability,
     });
   } catch (err) {

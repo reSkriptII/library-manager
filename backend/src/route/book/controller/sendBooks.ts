@@ -2,20 +2,8 @@ import { Request, Response } from "express";
 import { psqlPool } from "#util/db.js";
 import type { QueryResult } from "pg";
 
-type searchField = "title" | "author" | "genre";
-type reqQuery = {
-  search: string;
-  field: searchField;
-  available: "true" | undefined;
-  limit: `${number}` | undefined;
-  offset: `${number}` | undefined;
-};
-
-export async function sendBooks(
-  req: Request<any, any, any, reqQuery>,
-  res: Response
-) {
-  function extractNum(value: any) {
+export async function sendBooks(req: Request, res: Response) {
+  function extractNum(value: unknown) {
     if (value == null || isNaN(Number(limit))) return null;
     return Number(value);
   }
@@ -28,9 +16,9 @@ export async function sendBooks(
   try {
     if (search && field === "genre") {
       // TODO
-    } else if (search && ["title", "author"].includes(field)) {
+    } else if (search && ["title", "author"].includes(String(field))) {
       queryResult = await psqlPool.query(
-        `SELECT book_id, title, author, availability 
+        `SELECT book_id, title, availability 
         FROM books
         WHERE title LIKE '%' || $1 || '%'
           ${available === "true" ? "AND availability = true" : ""}

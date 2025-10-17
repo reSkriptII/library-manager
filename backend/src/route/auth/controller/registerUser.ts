@@ -3,16 +3,7 @@ import { Request, Response } from "express";
 import { psqlPool } from "#util/db.js";
 import { sendResponse } from "#util/sendResponse.js";
 
-type reqBody = {
-  name: string;
-  email: string;
-  password: string;
-};
-
-export async function registerUser(
-  req: Request<any, any, reqBody>,
-  res: Response
-) {
+export async function registerUser(req: Request, res: Response) {
   const { name, email, password } = req.body;
 
   try {

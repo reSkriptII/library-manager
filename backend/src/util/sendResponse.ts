@@ -1,6 +1,6 @@
 import { Response } from "express";
 
-function sendResponse(res: Response, isSuccess: true, data?: any): Response;
+function sendResponse(res: Response, isSuccess: true, data?: unknown): Response;
 function sendResponse(
   res: Response,
   isSuccess: false,
@@ -10,7 +10,7 @@ function sendResponse(
 function sendResponse(
   res: Response,
   isSuccess: boolean,
-  statuscodeOrData?: any,
+  statuscodeOrData?: unknown,
   message?: string | undefined
 ): Response {
   if (isSuccess) {
@@ -20,6 +20,8 @@ function sendResponse(
     });
   }
 
+  if (typeof statuscodeOrData !== "number")
+    throw new TypeError("Status code is not a number");
   return res.status(statuscodeOrData).json({
     status: "fail",
     message: message,

@@ -4,12 +4,7 @@ import { Request, Response } from "express";
 import { psqlPool } from "#util/db.js";
 import { sendResponse } from "#util/sendResponse.js";
 
-type reqBody = {
-  email: string;
-  password: string;
-};
-
-export async function login(req: Request<any, any, reqBody>, res: Response) {
+export async function login(req: Request, res: Response) {
   const { email, password } = req.body;
 
   try {

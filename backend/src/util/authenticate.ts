@@ -10,6 +10,8 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
         access_token,
         String(process.env.ACCESS_TOKEN_SECRET)
       );
+      if (typeof payload == "string" || payload.sub == undefined)
+        throw new jwt.JsonWebTokenError("unexpected payload data");
       req.user = { id: payload.sub };
       return next();
     } catch (err) {
@@ -25,6 +27,8 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
         refresh_token,
         String(process.env.REFRESH_TOKEN_SECRET)
       );
+      if (typeof payload == "string" || payload.sub == undefined)
+        throw new jwt.JsonWebTokenError("unexpected payload data");
       const userId = payload.sub;
 
       req.user = { id: userId };
