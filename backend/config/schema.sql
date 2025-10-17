@@ -1,6 +1,6 @@
 BEGIN;
 
-DROP TABLE IF EXISTS books, authors, book_authors, genres, book_genres, users;
+DROP TABLE IF EXISTS books, authors, book_authors, genres, book_genres, users, borrow_records;
 DROP TYPE IF EXISTS user_role;
 
 CREATE TABLE books (
@@ -39,6 +39,25 @@ CREATE TABLE users (
     email TEXT NOT NULl,
     hashed_password TEXT NOT NULL,
     role user_role NOT NULL DEFAULT 'user'
+);
+
+CREATE TABLE borrow_records (
+    borrow_id SERIAL PRIMARY KEY,
+    user_id INTEGER,
+    book_id INTEGER,
+    borrow_time TIMESTAMP DEFAULT NOW(),
+    due_date DATE DEFAULT NOW() + INTERVAL '10 days',
+    return_time TIMESTAMP NULL DEFAULT NULL,
+    returned BOOLEAN DEFAULT FALSE,
+    late_return BOOLEAN DEFAULT NULL,
+    CONSTRAINT fk_user_id 
+        FOREIGN KEY (user_id)
+        REFERENCES  users (user_id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_book_id
+        FOREIGN KEY (book_id)
+        REFERENCES books (book_id)
+        ON DELETE CASCADE
 );
 
 COMMIT;

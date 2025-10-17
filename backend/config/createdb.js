@@ -14,7 +14,7 @@ await client.connect();
 await client.query(schema);
 console.log("successfully create posgreSQL database");
 
-await populateUserTable;
+await populateUserTable();
 console.log("successfully insert sample data");
 
 client.end();
