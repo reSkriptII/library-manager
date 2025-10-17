@@ -14,26 +14,32 @@ export async function sendBooks(req: Request, res: Response) {
 
   let queryResult: QueryResult | null = null;
   try {
-    if (search && field === "genre") {
-      // TODO
-    } else if (search && ["title", "author"].includes(String(field))) {
+    if (
+      ["title", "author", "genre", "undefined"].includes(String(field)) ||
+      search === undefined
+    ) {
+      const searchCol =
+        field === "author"
+          ? "authors.name"
+          : field === "genre"
+            ? "genres.genre_name"
+            : "books.title";
+
       queryResult = await psqlPool.query(
-        `SELECT book_id, title, availability 
+        `SELECT books.book_id, books.title, books.availability,
+        array_agg(genres.genre_name) as genres,
+        array_agg(authors.name) as authors
         FROM books
-        WHERE title LIKE '%' || $1 || '%'
+        LEFT JOIN book_authors ba ON books.book_id = ba.book_id
+        LEFT JOIN authors ON ba.author_id = authors.author_id
+        LEFT JOIN book_genres bg ON books.book_id = bg.book_id
+        LEFT JOIN genres ON bg.genre_id = genres.genre_id
+        WHERE ${searchCol} LIKE '%' || $1 || '%'
           ${available === "true" ? "AND availability = true" : ""}
+        GROUP BY availability, books.book_id, books.title
         LIMIT $2
         OFFSET $3`,
-        [search, limitNum, offsetNum]
-      );
-    } else {
-      queryResult = await psqlPool.query(
-        `SELECT book_id, title, author, availability 
-        FROM books
-        ${available === "true" ? "WHERE availability = true" : ""}
-        LIMIT $1
-        OFFSET $2`,
-        [limitNum, offsetNum]
+        [search ?? "", limitNum ?? null, offsetNum ?? null]
       );
     }
   } catch (err) {
@@ -47,7 +53,8 @@ export async function sendBooks(req: Request, res: Response) {
       return {
         id: book.book_id,
         title: book.title,
-        author: book.author,
+        authors: book.authors,
+        genres: book.genres,
         available: book.availablility,
       };
     })

@@ -7,7 +7,6 @@ import { psqlPool } from "#util/db.js";
 
 export async function addBook(req: Request, res: Response) {
   const { title, authors, genres } = req.body;
-  console.log(req.body);
   if (!title || !authors || !genres) {
     return sendResponse(res, false, 400, "Bad input");
   }
@@ -32,7 +31,7 @@ export async function addBook(req: Request, res: Response) {
         return sendResponse(res, false, 400, "bad request: author not found");
       }
 
-      await db.query(
+      let a = await db.query(
         "INSERT INTO book_authors (book_id, author_id) VALUES ($1, $2)",
         [newBookId, authorId]
       );
@@ -53,6 +52,7 @@ export async function addBook(req: Request, res: Response) {
         "INSERT INTO book_genres (book_id, genre_id) VALUES ($1, $2)",
         [newBookId, genreId]
       );
+      await db.query("COMMIT");
     }
     if (req.file && req.file.mimetype.split("/")[0] === "image") {
       const destFileName = newBookId + "." + mime.extension(req.file.mimetype);
@@ -60,7 +60,6 @@ export async function addBook(req: Request, res: Response) {
       const destFilePath = path.join(process.cwd(), "coverimage", destFileName);
 
       await copyFile(srcFilePath, destFilePath);
-      await rm(srcFilePath);
     }
 
     sendResponse(res, true);
@@ -68,6 +67,9 @@ export async function addBook(req: Request, res: Response) {
     db.query("ROLLBACK");
     console.log(err);
   } finally {
+    if (req.file) {
+      rm(path.join(process.cwd(), req.file.path));
+    }
     db.release();
   }
 }
