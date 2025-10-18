@@ -7,6 +7,8 @@ export type booksSearchOption = {
 export type booksData = {
   id: number;
   title: string;
-  author: string;
+  authors: string[];
+  genres: string[];
   available: boolean;
+  series: string;
 }[];
