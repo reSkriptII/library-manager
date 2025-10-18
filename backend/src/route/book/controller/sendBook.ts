@@ -1,10 +1,13 @@
 import { psqlPool } from "#util/db.js";
+import { extractNum } from "#util/extractNum.js";
 import { sendResponse } from "#util/sendResponse.js";
 import type { Request, Response } from "express";
 
 export async function sendBook(req: Request, res: Response) {
-  const bookId = req.params.id;
-
+  const bookId = extractNum(req.params.id);
+  if (bookId == null) {
+    return sendResponse(res, false, 400, "invalid book ID");
+  }
   try {
     const bookResult = await psqlPool.query(
       `SELECT books.title, books.availability,

@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
 import { sendResponse } from "#util/sendResponse.js";
 import { psqlPool } from "#util/db.js";
+import { extractNum } from "#util/extractNum.js";
 
 export async function borrowBook(req: Request, res: Response) {
   //TODO: check privilege
+  const bookId = extractNum(req.body?.bookId);
+  const userId = extractNum(req.body?.userId);
 
-  const { bookId, userId } = req.body;
   if (!bookId || !userId) {
     return sendResponse(res, false, 400, "Bad input");
   }
@@ -18,20 +20,21 @@ export async function borrowBook(req: Request, res: Response) {
       "SELECT availability FROM books WHERE book_id = $1",
       [bookId]
     );
-    const isBookAvailable = bookResult.rows[0];
+    const isBookAvailable = bookResult.rows[0].availability;
+    console.log(isBookAvailable);
     if (isBookAvailable == undefined) {
       return sendResponse(res, false, 400, "Bad input: book not found");
     }
     if (isBookAvailable === false) {
-      return sendResponse(res, false, 400, "book not available");
+      return sendResponse(res, false, 400, "book is not available");
     }
 
     const userResult = await db.query(
-      "SELECT name FROM user WHERE user_id = $1",
+      "SELECT name FROM users WHERE user_id = $1",
       [bookId]
     );
-    const isUserFound = bookResult.rows[0];
-    if (isUserFound.length == undefined) {
+    const isUserFound = userResult.rowCount;
+    if (!isUserFound) {
       return sendResponse(res, false, 400, "Bad input: user not found");
     }
 
@@ -43,10 +46,9 @@ export async function borrowBook(req: Request, res: Response) {
     await db.query("UPDATE books SET availability = false WHERE book_id = $1", [
       bookId,
     ]);
-    console.log(borrowResult);
 
     await db.query("COMMIT");
-    sendResponse(res, true, { borrowId: borrowResult.rows[0] });
+    sendResponse(res, true, { borrowId: borrowResult.rows[0].borrow_id });
   } catch (err) {
     await db.query("ROLLBACK");
     console.log(err);

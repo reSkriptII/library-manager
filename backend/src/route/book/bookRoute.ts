@@ -11,7 +11,7 @@ const upload = multer({ dest: "./coverimage/" });
 const bookRoute = express.Router();
 
 bookRoute.post("/add", upload.single("coverimg"), addBook);
-bookRoute.post("borrow", borrowBook);
+bookRoute.post("/borrow", borrowBook);
 
 bookRoute.get("/", sendBooks);
 bookRoute.get("/:id", sendBook);
