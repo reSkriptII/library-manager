@@ -24,16 +24,32 @@ export async function sendBooks(req: Request, res: Response) {
 
       queryResult = await psqlPool.query(
         `SELECT books.book_id, books.title, books.availability,
-        array_agg(genres.genre_name) as genres,
-        array_agg(authors.name) as authors
+        a.genres as genres,
+        b.authors as authors
         FROM books
-        LEFT JOIN book_authors ba ON books.book_id = ba.book_id
-        LEFT JOIN authors ON ba.author_id = authors.author_id
-        LEFT JOIN book_genres bg ON books.book_id = bg.book_id
-        LEFT JOIN genres ON bg.genre_id = genres.genre_id
-        WHERE ${searchCol} ILIKE '%' || $1 || '%'
+        JOIN 
+          (SELECT books.book_id, array_agg(genre_name) as genres
+            FROM books 
+              LEFT JOIN book_genres bg ON books.book_id = bg.book_id
+              JOIN genres ON bg.genre_id = genres.genre_id
+              GROUP BY books.book_id
+          ) a ON books.book_id = a.book_id
+        JOIN 
+          (SELECT books.book_id, array_agg(name) as authors
+            FROM books
+              LEFT JOIN book_authors ba ON books.book_id = ba.book_id
+              JOIN authors ON ba.author_id = authors.author_id
+              GROUP BY books.book_id
+          ) b ON books.book_id = b.book_id
+        ${
+          field == undefined
+            ? "WHERE $1 LIKE '%%'"
+            : field === "title"
+              ? "WHERE books.title ILIKE '%' || $1 || '%'"
+              : `WHERE EXISTS (SELECT 1 FROM unnest(${field + "s"}) as listelem
+                WHERE listelem LIKE '%' || $1 || '%')`
+        }
           ${availableOnly === "true" ? "AND availability = true" : ""}
-        GROUP BY availability, books.book_id, books.title
         LIMIT $2
         OFFSET $3`,
         [search ?? "", limitNum ?? null, offsetNum ?? null]

@@ -80,7 +80,7 @@ async function populateBookData() {
     {
       title: "Cat raising handbook",
       authors: ["Thomas Williams", "David Park"],
-      genres: ["textbook", "math"],
+      genres: ["animal"],
     },
   ];
 

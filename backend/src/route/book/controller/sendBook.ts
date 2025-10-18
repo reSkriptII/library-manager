@@ -11,15 +11,24 @@ export async function sendBook(req: Request, res: Response) {
   try {
     const bookResult = await psqlPool.query(
       `SELECT books.title, books.availability,
-        array_agg(genres.genre_name) as genres,
-        array_agg(authors.name) as authors
+        a.genres as genres, b.authors as authors
         FROM books
-        LEFT JOIN book_authors ba ON books.book_id = ba.book_id
-        LEFT JOIN authors ON ba.author_id = authors.author_id
-        LEFT JOIN book_genres bg ON books.book_id = bg.book_id
-        LEFT JOIN genres ON bg.genre_id = genres.genre_id
+        JOIN 
+          (SELECT books.book_id, array_agg(genre_name) as genres
+            FROM books 
+              LEFT JOIN book_genres bg ON books.book_id = bg.book_id
+              JOIN genres ON bg.genre_id = genres.genre_id
+              GROUP BY books.book_id
+          ) a ON books.book_id = a.book_id
+        JOIN 
+          (SELECT books.book_id, array_agg(name) as authors
+            FROM books
+              LEFT JOIN book_authors ba ON books.book_id = ba.book_id
+              JOIN authors ON ba.author_id = authors.author_id
+              GROUP BY books.book_id
+          ) b ON books.book_id = b.book_id
         WHERE books.book_id = $1
-        GROUP BY books.title, availability`,
+        ORDER BY availability`,
       [bookId]
     );
     const bookData = bookResult.rows[0];
