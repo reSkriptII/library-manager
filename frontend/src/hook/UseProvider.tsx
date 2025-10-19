@@ -11,11 +11,9 @@ export function UseProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let isMount = true;
 
-    axios
-      .get(window.api + "/auth/me", { withCredentials: true })
-      .then((res) => {
-        if (isMount) setUser(res.data.data);
-      });
+    axios.get(window.api + "/me", { withCredentials: true }).then((res) => {
+      if (isMount) setUser(res.data.data);
+    });
 
     return () => {
       isMount = false;

@@ -37,7 +37,7 @@ export function HomePage() {
         availableOnly: availableOnly || null,
       };
       console.log(params);
-      const booksResult = await axios.get(window.api + "/book", {
+      const booksResult = await axios.get(window.api + "/books", {
         params,
       });
 

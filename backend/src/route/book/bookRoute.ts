@@ -1,32 +1,17 @@
 import express from "express";
-import multer from "multer";
 
 import { sendBooks } from "./controller/sendBooks.js";
 import { sendCoverImg } from "./controller/sendCoverImg.js";
 import { sendBook } from "./controller/sendBook.js";
-import { addBook } from "./controller/addBook.js";
-import { borrowBook } from "./controller/borrowBook.js";
-import { returnBook } from "./controller/returnBook.js";
 import { authenticate } from "#util/authenticate.js";
 import { checkRole } from "#util/checkRole.js";
 import { reserveBook } from "./controller/reserveBook.js";
 
-const upload = multer({ dest: "./coverimage/" });
 const bookRoute = express.Router();
 
-bookRoute.post(
-  "/add",
-  authenticate,
-  checkRole("admin"),
-  upload.single("coverimg"),
-  addBook
-);
-bookRoute.post("/borrow", authenticate, checkRole("librarian"), borrowBook);
-bookRoute.post("/return", authenticate, checkRole("librarian"), returnBook);
-bookRoute.post("/reserve", authenticate, checkRole("user"), reserveBook);
-
-bookRoute.get("/", sendBooks);
-bookRoute.get("/:id", sendBook);
-bookRoute.get("/:id/cover", sendCoverImg);
+bookRoute.get("/books", sendBooks);
+bookRoute.get("/book/:id", sendBook);
+bookRoute.get("/book/:id/cover", sendCoverImg);
+bookRoute.post("/book/reserve", authenticate, checkRole("user"), reserveBook);
 
 export { bookRoute };

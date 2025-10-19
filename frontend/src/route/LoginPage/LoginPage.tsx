@@ -18,7 +18,7 @@ export function LoginPage() {
     e.preventDefault();
 
     const result = await axios.post(
-      window.api + "/auth/login",
+      window.api + "/login",
       {
         email: emailInput,
         password: passwordInput,
@@ -31,7 +31,7 @@ export function LoginPage() {
     //TODO: login result notification
 
     if ((result.data.status = "success")) {
-      const userResult = await axios.get(window.api + "/auth/me", {
+      const userResult = await axios.get(window.api + "/me", {
         withCredentials: true,
       });
       setUser(userResult.data.data);
