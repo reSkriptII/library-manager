@@ -68,7 +68,7 @@ export async function sendBooks(req: Request, res: Response) {
         title: book.title,
         authors: book.authors,
         genres: book.genres,
-        available: book.availablility,
+        available: book.availability,
       };
     })
   );

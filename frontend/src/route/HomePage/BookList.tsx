@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { Dot } from "#component/etc/Dot.tsx";
 import type { booksData } from "./type";
 
 export function BookList({ books }: { books: booksData }) {
@@ -12,6 +13,10 @@ export function BookList({ books }: { books: booksData }) {
               alt="book cover"
               src={window.api + `/book/${book.id}/cover`}
               className="m-auto h-72 w-auto"
+            />
+            <Dot
+              className="absolute top-4 right-4 size-4"
+              fill={book.available ? "lime" : "red"}
             />
             <p className="text-2xl">{book.title}</p>
             <p>{book.authors.join(", ")}</p>

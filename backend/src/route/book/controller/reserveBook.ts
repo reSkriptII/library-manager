@@ -16,7 +16,7 @@ export async function reserveBook(req: Request, res: Response) {
 
   try {
     const bookResult = await psqlPool.query(
-      "SELECT availability, is_reserved FROM books WHERE book_id = $1",
+      "SELECT availability FROM books WHERE book_id = $1",
       [bookId]
     );
 
@@ -25,7 +25,6 @@ export async function reserveBook(req: Request, res: Response) {
       return sendResponse(res, false, 404, "book not found");
     }
 
-    await psqlPool.query("BEGIN");
     await psqlPool.query(
       "INSERT INTO reservations(user_id, book_id) VALUES ($1, $2)",
       [userId, bookId]

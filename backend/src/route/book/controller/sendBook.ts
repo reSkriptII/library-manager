@@ -43,7 +43,6 @@ export async function sendBook(req: Request, res: Response) {
       return sendResponse(res, false, 404, "book not found");
     }
 
-    console.log(bookData);
     return sendResponse(res, true, {
       id: bookId,
       title: bookData.title,

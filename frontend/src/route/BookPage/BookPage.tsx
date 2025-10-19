@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import axios from "axios";
-import { HeaderBar } from "../../component/HeaderBar/HeaderBar";
+import { HeaderBar } from "#component/HeaderBar/HeaderBar.jsx";
+import { Dot } from "#component/etc/Dot.js";
+import { ReserveButton } from "./ReserveButton.jsx";
 import type { bookData } from "./type";
 
 export function BookPage() {
@@ -65,6 +67,7 @@ export function BookPage() {
               <p className="mb-6 pl-6 text-xl">{book.series ?? "N/A"}</p>
             </div>
             <ReserveButton bookId={id} />
+            <p className="text-sm">reserve queue: {" " + book.reserveQueue}</p>
           </div>
         </div>
 
@@ -76,21 +79,5 @@ export function BookPage() {
         </div>
       </div>
     </>
-  );
-}
-
-function ReserveButton({ bookId }: { bookId: string }) {
-  return (
-    <button className="m-auto w-fit border border-black px-6 py-2 text-2xl shadow shadow-neutral-400 active:shadow-none">
-      Reserve this book
-    </button>
-  );
-}
-
-function Dot({ className, fill }: { className: string; fill?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 8 8">
-      <circle cx="4" cy="4" r="4" fill={fill} />
-    </svg>
   );
 }

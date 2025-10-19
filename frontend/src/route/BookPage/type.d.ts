@@ -3,6 +3,7 @@ export type bookData = {
   title: string;
   authors: string[];
   genres: string[];
-  available: boolean;
   series: string;
+  available: boolean;
+  reserveQueue: number;
 };
