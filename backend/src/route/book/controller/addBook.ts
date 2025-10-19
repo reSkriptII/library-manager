@@ -6,6 +6,8 @@ import { sendResponse } from "#util/sendResponse.js";
 import { psqlPool } from "#util/db.js";
 
 export async function addBook(req: Request, res: Response) {
+  //TODO: check privilege
+
   const { title, authors, genres } = req.body;
   if (!title || !authors || !genres) {
     return sendResponse(res, false, 400, "Bad input");

@@ -3,7 +3,10 @@ import { psqlPool } from "#util/db.js";
 import { sendResponse } from "#util/sendResponse.js";
 
 export async function me(req: Request, res: Response) {
-  const userId = req.user.id;
+  const userId = req.user?.id;
+  if (userId == undefined) {
+    return sendResponse(res, false, 401, "user not found");
+  }
 
   try {
     const result = await psqlPool.query(

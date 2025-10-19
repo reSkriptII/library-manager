@@ -12,7 +12,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
       );
       if (typeof payload == "string" || payload.sub == undefined)
         throw new jwt.JsonWebTokenError("unexpected payload data");
-      req.user = { id: payload.sub };
+      req.user = { id: payload.sub as unknown as number };
       return next();
     } catch (err) {
       if (err instanceof jwt.JsonWebTokenError) {
@@ -29,7 +29,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
       );
       if (typeof payload == "string" || payload.sub == undefined)
         throw new jwt.JsonWebTokenError("unexpected payload data");
-      const userId = payload.sub;
+      const userId = payload.sub as unknown as number;
 
       req.user = { id: userId };
       const newAccessToken = jwt.sign(
