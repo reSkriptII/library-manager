@@ -10,23 +10,26 @@ export async function sendBook(req: Request, res: Response) {
   }
   try {
     const bookResult = await psqlPool.query(
-      `SELECT books.title, books.availability,
-        a.genres as genres, b.authors as authors
+      `SELECT books.title, series_name as series, books.availability,
+        a.genres as genres, b.authors as authors,
+        (SELECT count(*) FROM reservations WHERE books.book_id = reservation.book_id)
         FROM books
-        JOIN 
+        LEFT JOIN 
           (SELECT books.book_id, array_agg(genre_name) as genres
             FROM books 
               LEFT JOIN book_genres bg ON books.book_id = bg.book_id
               JOIN genres ON bg.genre_id = genres.genre_id
               GROUP BY books.book_id
           ) a ON books.book_id = a.book_id
-        JOIN 
+        LEFT JOIN 
           (SELECT books.book_id, array_agg(name) as authors
             FROM books
               LEFT JOIN book_authors ba ON books.book_id = ba.book_id
               JOIN authors ON ba.author_id = authors.author_id
               GROUP BY books.book_id
           ) b ON books.book_id = b.book_id
+        LEFT JOIN book_series bs ON books.series_id = bs.series_id
+        LEFT JOIN
         WHERE books.book_id = $1
         ORDER BY availability`,
       [bookId]
@@ -43,6 +46,7 @@ export async function sendBook(req: Request, res: Response) {
       authors: bookData.authors,
       genres: bookData.genres,
       available: bookData.availability,
+      reserved: bookData.is_reserved,
     });
   } catch (err) {
     console.log(err);

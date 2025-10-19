@@ -34,6 +34,9 @@ export async function returnBook(req: Request, res: Response) {
         WHERE borrow_id = $1`,
       [borrowId]
     );
+    await db.query("UPDATE books SET availability = TRUE WHERE book_id = $1", [
+      bookId,
+    ]);
 
     await db.query("COMMIT");
     return sendResponse(res, true);

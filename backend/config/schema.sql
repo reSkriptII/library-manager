@@ -1,12 +1,29 @@
 BEGIN;
 
-DROP TABLE IF EXISTS books, authors, book_authors, genres, book_genres, users, borrow_records;
+DROP TABLE IF EXISTS books, authors, book_authors, genres, book_genres, 
+    book_series, users, borrow_records,reservations;
 DROP TYPE IF EXISTS user_role;
+
+CREATE TYPE user_role AS ENUM ('user', 'librarian', 'admin');
+
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT NOT NULl,
+    hashed_password TEXT NOT NULL,
+    role user_role NOT NULL DEFAULT 'user'
+);
+
+CREATE TABLE book_series (
+    series_id SERIAL PRIMARY KEY,
+    series_name TEXT
+);
 
 CREATE TABLE books (
     book_id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
-    availability BOOLEAN DEFAULT TRUE
+    availability BOOLEAN DEFAULT TRUE,
+    series_id INTEGER NULL REFERENCES book_series (series_id)
 );
 
 CREATE TABLE authors (
@@ -31,16 +48,6 @@ CREATE TABLE book_genres (
     PRIMARY KEY (book_id, genre_id)
 );
 
-CREATE TYPE user_role AS ENUM ('user', 'librarian', 'admin');
-
-CREATE TABLE users (
-    user_id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    email TEXT NOT NULl,
-    hashed_password TEXT NOT NULL,
-    role user_role NOT NULL DEFAULT 'user'
-);
-
 CREATE TABLE borrow_records (
     borrow_id SERIAL PRIMARY KEY,
     user_id INTEGER,
@@ -58,6 +65,13 @@ CREATE TABLE borrow_records (
         FOREIGN KEY (book_id)
         REFERENCES books (book_id)
         ON DELETE CASCADE
+);
+
+CREATE TABLE reservations (
+    reserve_id SERIAL PRIMARY KEY,
+    book_id INTEGER REFERENCES books(book_id),
+    user_id INTEGER REFERENCES users(user_id),
+    reserve_time TIMESTAMP DEFAULT NOW()
 );
 
 COMMIT;

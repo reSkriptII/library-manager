@@ -9,6 +9,7 @@ import { borrowBook } from "./controller/borrowBook.js";
 import { returnBook } from "./controller/returnBook.js";
 import { authenticate } from "#util/authenticate.js";
 import { checkRole } from "#util/checkRole.js";
+import { reserveBook } from "./controller/reserveBook.js";
 
 const upload = multer({ dest: "./coverimage/" });
 const bookRoute = express.Router();
@@ -22,6 +23,7 @@ bookRoute.post(
 );
 bookRoute.post("/borrow", authenticate, checkRole("librarian"), borrowBook);
 bookRoute.post("/return", authenticate, checkRole("librarian"), returnBook);
+bookRoute.post("/reserve", authenticate, checkRole("user"), reserveBook);
 
 bookRoute.get("/", sendBooks);
 bookRoute.get("/:id", sendBook);
