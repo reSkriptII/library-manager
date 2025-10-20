@@ -6,8 +6,9 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { bookRoute } from "./route/book/bookRoute.js";
 import { authRoute } from "./route/auth/authRoute.js";
-import { libRoute } from "route/librarian/librarianRoute.js";
-import { adminRoute } from "route/admin/adminRoute.js";
+import { libRoute } from "./route/librarian/librarianRoute.js";
+import { adminRoute } from "./route/admin/adminRoute.js";
+import "./util/db.js";
 
 const app = express();
 if (!process.env.REFRESH_TOKEN_SECRET) {

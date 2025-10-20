@@ -14,7 +14,7 @@ export async function sendCoverImg(req: Request, res: Response) {
     const filteredImgNames = imgDir.filter(
       (file) => path.parse(file).name === bookId
     );
-    if (filteredImgNames == undefined) {
+    if (filteredImgNames.length === 0) {
       return res.status(404).send("not found");
     }
 
