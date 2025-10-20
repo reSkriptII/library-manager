@@ -17,8 +17,7 @@ export function DashBoardNav() {
               <details>
                 <summary>Librarian</summary>
                 <ul>
-                  <LinkLi to="/dashboard/borrow">Borrow Book</LinkLi>
-                  <LinkLi to="/dashboard/return">Return Book</LinkLi>
+                  <LinkLi to="/dashboard/borrow-return">Borrow & Return</LinkLi>
                   <LinkLi to="/dashboard/register-user">Register User</LinkLi>
                 </ul>
               </details>
