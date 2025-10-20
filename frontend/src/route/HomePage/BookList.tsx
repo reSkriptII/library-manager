@@ -3,7 +3,6 @@ import { Dot } from "#component/etc/Dot.tsx";
 import type { booksData } from "./type";
 
 export function BookList({ books }: { books: booksData }) {
-  console.log(books);
   return (
     <div className="grid grid-cols-4">
       {books.map((book) => {

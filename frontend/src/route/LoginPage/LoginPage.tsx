@@ -17,28 +17,33 @@ export function LoginPage() {
   async function handleLogin(e: any) {
     e.preventDefault();
 
-    const result = await axios.post(
-      window.api + "/login",
-      {
-        email: emailInput,
-        password: passwordInput,
-      },
-      {
-        withCredentials: true,
-      },
-    );
+    try {
+      await axios.post(
+        window.api + "/login",
+        {
+          email: emailInput,
+          password: passwordInput,
+        },
+        {
+          withCredentials: true,
+        },
+      );
 
-    //TODO: login result notification
-
-    if ((result.data.status = "success")) {
       const userResult = await axios.get(window.api + "/me", {
         withCredentials: true,
       });
       setUser(userResult.data.data);
+      console.log(userResult);
 
-      window.location.href = "/";
-    } else {
-      //window.location.href = "./";
+      //TODO: notificate login success
+      //window.location.href = "/";
+    } catch (err) {
+      if (err instanceof axios.AxiosError) {
+        if (err.status === 401) {
+          //TODO: notificate login error
+          //window.location.href = "./";
+        }
+      }
     }
   }
   return (

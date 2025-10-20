@@ -36,13 +36,13 @@ export function HomePage() {
         field: searchField,
         availableOnly: availableOnly || null,
       };
-      console.log(params);
+
       const booksResult = await axios.get(window.api + "/books", {
         params,
       });
 
       setBooks(booksResult.data);
-    }, 500),
+    }, 200),
     [data, searchField, availableOnly],
   );
 

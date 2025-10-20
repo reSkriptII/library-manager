@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { createContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import type { userContextType, user } from "type";
@@ -10,10 +10,22 @@ export function UseProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let isMount = true;
+    async function getUser() {
+      try {
+        const result = await axios.get(window.api + "/me", {
+          withCredentials: true,
+        });
 
-    axios.get(window.api + "/me", { withCredentials: true }).then((res) => {
-      if (isMount) setUser(res.data.data);
-    });
+        if (isMount) setUser(result.data.data);
+      } catch (err) {
+        if (err instanceof AxiosError) {
+          if ((err.status = 401)) {
+            if (isMount) setUser(null);
+          }
+        }
+      }
+    }
+    getUser();
 
     return () => {
       isMount = false;
