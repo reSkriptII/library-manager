@@ -1,9 +1,17 @@
+import axios from "axios";
 import type { user } from "../../type";
 
 type props = { hidden: boolean; user: user | null };
 
 export function ProfileMenu({ hidden, user }: props) {
   if (hidden) return;
+  async function handleLogout() {
+    try {
+      await axios.post(window.api + "/logout", null, { withCredentials: true });
+    } catch (err) {}
+    window.location.reload();
+  }
+
   const divClass =
     "relative z-100 w-fit bg-neutral-100 p-2 shadow shadow-neutral-400";
   const iconClass = "relative bottom-0.5 mr-2 inline size-5";
@@ -50,7 +58,7 @@ export function ProfileMenu({ hidden, user }: props) {
           </a>
         </li>
         <li>
-          <button className="text-left">
+          <button className="text-left" onClick={handleLogout}>
             <img
               src="/logout-ico.svg"
               className={iconClass}
