@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { psqlPool } from "./db.js";
-import { sendResponse } from "./sendResponse.js";
+import { psqlPool } from "../util/db.js";
+import { sendResponse } from "../util/sendResponse.js";
 
 type role = "user" | "librarian" | "admin";
 

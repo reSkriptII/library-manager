@@ -2,8 +2,8 @@ import express from "express";
 import multer from "multer";
 
 import { addBook } from "./controller/addBook.js";
-import { authenticate } from "#util/authenticate.js";
-import { checkRole } from "#util/checkRole.js";
+import { authenticate } from "middleware/authenticate.js";
+import { checkRole } from "middleware/checkRole.js";
 
 const upload = multer({ dest: "./coverimage/" });
 const adminRoute = express.Router();

@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
-import { sendResponse } from "./sendResponse.js";
-import { redisClient } from "./db.js";
-import { hashToken } from "./hashToken.js";
+import { sendResponse } from "../util/sendResponse.js";
+import { redisClient } from "../util/db.js";
+import { hashToken } from "../util/hashToken.js";
 
 export async function authenticate(
   req: Request,
