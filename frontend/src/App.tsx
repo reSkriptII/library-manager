@@ -7,7 +7,7 @@ import { BookPage } from "./route/BookPage/BookPage.js";
 import { Dashboard } from "./route/Dashboard/DashBoard.js";
 import { BorrowedBook } from "./route/Dashboard/subroute/BorrowedBook.js";
 import { BorrowReturnBook } from "./route/Dashboard/subroute/BorrowReturnBook/BorrowReturnBook.js";
-import { RegisterUser } from "./route/Dashboard/subroute/registerUser.js";
+import { RegisterUser } from "./route/Dashboard/subroute/RegisterUser.js";
 
 export default function App() {
   return (
