@@ -10,6 +10,7 @@ export async function authenticate(
   next: NextFunction
 ) {
   const { access_token, refresh_token } = req.cookies;
+
   if (access_token) {
     try {
       const payload = jwt.verify(
@@ -47,7 +48,7 @@ export async function authenticate(
       const userId = payload.sub as unknown as number;
 
       const REFRSH_TOKEN_EXP =
-        Number(process.env.REFRESH_TOKEN_EXP) < 0
+        Number(process.env.REFRESH_TOKEN_EXP) > 0
           ? Number(process.env.REFRESH_TOKEN_EXP)
           : 48 * 60 * 60 * 1000;
       req.user = { id: userId };
@@ -64,8 +65,8 @@ export async function authenticate(
 
       await redisClient.del("auth:refresh:" + refresh_token);
       await redisClient.set(
-        "auth:refresh:" + refresh_token,
-        JSON.stringify(userId),
+        "auth:refresh:" + hashToken(newRefreshToken),
+        JSON.stringify({ userId }),
         { expiration: { type: "EX", value: REFRSH_TOKEN_EXP / 1000 } }
       );
 

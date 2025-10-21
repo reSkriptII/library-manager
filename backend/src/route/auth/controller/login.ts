@@ -47,7 +47,7 @@ export async function login(req: Request, res: Response) {
     );
 
     const REFRSH_TOKEN_EXP =
-      Number(process.env.REFRESH_TOKEN_EXP) < 0
+      Number(process.env.REFRESH_TOKEN_EXP) > 0
         ? Number(process.env.REFRESH_TOKEN_EXP)
         : 48 * 60 * 60 * 1000;
     const refreshToken = jwt.sign(
@@ -60,7 +60,7 @@ export async function login(req: Request, res: Response) {
     console.log(hashToken(refreshToken));
     await redisClient.set(
       "auth:refresh:" + hashToken(refreshToken),
-      JSON.stringify({ userId: userData.user_id }),
+      JSON.stringify(userData.user_id),
       { expiration: { type: "EX", value: REFRSH_TOKEN_EXP / 1000 } }
     );
 
