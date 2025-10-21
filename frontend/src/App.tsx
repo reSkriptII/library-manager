@@ -6,7 +6,8 @@ import { LoginPage } from "./route/LoginPage/LoginPage.jsx";
 import { BookPage } from "./route/BookPage/BookPage.js";
 import { Dashboard } from "./route/Dashboard/DashBoard.js";
 import { BorrowedBook } from "./route/Dashboard/subroute/BorrowedBook.js";
-import { BorrowReturnBook } from "./route/Dashboard/subroute/BorrowReturnBook.js";
+import { BorrowReturnBook } from "./route/Dashboard/subroute/BorrowReturnBook/BorrowReturnBook.js";
+import { RegisterUser } from "./route/Dashboard/subroute/registerUser.js";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/dashboard/*" element={<Dashboard />}>
           <Route path="borrowed-books" element={<BorrowedBook />} />
           <Route path="borrow-return" element={<BorrowReturnBook />} />
+          <Route path="register" element={<RegisterUser />} />
         </Route>
       </Routes>
     </UseProvider>

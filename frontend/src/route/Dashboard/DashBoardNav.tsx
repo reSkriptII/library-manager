@@ -11,20 +11,26 @@ export function DashBoardNav() {
     <aside className="absolute top-18 h-[calc(100vh-72px)] w-50 bg-neutral-100 p-4">
       <nav>
         <ul>
-          <LinkLi to="/dashboard/borrowed-books">Borrowed books</LinkLi>
+          <li>
+            <details open>
+              <summary>User</summary>
+              <LinkLi to="/dashboard/borrowed-books">Borrowed books</LinkLi>
+            </details>
+          </li>
+
           {(user?.role === "librarian" || user?.role === "admin") && (
             <li>
-              <details>
+              <details open>
                 <summary>Librarian</summary>
                 <ul>
                   <LinkLi to="/dashboard/borrow-return">Borrow & Return</LinkLi>
-                  <LinkLi to="/dashboard/register-user">Register User</LinkLi>
+                  <LinkLi to="/dashboard/register">Register User</LinkLi>
                 </ul>
               </details>
             </li>
           )}
           {user?.role === "admin" && (
-            <details>
+            <details open>
               <summary>Admin</summary>
               <ul>
                 <LinkLi to="/dashboard/managebook">Manage Book</LinkLi>

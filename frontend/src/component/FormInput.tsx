@@ -7,6 +7,9 @@ type FormInputProps = {
   value: any;
   required?: boolean;
   invalidMsg?: string;
+  min?: number;
+  max?: number;
+  minLength?: number;
 };
 
 export function FormInput({
@@ -16,6 +19,9 @@ export function FormInput({
   value,
   required,
   invalidMsg,
+  min,
+  max,
+  minLength,
 }: FormInputProps) {
   return (
     <label className="my-4 block">
@@ -26,6 +32,9 @@ export function FormInput({
         onChange={onChange}
         value={value}
         required={required}
+        min={min}
+        max={max}
+        minLength={minLength}
       />
       <p className="hidden peer-user-invalid:block">{invalidMsg}</p>
     </label>
