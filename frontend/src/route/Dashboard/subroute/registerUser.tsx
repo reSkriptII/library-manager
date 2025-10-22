@@ -15,7 +15,7 @@ export function RegisterUser() {
     if (!username || password.length < 6 || !EMAIL_REGEXP.test(email)) return;
     try {
       await axios.post(window.api + "/register", {
-        username,
+        name: username,
         email,
         password,
       });

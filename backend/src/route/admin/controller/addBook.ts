@@ -6,23 +6,38 @@ import { sendResponse } from "#util/sendResponse.js";
 import { psqlPool } from "#util/db.js";
 
 export async function addBook(req: Request, res: Response) {
-  //TODO: check privilege
-
-  const { title, authors, genres } = req.body;
-  if (!title || !authors || !genres) {
+  if (!req.body.bookData) {
+    return sendResponse(res, false, 400, "Bad input");
+  }
+  const { title, authors, genres, series } = JSON.parse(req.body.bookData);
+  console.log(JSON.parse(req.body.bookData));
+  if (!title || !Array.isArray(authors) || !Array.isArray(genres)) {
     return sendResponse(res, false, 400, "Bad input");
   }
 
   const db = await psqlPool.connect();
   try {
     await db.query("BEGIN");
+    let seriesId = null;
+    if (series) {
+      const seriesResult = await db.query(
+        "SELECT series_id FROM book_series WHERE series_name = $1",
+        [series]
+      );
+      seriesId = seriesResult.rows[0]?.series_id;
+      if (seriesId == null) {
+        await db.query("ROLLBACK");
+        return sendResponse(res, false, 400, "bad request: series not found");
+      }
+    }
+
     const bookInsertResult = await db.query(
-      "INSERT INTO books (title) VALUES ($1) RETURNING book_id",
-      [title]
+      "INSERT INTO books (title, series_id) VALUES ($1, $2) RETURNING book_id",
+      [title, seriesId]
     );
     const newBookId = bookInsertResult.rows[0].book_id;
 
-    for (const author of authors.split(",")) {
+    for (const author of authors) {
       const authorResult = await db.query(
         "SELECT author_id FROM authors WHERE name = $1",
         [author]
@@ -39,7 +54,7 @@ export async function addBook(req: Request, res: Response) {
       );
     }
 
-    for (const genre of genres.split(",")) {
+    for (const genre of genres) {
       const genreResult = await db.query(
         "SELECT genre_id FROM genres WHERE genre_name = $1",
         [genre]
@@ -56,6 +71,7 @@ export async function addBook(req: Request, res: Response) {
       );
       await db.query("COMMIT");
     }
+
     if (req.file && req.file.mimetype.split("/")[0] === "image") {
       const destFileName = newBookId + "." + mime.extension(req.file.mimetype);
       const srcFilePath = path.join(process.cwd(), req.file.path);

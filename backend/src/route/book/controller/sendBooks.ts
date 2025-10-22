@@ -4,7 +4,6 @@ import { extractNum } from "#util/extractNum.js";
 import type { QueryResult } from "pg";
 
 export async function sendBooks(req: Request, res: Response) {
-  console.log(req.query);
   const { search, field, availableOnly, limit, offset } = req.query;
   const limitNum = extractNum(limit);
   const offsetNum = extractNum(offset);

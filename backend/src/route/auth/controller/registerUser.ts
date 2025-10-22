@@ -8,17 +8,13 @@ export async function registerUser(req: Request, res: Response) {
 
   try {
     const result = await psqlPool.query(
-      `SELECT name, email FROM users
+      `SELECT email FROM users
       WHERE name = $1 OR email = $2`,
       [name, email]
     );
 
-    if (result.rows.length) {
-      const message =
-        result.rows[0].name === name
-          ? "name already used"
-          : "email already used";
-      return sendResponse(res, false, 400, message);
+    if (result.rowCount == 0) {
+      return sendResponse(res, false, 400, "email already used");
     }
   } catch (err) {
     console.log(err);

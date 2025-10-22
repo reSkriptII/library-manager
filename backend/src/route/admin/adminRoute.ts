@@ -9,7 +9,7 @@ const upload = multer({ dest: "./coverimage/" });
 const adminRoute = express.Router();
 
 adminRoute.post(
-  "/add",
+  "/addbook",
   authenticate,
   checkRole("admin"),
   upload.single("coverimg"),
