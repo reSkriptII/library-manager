@@ -9,6 +9,7 @@ import { authRoute } from "./route/auth/authRoute.js";
 import { libRoute } from "./route/librarian/librarianRoute.js";
 import { adminRoute } from "./route/admin/adminRoute.js";
 import "./util/db.js";
+import { userRoute } from "route/user/userRoute.js";
 
 const app = express();
 if (!process.env.REFRESH_TOKEN_SECRET) {
@@ -23,5 +24,6 @@ app.use("/", authRoute);
 
 app.use("/lib", libRoute);
 app.use("/admin", adminRoute);
+app.use("/user", userRoute);
 
 app.listen(5000);

@@ -48,7 +48,7 @@ export async function addBook(req: Request, res: Response) {
         return sendResponse(res, false, 400, "bad request: author not found");
       }
 
-      let a = await db.query(
+      await db.query(
         "INSERT INTO book_authors (book_id, author_id) VALUES ($1, $2)",
         [newBookId, authorId]
       );

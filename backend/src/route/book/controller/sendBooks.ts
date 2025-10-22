@@ -1,27 +1,18 @@
 import { Request, Response } from "express";
 import { psqlPool } from "#util/db.js";
 import { extractNum } from "#util/extractNum.js";
-import type { QueryResult } from "pg";
 
 export async function sendBooks(req: Request, res: Response) {
   const { search, field, availableOnly, limit, offset } = req.query;
   const limitNum = extractNum(limit);
   const offsetNum = extractNum(offset);
 
-  let queryResult: QueryResult | null = null;
   try {
     if (
       ["title", "author", "genre", "undefined"].includes(String(field)) ||
       search === undefined
     ) {
-      const searchCol =
-        field === "author"
-          ? "authors.name"
-          : field === "genre"
-            ? "genres.genre_name"
-            : "books.title";
-
-      queryResult = await psqlPool.query(
+      const queryResult = await psqlPool.query(
         `SELECT books.book_id, books.title, books.availability,
         a.genres as genres,
         b.authors as authors
@@ -53,22 +44,22 @@ export async function sendBooks(req: Request, res: Response) {
         OFFSET $3`,
         [search ?? "", limitNum ?? null, offsetNum ?? null]
       );
+
+      const booksData = queryResult?.rows ?? [];
+
+      return res.json(
+        booksData?.map((book) => {
+          return {
+            id: book.book_id,
+            title: book.title,
+            authors: book.authors,
+            genres: book.genres,
+            available: book.availability,
+          };
+        })
+      );
     }
   } catch (err) {
     console.log(err);
   }
-
-  const booksData = queryResult?.rows ?? [];
-
-  res.json(
-    booksData?.map((book) => {
-      return {
-        id: book.book_id,
-        title: book.title,
-        authors: book.authors,
-        genres: book.genres,
-        available: book.availability,
-      };
-    })
-  );
 }
