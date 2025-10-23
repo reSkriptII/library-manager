@@ -15,5 +15,6 @@ export async function addAuthor(req: Request, res: Response) {
       return sendResponse(res, false, 400, "author already exist");
 
     await psqlPool.query("INSERT INTO authors (name) VALUES ($1)", [author]);
+    return sendResponse(res, true);
   } catch (err) {}
 }
