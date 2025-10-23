@@ -12,7 +12,7 @@ export function UseProvider({ children }: { children: ReactNode }) {
     let isMount = true;
     async function getUser() {
       try {
-        const result = await axios.get(window.api + "/me", {
+        const result = await axios.get(window.api + "/user/me", {
           withCredentials: true,
         });
 

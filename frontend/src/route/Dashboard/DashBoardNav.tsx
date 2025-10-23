@@ -34,6 +34,7 @@ export function DashBoardNav() {
               <summary>Admin</summary>
               <ul>
                 <LinkLi to="/dashboard/managebook">Manage Book</LinkLi>
+                <LinkLi to="/dashboard/addbook">Add book</LinkLi>
               </ul>
             </details>
           )}
