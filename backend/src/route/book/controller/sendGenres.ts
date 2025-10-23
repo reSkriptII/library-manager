@@ -10,7 +10,7 @@ export async function sendGenres(req: Request, res: Response) {
         (search ? " WHERE genre_id ILIKE '%' || $1 || '%'" : ""),
       search ? [search] : undefined
     );
-    console.log(result.rows.map((row) => row.name));
+
     return sendResponse(
       res,
       true,
