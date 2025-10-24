@@ -23,7 +23,7 @@ CREATE TABLE books (
     book_id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
     availability BOOLEAN DEFAULT TRUE,
-    series_id INTEGER NULL REFERENCES book_series (series_id)
+    series_id INTEGER NULL REFERENCES book_series (series_id) ON DELETE SET NULL
 );
 
 CREATE TABLE authors (
@@ -32,8 +32,8 @@ CREATE TABLE authors (
 );
 
 CREATE TABLE book_authors (
-    book_id INTEGER REFERENCES books(book_id),
-    author_id INTEGER REFERENCES authors(author_id),
+    book_id INTEGER REFERENCES books(book_id) ON DELETE CASCADE,
+    author_id INTEGER REFERENCES authors(author_id) ON DELETE CASCADE,
     PRIMARY KEY (book_id, author_id)
 );
 
@@ -43,8 +43,8 @@ CREATE TABLE genres (
 );
 
 CREATE TABLE book_genres (
-    book_id INTEGER REFERENCES books(book_id),
-    genre_id INTEGER REFERENCES genres(genre_id),
+    book_id INTEGER REFERENCES books(book_id) ON DELETE CASCADE,
+    genre_id INTEGER REFERENCES genres(genre_id) ON DELETE CASCADE,
     PRIMARY KEY (book_id, genre_id)
 );
 
@@ -60,17 +60,17 @@ CREATE TABLE borrow_records (
     CONSTRAINT fk_user_id 
         FOREIGN KEY (user_id)
         REFERENCES  users (user_id)
-        ON DELETE CASCADE,
+        ON DELETE RESTRICT,
     CONSTRAINT fk_book_id
         FOREIGN KEY (book_id)
         REFERENCES books (book_id)
-        ON DELETE CASCADE
+        ON DELETE RESTRICT
 );
 
 CREATE TABLE reservations (
     reserve_id SERIAL PRIMARY KEY,
-    book_id INTEGER REFERENCES books(book_id),
-    user_id INTEGER REFERENCES users(user_id),
+    book_id INTEGER REFERENCES books(book_id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
     reserve_time TIMESTAMP DEFAULT NOW()
 );
 
