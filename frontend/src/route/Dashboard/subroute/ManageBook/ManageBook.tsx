@@ -2,8 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { SearchField } from "#root/component/SearchField.jsx";
 import { useDebounce } from "#root/hook/useDebounce.js";
-import type { booksSearchOption } from "./type";
-import type { booksData } from "#root/route/HomePage/type.js";
+import type { booksSearchOption, bookData } from "./type";
 
 export function ManageBook() {
   const defaultSearchOption: booksSearchOption = {
@@ -12,7 +11,7 @@ export function ManageBook() {
     availableOnly: false,
   };
   const [searchOption, setSearchOption] = useState(defaultSearchOption);
-  const [books, setBooks] = useState<booksData | null>(null);
+  const [books, setBooks] = useState<bookData[] | null>(null);
 
   function handleSearchOptionChange(
     option: "data" | "searchField" | "availableOnly",
