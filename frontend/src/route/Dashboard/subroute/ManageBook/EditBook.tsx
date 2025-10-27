@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { useParams } from "react-router";
 import type { bookData } from "./type";
 import { Dot } from "#root/component/etc/Dot.tsx";
@@ -82,6 +82,19 @@ export function EditBook() {
       console.log(err);
     }
   }
+  async function handleCoverChange(file: File | null) {
+    console.log("ho");
+    if (!file) return;
+    try {
+      const form = new FormData();
+      form.append("coverimg", file);
+      await axios.put(window.api + `/book/${id}/cover`, form, {
+        withCredentials: true,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
   return (
     <>
       <div className="mx-auto my-4 grid max-w-screen-xl grid-cols-2 justify-around px-8">
@@ -145,11 +158,17 @@ export function EditBook() {
             <p className="text-sm">reserve queue: {" " + book.reserveQueue}</p>
           </div>
         </div>
-
-        <div className="my-4 flex h-118 items-center justify-center">
-          <img
-            src={window.api + `/book/${id}/cover`}
-            className="aspect-auto max-h-full max-w-full"
+        <div className="my-4">
+          <div className="flex h-108 items-center justify-center">
+            <img
+              src={window.api + `/book/${id}/cover`}
+              className="aspect-auto max-h-full max-w-full"
+            />
+          </div>
+          <input
+            type="file"
+            className="border border-black px-6 py-2 text-xl file:border file:border-black file:p-2"
+            onChange={(e) => handleCoverChange(e.target.files?.[0] ?? null)}
           />
         </div>
       </div>

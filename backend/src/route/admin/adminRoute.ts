@@ -1,18 +1,16 @@
 import express from "express";
 import multer from "multer";
 
-import { addBook } from "./controller/addBook.js";
+import { addBook } from "../book/controller/addBook.js";
 import { authenticate } from "middleware/authenticate.js";
 import { checkRole } from "middleware/checkRole.js";
 import { addAuthor as createAuthor } from "./controller/createAuthor.js";
 import { addGenre as createGenre } from "./controller/createGenre.js";
 
-const upload = multer({ dest: "./coverimage/" });
 const adminRoute = express.Router();
 
 adminRoute.use(authenticate, checkRole("admin"));
 
-adminRoute.post("/addbook", upload.single("coverimg"), addBook);
 adminRoute.post("/createauthor", createAuthor);
 adminRoute.post("/creategenre", createGenre);
 

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { Link } from "react-router";
 import { SearchField } from "#root/component/SearchField.jsx";
 import { useDebounce } from "#root/hook/useDebounce.js";
 import type { booksSearchOption, bookData } from "./type";
@@ -24,6 +25,7 @@ export function ManageBook() {
   }
 
   async function deleteBook(id: number) {
+    if (!confirm("delete book?")) return;
     try {
       await axios.delete(window.api + `/book/${id}/delete`, {
         withCredentials: true,
@@ -52,6 +54,7 @@ export function ManageBook() {
 
       setBooks(booksResult.data);
     }, 200),
+    [],
   );
 
   const bookRows =
@@ -90,8 +93,17 @@ export function ManageBook() {
         </td>
         <td>series</td>
         <td>{String(book.available)}</td>
-        <td>
+        <td className="p-6">
+          <Link
+            to={"/dashboard/editbook/" + book.id}
+            className="border border-black"
+          >
+            edit
+          </Link>
+        </td>
+        <td className="px-6">
           <button
+            type="button"
             className="border border-black"
             onClick={() => deleteBook(book.id)}
           >
@@ -118,6 +130,8 @@ export function ManageBook() {
             <th>genres</th>
             <th>series</th>
             <th>available</th>
+            <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>{bookRows}</tbody>

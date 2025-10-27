@@ -14,7 +14,7 @@ export function AddBook() {
     formData.append("bookData", JSON.stringify({ title, authors, genres }));
     if (coverImg) formData.append("coverimg", coverImg);
     try {
-      await axios.post(window.api + "/admin/addbook", formData, {
+      await axios.post(window.api + "/book", formData, {
         withCredentials: true,
       });
       alert("success");
