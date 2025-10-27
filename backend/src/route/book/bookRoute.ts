@@ -8,6 +8,7 @@ import { checkRole } from "middleware/checkRole.js";
 import { reserveBook } from "./controller/reserveBook.js";
 import { sendAuthors } from "./controller/sendAuthors.js";
 import { sendGenres } from "./controller/sendGenres.js";
+import { deleteBook } from "./controller/deleteBook.js";
 
 const bookRoute = express.Router();
 
@@ -17,5 +18,11 @@ bookRoute.get("/books", sendBooks);
 bookRoute.get("/book/:id", sendBook);
 bookRoute.get("/book/:id/cover", sendCoverImg);
 bookRoute.post("/book/reserve", authenticate, checkRole("user"), reserveBook);
+bookRoute.delete(
+  "/book/:id/delete",
+  authenticate,
+  checkRole("admin"),
+  deleteBook
+);
 
 export { bookRoute };

@@ -4,7 +4,6 @@ import type { bookData } from "../type";
 
 export function BookData({ bookId }: { bookId: number | null }) {
   const [bookData, setBookData] = useState<bookData | null>(null);
-  console.log(bookData);
   useEffect(() => {
     let isMount = true;
     (async () => {

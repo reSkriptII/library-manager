@@ -1,4 +1,4 @@
-import type { booksSearchOption } from "./type";
+import type { booksSearchOption } from "../route/HomePage/type";
 
 type args = {
   searchOption: booksSearchOption;

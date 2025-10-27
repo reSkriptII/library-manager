@@ -28,20 +28,20 @@ export function LoginPage() {
           withCredentials: true,
         },
       );
+      window.location.href = "/";
 
-      const userResult = await axios.get(window.api + "/me", {
+      const userResult = await axios.get(window.api + "/user/me", {
         withCredentials: true,
       });
       setUser(userResult.data.data);
       console.log(userResult);
 
       //TODO: notificate login success
-      //window.location.href = "/";
     } catch (err) {
       if (err instanceof axios.AxiosError) {
         if (err.status === 401) {
           //TODO: notificate login error
-          //window.location.href = "./";
+          window.location.href = "./";
         }
       }
     }

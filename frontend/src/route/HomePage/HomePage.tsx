@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDebounce } from "#hook/useDebounce.ts";
 
 import { HeaderBar } from "#component/HeaderBar/HeaderBar.jsx";
-import { SearchField } from "./SearchField.jsx";
+import { SearchField } from "../../component/SearchField.js";
 import type { booksData, booksSearchOption } from "./type.ts";
 import { BookList } from "./BookList.tsx";
 import axios from "axios";

@@ -56,8 +56,6 @@ export async function login(req: Request, res: Response) {
       { expiresIn: REFRSH_TOKEN_EXP }
     );
 
-    // TODO: add refresh token in database
-    console.log(hashToken(refreshToken));
     await redisClient.set(
       "auth:refresh:" + hashToken(refreshToken),
       JSON.stringify(userData.user_id),

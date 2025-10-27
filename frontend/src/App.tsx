@@ -9,6 +9,7 @@ import { BorrowedBook } from "./route/Dashboard/subroute/BorrowedBook.js";
 import { BorrowReturnBook } from "./route/Dashboard/subroute/BorrowReturnBook/BorrowReturnBook.js";
 import { RegisterUser } from "./route/Dashboard/subroute/RegisterUser.js";
 import { AddBook } from "./route/Dashboard/subroute/AddBook/AddBooks.js";
+import { ManageBook } from "./route/Dashboard/subroute/ManageBook/ManageBook.js";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="borrow-return" element={<BorrowReturnBook />} />
           <Route path="register" element={<RegisterUser />} />
           <Route path="addbook" element={<AddBook />} />
+          <Route path="managebook" element={<ManageBook />} />
         </Route>
       </Routes>
     </UseProvider>
