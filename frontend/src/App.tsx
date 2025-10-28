@@ -5,7 +5,7 @@ import { HomePage } from "./route/HomePage/HomePage.jsx";
 import { LoginPage } from "./route/LoginPage/LoginPage.jsx";
 import { BookPage } from "./route/BookPage/BookPage.js";
 import { Dashboard } from "./route/Dashboard/DashBoard.js";
-import { BorrowedBook } from "./route/Dashboard/subroute/BorrowedBook.js";
+import { BorrowedBook } from "./route/Dashboard/subroute/BorrowedBook/BorrowedBook.js";
 import { BorrowReturnBook } from "./route/Dashboard/subroute/BorrowReturnBook/BorrowReturnBook.js";
 import { RegisterUser } from "./route/Dashboard/subroute/RegisterUser.js";
 import { AddBook } from "./route/Dashboard/subroute/AddBook/AddBooks.js";

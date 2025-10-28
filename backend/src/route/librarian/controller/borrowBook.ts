@@ -20,8 +20,7 @@ export async function borrowBook(req: Request, res: Response) {
       "SELECT availability FROM books WHERE book_id = $1",
       [bookId]
     );
-    const isBookAvailable = bookResult.rows[0].availability;
-    console.log(isBookAvailable);
+    const isBookAvailable = bookResult.rows[0]?.availability;
     if (isBookAvailable == undefined) {
       return sendResponse(res, false, 400, "Bad input: book not found");
     }
@@ -31,7 +30,7 @@ export async function borrowBook(req: Request, res: Response) {
 
     const userResult = await db.query(
       "SELECT name FROM users WHERE user_id = $1",
-      [bookId]
+      [userId]
     );
     const isUserFound = userResult.rowCount;
     if (!isUserFound) {
