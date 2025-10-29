@@ -1,32 +1,34 @@
 import { copyFile, rm, readdir } from "fs/promises";
 import path from "path";
 import mime from "mime-types";
-import { sendResponse } from "#util/sendResponse.js";
 import type { Request, Response } from "express";
+import { sendResponse } from "#util/sendResponse.js";
 
-export async function putCoverImg(req: Request, res: Response) {
-  const { id } = req.params;
-
-  if (!id) {
-    return sendResponse(res, false, 400, "bad input");
-  }
+export async function putProfileImg(req: Request, res: Response) {
+  const userId = req.user?.id as number;
 
   try {
     if (req.file && req.file.mimetype.split("/")[0] === "image") {
-      const imgDirPath = path.resolve("coverimage");
+      const imgDirPath = path.resolve("userprofile");
       const imgDir = await readdir(imgDirPath);
 
       const filteredImgNames = imgDir.filter(
-        (file) => path.parse(file).name === id
+        (file) => path.parse(file).name === String(userId)
       );
       filteredImgNames.forEach((img) => rm(path.join(imgDirPath, img)));
 
-      const destFileName = id + "." + mime.extension(req.file.mimetype);
+      const destFileName = userId + "." + mime.extension(req.file.mimetype);
       const srcFilePath = path.join(process.cwd(), req.file.path);
-      const destFilePath = path.join(process.cwd(), "coverimage", destFileName);
+      const destFilePath = path.join(
+        process.cwd(),
+        "userprofile",
+        destFileName
+      );
 
       await copyFile(srcFilePath, destFilePath);
     }
+  } catch (err) {
+    console.log(err);
   } finally {
     if (req.file) {
       rm(path.join(process.cwd(), req.file.path));

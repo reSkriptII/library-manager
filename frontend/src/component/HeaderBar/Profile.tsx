@@ -28,7 +28,7 @@ export default function Profile() {
 type ProfileButtonProps = { user: user | null; onClick: () => void };
 function ProfileButton({ user, onClick }: ProfileButtonProps) {
   const profilePicUrl = user
-    ? window.api + `/user/${user.id}/profileimg`
+    ? window.api + `/user/me/profileimg`
     : "/profile.svg";
   return (
     <button
