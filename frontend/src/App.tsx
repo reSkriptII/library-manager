@@ -11,6 +11,7 @@ import { RegisterUser } from "./route/Dashboard/subroute/RegisterUser.js";
 import { AddBook } from "./route/Dashboard/subroute/AddBook/AddBooks.js";
 import { ManageBook } from "./route/Dashboard/subroute/ManageBook/ManageBook.js";
 import { EditBook } from "./route/Dashboard/subroute/ManageBook/EditBook.js";
+import { ManageUser } from "./route/Dashboard/subroute/ManangeUser/ManageUser.js";
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="addbook" element={<AddBook />} />
           <Route path="managebook" element={<ManageBook />} />
           <Route path="editbook/:id" element={<EditBook />} />
+          <Route path="manageuser" element={<ManageUser />} />
         </Route>
       </Routes>
     </UseProvider>

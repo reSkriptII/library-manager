@@ -6,6 +6,11 @@ import { sendProfileImg } from "./controller/sendProfileImg.js";
 import { putProfileImg } from "./controller/putProfileImg.js";
 import { deleteProfileImg } from "./controller/deleteProfileImg.js";
 import multer from "multer";
+import { checkRole } from "middleware/checkRole.js";
+import { sendUser } from "./controller/sendUser.js";
+import { deleteUser } from "./controller/deleteUser.js";
+import { renameUser } from "./controller/renameUser.js";
+import { changeRole } from "./controller/changeRole.js";
 
 const userRoute = express.Router();
 const upload = multer({ dest: "userprofile/" });
@@ -23,4 +28,10 @@ userRoute.put(
 );
 
 userRoute.delete("/me/profileimg", authenticate, deleteProfileImg);
+
+userRoute.get("/", authenticate, checkRole("admin"), sendUser);
+userRoute.delete("/:id", authenticate, checkRole("admin"), deleteUser);
+userRoute.put("/:id/name", authenticate, checkRole("admin"), renameUser);
+userRoute.put("/:id/role", authenticate, checkRole("admin"), changeRole);
+
 export { userRoute };
