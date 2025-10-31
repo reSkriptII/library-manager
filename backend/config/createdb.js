@@ -23,8 +23,8 @@ client.end();
 async function populateUserTable() {
   const users = [
     {
-      name: "user",
-      email: "user@test.com",
+      name: "member",
+      email: "member@test.com",
       password: "user1234",
     },
     {
@@ -103,7 +103,9 @@ async function populateBookData() {
   }, []);
 
   for (const author of authors) {
-    await client.query("INSERT INTO authors (name) VALUES ($1)", [author]);
+    await client.query("INSERT INTO authors (author_name) VALUES ($1)", [
+      author,
+    ]);
   }
   for (const genre of genres) {
     await client.query("INSERT INTO genres (genre_name) VALUES ($1)", [genre]);
@@ -121,7 +123,7 @@ async function populateBookData() {
         `INSERT INTO book_authors (book_id, author_id)
           VALUES (
             $1, 
-            (SELECT author_id FROM authors WHERE name = $2)
+            (SELECT author_id FROM authors WHERE author_name = $2)
           )`,
         [bookId, author]
       );
@@ -138,4 +140,6 @@ async function populateBookData() {
       );
     }
   }
+
+  await client.query("REFRESH MATERIALIZED VIEW book_details");
 }

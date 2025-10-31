@@ -1,77 +1,101 @@
 BEGIN;
 
+DROP MATERIALIZED VIEW IF EXISTS book_details;
 DROP TABLE IF EXISTS books, authors, book_authors, genres, book_genres, 
-    book_series, users, borrow_records,reservations;
+    book_series, users, lends,reservations CASCADE;
 DROP TYPE IF EXISTS user_role;
 
-CREATE TYPE user_role AS ENUM ('user', 'librarian', 'admin');
+/* **********************************************************************
+ * User
+ */
+
+CREATE TYPE user_role AS ENUM ('member', 'librarian', 'admin');
 
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
-    email TEXT NOT NULl,
+    email TEXT UNIQUE NOT NULL,
     hashed_password TEXT NOT NULL,
-    role user_role NOT NULL DEFAULT 'user'
+    role user_role NOT NULL DEFAULT 'member',
+    create_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE book_series (
-    series_id SERIAL PRIMARY KEY,
-    series_name TEXT
-);
+/* **********************************************************************
+ * Book data 
+ */
 
 CREATE TABLE books (
     book_id SERIAL PRIMARY KEY,
-    title TEXT NOT NULL,
-    availability BOOLEAN DEFAULT TRUE,
-    series_id INTEGER NULL REFERENCES book_series (series_id) ON DELETE SET NULL
+    title TEXT NOT NULL
 );
 
+-- book authors
 CREATE TABLE authors (
     author_id SERIAL PRIMARY KEY,
-    name TEXT UNIQUE
+    author_name TEXT UNIQUE
 );
 
 CREATE TABLE book_authors (
-    book_id INTEGER REFERENCES books(book_id) ON DELETE CASCADE,
-    author_id INTEGER REFERENCES authors(author_id) ON DELETE CASCADE,
+    book_id INTEGER NOT NULL REFERENCES books(book_id) ON DELETE CASCADE,
+    author_id INTEGER NOT NULL REFERENCES authors(author_id) ON DELETE CASCADE,
     PRIMARY KEY (book_id, author_id)
 );
 
+-- genres
 CREATE TABLE genres (
     genre_id SERIAL PRIMARY KEY,
     genre_name TEXT UNIQUE
 );
 
 CREATE TABLE book_genres (
-    book_id INTEGER REFERENCES books(book_id) ON DELETE CASCADE,
-    genre_id INTEGER REFERENCES genres(genre_id) ON DELETE CASCADE,
+    book_id INTEGER  NOT NULL REFERENCES books(book_id) ON DELETE CASCADE,
+    genre_id INTEGER NOT NULL REFERENCES genres(genre_id) ON DELETE CASCADE,
     PRIMARY KEY (book_id, genre_id)
 );
 
-CREATE TABLE borrow_records (
+/* **********************************************************************
+ * lends and reservations
+ */
+CREATE TABLE lends (
     borrow_id SERIAL PRIMARY KEY,
-    user_id INTEGER,
-    book_id INTEGER,
-    borrow_time TIMESTAMP DEFAULT NOW(),
-    due_date DATE DEFAULT NOW() + INTERVAL '10 days',
-    return_time TIMESTAMP NULL DEFAULT NULL,
-    returned BOOLEAN DEFAULT FALSE,
-    late_return BOOLEAN DEFAULT NULL,
-    CONSTRAINT fk_user_id 
-        FOREIGN KEY (user_id)
-        REFERENCES  users (user_id)
-        ON DELETE RESTRICT,
-    CONSTRAINT fk_book_id
-        FOREIGN KEY (book_id)
-        REFERENCES books (book_id)
-        ON DELETE RESTRICT
+    user_id INTEGER NOT NULL REFERENCES users (user_id) ON DELETE RESTRICT,
+    book_id INTEGER NOT NULL REFERENCES books (book_id) ON DELETE RESTRICT,
+    borrow_time TIMESTAMP NOT NULL DEFAULT NOW(),
+    due_date TIMESTAMP DEFAULT NOW() + INTERVAL '10 days',
+    return_time TIMESTAMP NULL DEFAULT NULL
 );
 
 CREATE TABLE reservations (
     reserve_id SERIAL PRIMARY KEY,
-    book_id INTEGER REFERENCES books(book_id) ON DELETE CASCADE,
-    user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
-    reserve_time TIMESTAMP DEFAULT NOW()
+    book_id INTEGER NOT NULL REFERENCES books(book_id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    reserve_time TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE (book_id, user_id)
 );
+/* **********************************************************************
+ * views
+ */
+
+CREATE MATERIALIZED VIEW book_details AS 
+    SELECT books.book_id as id, books.title, 
+        a.genres, b.authors, c.reserve_queue
+    FROM books
+    LEFT JOIN 
+        (SELECT book_id, array_agg(genre_name) as genres
+        FROM book_genres bg
+            JOIN genres ON bg.genre_id = genres.genre_id
+            GROUP BY book_id
+        ) a ON books.book_id = a.book_id
+    LEFT JOIN 
+        (SELECT book_id, array_agg(author_name) as authors
+        FROM book_authors ba
+            JOIN authors ON ba.author_id = authors.author_id
+            GROUP BY book_id
+        ) b ON books.book_id = b.book_id
+    LEFT JOIN 
+        (SELECT book_id, count(*) as reserve_queue
+        FROM reservations 
+        GROUP BY book_id
+        ) c ON books.book_id = c.book_id;
 
 COMMIT;

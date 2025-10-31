@@ -1,5 +1,7 @@
 node_modules/
 dist/
 coverimage/*
+userprofile/*
+api.txt
 .env
 config/sampledata.sql
