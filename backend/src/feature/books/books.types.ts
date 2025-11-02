@@ -1,15 +1,13 @@
 import type { Middleware } from "types/express.js";
 import { editBook } from "./books.controllers.js";
 
-export type BookSearchParam = {
-  title?: string;
-  genre?: number | number[];
-  author?: number | number[];
-};
-
 //#region Book retrieval
 export namespace GetBooksList {
-  export type ReqQuery = BookSearchParam;
+  export type ReqQuery = {
+    title?: string;
+    genre?: number | number[];
+    author?: number | number[];
+  };
 
   export type ResBody = {
     id: number;
@@ -39,7 +37,7 @@ export namespace GetBookById {
       id: number;
       name: string;
     }[];
-    author: {
+    authors: {
       id: number;
       name: string;
     }[];

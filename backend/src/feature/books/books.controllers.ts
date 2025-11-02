@@ -11,7 +11,26 @@ export const getBookList: GetBooksList.Controller = async function (req, res) {
     console.log("/books getBookList: ", err);
   }
 };
-export const getBookById = function () {};
+export const getBookById: GetBookById.Controller = async function (req, res) {
+  const bookId = req.params.id;
+  if (isNaN(bookId)) {
+    res.status(400).send();
+    return;
+  }
+
+  try {
+    const book = await services.getBookById(bookId);
+    if (book == null) {
+      res.status(404).send();
+      return;
+    }
+
+    res.status(200).send(book);
+    return;
+  } catch (err) {
+    console.log(`/books/${req.params.id}`);
+  }
+};
 
 export const createBook = function () {};
 export const editBook = function () {};

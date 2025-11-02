@@ -78,7 +78,7 @@ CREATE TABLE reservations (
 
 CREATE MATERIALIZED VIEW book_details AS
     SELECT books.book_id as id, books.title,
-        a.genre_ids, a.genre_names, b.author_ids, b.author_names
+        a.genre_ids, a.genre_names, b.author_ids, b.author_nam
     FROM books
     LEFT JOIN 
         (SELECT book_id, array_agg(genres.genre_id) as genre_ids,

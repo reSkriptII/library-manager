@@ -1,7 +1,17 @@
 import { psqlPool } from "#util/db.js";
-import { BookSearchParam } from "./books.types.js";
 
-export async function getAllBooks() {
+export type BookObject = {
+  id: number;
+  title: string;
+  author_ids: number[];
+  author_names: string[];
+  genre_ids: number[];
+  genre_names: string[];
+  lent: boolean;
+  reserve_queue: number;
+};
+
+export async function getAllBooks(): Promise<BookObject[]> {
   return psqlPool
     .query(
       `SELECT id, title, author_ids, author_names, genre_ids, genre_names,
@@ -23,10 +33,19 @@ export async function getAllBooks() {
     .then((r) => r.rows);
 }
 
-export async function searchBooks({ title, author, genre }: BookSearchParam) {
-  if (title == undefined && author == undefined && genre == undefined)
-    throw new Error("books.model.SearchBooks: no search param");
+type SearchParam = {
+  id?: number;
+  title?: string;
+  author?: number | number[];
+  genre?: number | number[];
+};
 
+export async function searchBooks({
+  id,
+  title,
+  author,
+  genre,
+}: SearchParam): Promise<BookObject[]> {
   if (author != undefined && !Array.isArray(author)) author = [author];
   if (genre != undefined && !Array.isArray(genre)) genre = [genre];
 
@@ -47,12 +66,13 @@ export async function searchBooks({ title, author, genre }: BookSearchParam) {
         FROM reservations 
         GROUP BY book_id
         ) b ON books.id = b.book_id
-      WHERE ($1::text IS NULL OR title ILIKE '%' || $1 || '%')
-        AND ($2::int[] IS NULL OR id IN 
-          (SELECT book_id FROM book_authors WHERE author_id = ANY($2)))
-        AND ($3::int[] IS NULL OR id IN
-          (SELECT book_id FROM book_genres WHERE genre_id = ANY($3)))`,
-      [title, author ?? null, genre ?? null]
+      WHERE ($1::int IS NULL OR id = 1)
+        AND ($2::text IS NULL OR title ILIKE '%' || $2 || '%')
+        AND ($3::int[] IS NULL OR id IN 
+          (SELECT book_id FROM book_authors WHERE author_id = ANY($3)))
+        AND ($4::int[] IS NULL OR id IN
+          (SELECT book_id FROM book_genres WHERE genre_id = ANY($4)))`,
+      [id, title, author ?? null, genre ?? null]
     )
     .then((r) => r.rows);
 }
