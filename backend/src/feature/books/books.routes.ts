@@ -1,44 +1,32 @@
 import { Router } from "express";
 import multer from "multer";
-import {
-  createAuthor,
-  createBook,
-  createGenre,
-  editBook,
-  getAuthorList,
-  getBookById,
-  getBookCover,
-  getBookList,
-  getGenreList,
-  updateBookCover,
-} from "./books.controllers.js";
+import * as controllers from "./books.controllers.js";
 import { authenticate } from "middleware/authenticate.js";
 import { checkRole } from "middleware/checkRole.js";
-import { deleteBook } from "route/book/controller/deleteBook.js";
 
 const router = Router();
 const upload = multer({ dest: "./public/image/books" });
 
 // public
-router.get("/", getBookList);
-router.get("/:id", getBookById);
+router.get("/", controllers.getBookList);
+router.get("/:id", controllers.getBookById);
 
-router.get("/:id/cover", getBookCover);
+router.get("/:id/cover", controllers.getBookCover);
 
-router.get("/authors", getAuthorList);
-router.get("/genres", getGenreList);
+router.get("/authors", controllers.getAuthorList);
+router.get("/genres", controllers.getGenreList);
 
 // admin privilege
 router.use(authenticate);
 router.use(checkRole("admin"));
 
-router.post("/", createBook);
-router.patch("/:id", editBook);
-router.delete("/:id", deleteBook);
+router.post("/", controllers.createBook);
+router.patch("/:id", controllers.editBook);
+router.delete("/:id", controllers.deleteBook);
 
-router.put("/:id/cover", updateBookCover);
+router.put("/:id/cover", controllers.updateBookCover);
 
-router.post("/authors", createAuthor);
-router.post("/genres", createGenre);
+router.post("/authors", controllers.createAuthor);
+router.post("/genres", controllers.createGenre);
 
 export default router;

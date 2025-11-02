@@ -76,26 +76,23 @@ CREATE TABLE reservations (
  * views
  */
 
-CREATE MATERIALIZED VIEW book_details AS 
-    SELECT books.book_id as id, books.title, 
-        a.genres, b.authors, COALESCE(c.reserve_queue, 0) as reserve_queue
+CREATE MATERIALIZED VIEW book_details AS
+    SELECT books.book_id as id, books.title,
+        a.genre_ids, a.genre_names, b.author_ids, b.author_names
     FROM books
     LEFT JOIN 
-        (SELECT book_id, array_agg(genre_name) as genres
+        (SELECT book_id, array_agg(genres.genre_id) as genre_ids,
+            array_agg(genre_name) as genre_names
         FROM book_genres bg
             JOIN genres ON bg.genre_id = genres.genre_id
             GROUP BY book_id
         ) a ON books.book_id = a.book_id
     LEFT JOIN 
-        (SELECT book_id, array_agg(author_name) as authors
+        (SELECT book_id, array_agg(authors.author_id) as author_ids,
+            array_agg(author_name) as author_names
         FROM book_authors ba
             JOIN authors ON ba.author_id = authors.author_id
             GROUP BY book_id
-        ) b ON books.book_id = b.book_id
-    LEFT JOIN 
-        (SELECT book_id, count(*) as reserve_queue
-        FROM reservations 
-        GROUP BY book_id
-        ) c ON books.book_id = c.book_id;
+        ) b ON books.book_id = b.book_id;
 
 COMMIT;

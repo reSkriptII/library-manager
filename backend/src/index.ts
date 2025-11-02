@@ -26,4 +26,7 @@ app.use("/lib", libRoute);
 app.use("/admin", adminRoute);
 app.use("/user", userRoute);
 
+import books from "./feature/books/books.routes.js";
+app.use("/v1/books", books);
+
 app.listen(5000);
