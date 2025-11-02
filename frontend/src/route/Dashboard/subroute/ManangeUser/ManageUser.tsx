@@ -6,7 +6,6 @@ import { EditableText } from "#root/component/EditableText.tsx";
 
 export function ManageUser() {
   const [users, setUsers] = useState<UserData[] | null>(null);
-  const [editUser, setEditUser] = useState<number | null>(null);
   const context = useContext(UserContext);
   if (!context) throw new Error("userContext not found");
   const thisUser = context.user;

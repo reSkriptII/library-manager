@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect, type ChangeEvent } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import type { bookData } from "./type";
 import { Dot } from "#root/component/etc/Dot.tsx";

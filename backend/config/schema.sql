@@ -78,7 +78,7 @@ CREATE TABLE reservations (
 
 CREATE MATERIALIZED VIEW book_details AS 
     SELECT books.book_id as id, books.title, 
-        a.genres, b.authors, c.reserve_queue
+        a.genres, b.authors, COALESCE(c.reserve_queue, 0) as reserve_queue
     FROM books
     LEFT JOIN 
         (SELECT book_id, array_agg(genre_name) as genres
