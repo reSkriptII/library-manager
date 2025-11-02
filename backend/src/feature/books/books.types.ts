@@ -49,16 +49,8 @@ export namespace GetBookById {
 }
 //#endregion
 //#region Book modification
-export namespace CreateBook {
-  export type ReqBody = {
-    title: string;
-    genres: number[];
-    authors: number[];
-  };
 
-  export type Controller = Middleware<{}, {}, ReqBody>;
-}
-
+export type CreateBookController = Middleware<{}, {}, { detail: string }>;
 export namespace EditBook {
   export type ReqBody = {
     title?: string;

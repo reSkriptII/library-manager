@@ -1,3 +1,6 @@
+import { copyFile, rm } from "fs/promises";
+import path from "path";
+import mime from "mime-types";
 import * as models from "./books.models.js";
 import type { GetBooksList } from "./books.types.js";
 
@@ -28,6 +31,42 @@ export async function getBookById(id: number) {
     return structureBook(book);
   } catch (err) {
     console.log(err);
+  }
+}
+
+export async function createBook(
+  detail: models.BookDetail,
+  file: Express.Multer.File | undefined
+) {
+  const { authors, genres } = detail;
+  try {
+    if (!(await models.isAuthorsExist(authors))) {
+      throw Error("Author not exist");
+    }
+    if (!(await models.isGenresExist(genres))) {
+      throw Error("Genre not exist");
+    }
+    const bookId = await models.createBook(detail);
+
+    if (file && file.mimetype.split("/")[0] === "image") {
+      const cwd = process.cwd();
+      const destFileName = bookId + "." + mime.extension(file.mimetype);
+      const srcFilePath = path.join(cwd, file.path);
+      const destFilePath = path.join(
+        cwd,
+        "public",
+        "image",
+        "books",
+        destFileName
+      );
+
+      await copyFile(srcFilePath, destFilePath);
+    }
+  } catch (err) {
+    throw err;
+  } finally {
+    if (file)
+      rm(path.join(process.cwd(), file.path)).catch((err) => console.log(err));
   }
 }
 

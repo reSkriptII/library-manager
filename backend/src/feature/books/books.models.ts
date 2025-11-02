@@ -66,7 +66,7 @@ export async function searchBooks({
         FROM reservations 
         GROUP BY book_id
         ) b ON books.id = b.book_id
-      WHERE ($1::int IS NULL OR id = 1)
+      WHERE ($1::int IS NULL OR id = $1)
         AND ($2::text IS NULL OR title ILIKE '%' || $2 || '%')
         AND ($3::int[] IS NULL OR id IN 
           (SELECT book_id FROM book_authors WHERE author_id = ANY($3)))
@@ -75,4 +75,55 @@ export async function searchBooks({
       [id, title, author ?? null, genre ?? null]
     )
     .then((r) => r.rows);
+}
+
+export type BookDetail = {
+  title: string;
+  genres: number[];
+  authors: number[];
+};
+export async function createBook({ title, authors, genres }: BookDetail) {
+  if (!title || !Array.isArray(authors) || !Array.isArray(genres))
+    throw new TypeError("");
+
+  const client = await psqlPool.connect();
+  try {
+    client.query("BEGIN");
+
+    const bookId = await client
+      .query("INSERT INTO books (title) VALUES ($1) RETURNING book_id", [title])
+      .then((r) => r.rows[0].book_id);
+
+    await client.query(
+      `INSERT INTO book_authors (book_id, author_id) 
+    SELECT $1, author_id FROM UNNEST($2::int[]) as author_id`,
+      [bookId, authors]
+    );
+    await client.query(
+      `INSERT INTO book_genres (book_id, genre_id) 
+    SELECT $1, genre_id FROM UNNEST($2::int[]) as genre_id`,
+      [bookId, genres]
+    );
+
+    client.query("COMMIT");
+
+    return bookId;
+  } catch (err) {
+    client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+export async function isGenresExist(ids: number[]) {
+  return await psqlPool
+    .query("SELECT 1 FROM genres WHERE genre_id = ANY($1::int[])", [ids])
+    .then((r) => r.rows.length == ids.length);
+}
+
+export async function isAuthorsExist(ids: number[]) {
+  return await psqlPool
+    .query("SELECT 1 FROM authors WHERE author_id = ANY($1::int[])", [ids])
+    .then((r) => Boolean(r.rows.length == ids.length));
 }

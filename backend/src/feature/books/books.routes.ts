@@ -20,7 +20,7 @@ router.get("/genres", controllers.getGenreList);
 router.use(authenticate);
 router.use(checkRole("admin"));
 
-router.post("/", controllers.createBook);
+router.post("/", upload.single("coverImage"), controllers.createBook);
 router.patch("/:id", controllers.editBook);
 router.delete("/:id", controllers.deleteBook);
 

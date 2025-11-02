@@ -1,7 +1,12 @@
 node_modules/
 dist/
+
+.env
+config/sampledata.sql
+
+public/image/books/*
+public/image/users/*
+
 coverimage/*
 userprofile/*
 api.txt
-.env
-config/sampledata.sql
