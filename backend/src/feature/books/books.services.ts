@@ -40,12 +40,17 @@ export async function createBook(
 ) {
   const { authors, genres } = detail;
   try {
-    if (!(await models.isAuthorsExist(authors))) {
-      throw Error("Author not exist");
-    }
-    if (!(await models.isGenresExist(genres))) {
+    const isGenresExist = await models.isAuthorsExist(authors);
+
+    if (!isGenresExist) {
       throw Error("Genre not exist");
     }
+
+    const isAuthorsExist = await models.isGenresExist(genres);
+    if (!isAuthorsExist) {
+      throw Error("Author not exist");
+    }
+
     const bookId = await models.createBook(detail);
 
     if (file && file.mimetype.split("/")[0] === "image") {
@@ -67,6 +72,29 @@ export async function createBook(
   } finally {
     if (file)
       rm(path.join(process.cwd(), file.path)).catch((err) => console.log(err));
+  }
+}
+
+export async function updateBook(id: number, options: models.BookDetail) {
+  try {
+    const isBookExist = models.isBookExist(id);
+    if (!isBookExist) {
+      throw new Error("Book not exist");
+    }
+
+    const isGenresExist = await models.isGenresExist(options.genres);
+    if (!isGenresExist) {
+      throw Error("Genre not exist");
+    }
+
+    const isAuthorsExist = await models.isAuthorsExist(options.authors);
+    if (!isAuthorsExist) {
+      throw Error("Author not exist");
+    }
+
+    await models.updateBook(id, options);
+  } catch (err) {
+    throw err;
   }
 }
 

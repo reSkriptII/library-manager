@@ -1,5 +1,5 @@
 import type { Middleware } from "types/express.js";
-import { editBook } from "./books.controllers.js";
+import { updateBook } from "./books.controllers.js";
 
 //#region Book retrieval
 export namespace GetBooksList {
@@ -51,14 +51,14 @@ export namespace GetBookById {
 //#region Book modification
 
 export type CreateBookController = Middleware<{}, {}, { detail: string }>;
-export namespace EditBook {
+export namespace UpdateBook {
   export type ReqBody = {
-    title?: string;
-    genres?: number[];
-    authors?: number[];
+    title: string;
+    genres: number[];
+    authors: number[];
   };
 
-  export type Controller = Middleware<{}, {}, ReqBody>;
+  export type Controller = Middleware<{ id: number }, {}, ReqBody>;
 }
 //#endregion
 

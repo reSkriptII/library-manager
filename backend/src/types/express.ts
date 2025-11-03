@@ -15,4 +15,4 @@ export type Middleware<
   req: Request<Param, ResBody, ReqBody, Query>,
   res: Response<ResBody>,
   next?: NextFunction
-) => Promise<void> | void;
+) => Promise<unknown> | unknown;

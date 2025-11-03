@@ -21,7 +21,7 @@ router.use(authenticate);
 router.use(checkRole("admin"));
 
 router.post("/", upload.single("coverImage"), controllers.createBook);
-router.patch("/:id", controllers.editBook);
+router.put("/:id", controllers.updateBook);
 router.delete("/:id", controllers.deleteBook);
 
 router.put("/:id/cover", controllers.updateBookCover);

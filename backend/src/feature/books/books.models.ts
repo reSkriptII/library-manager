@@ -116,14 +116,55 @@ export async function createBook({ title, authors, genres }: BookDetail) {
   }
 }
 
+export async function updateBook(id: number, options: BookDetail) {
+  const client = await psqlPool.connect();
+  try {
+    await client.query("BEGIN");
+    await client.query("UPDATE books SET title = $2 WHERE book_id = $1", [
+      id,
+      options.title,
+    ]);
+
+    await client.query("DELETE FROM book_genres WHERE book_id = $1", [id]);
+    if (options.genres.length > 0) {
+      await client.query(
+        `INSERT INTO book_genres (book_id, genre_id) 
+        SELECT $1, genre_id FROM UNNEST($2::int[]) AS genre_id`,
+        [id, options.genres]
+      );
+    }
+
+    await client.query("DELETE FROM book_authors WHERE book_id = $1", [id]);
+    if (options.authors.length > 0) {
+      await client.query(
+        `INSERT INTO book_authors(book_id, author_id) 
+        SELECT $1, genre_id FROM UNNEST($2::int[]) AS genre_id`,
+        [id, options.authors]
+      );
+    }
+
+    await client.query("COMMIT");
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+export async function isBookExist(id: number) {
+  return await psqlPool
+    .query("SELECT 1 FROM books WHERE book_id = $1", [id])
+    .then((r) => r.rows.length > 0);
+}
 export async function isGenresExist(ids: number[]) {
   return await psqlPool
     .query("SELECT 1 FROM genres WHERE genre_id = ANY($1::int[])", [ids])
-    .then((r) => r.rows.length == ids.length);
+    .then((r) => r.rows.length == ids?.length);
 }
 
 export async function isAuthorsExist(ids: number[]) {
   return await psqlPool
     .query("SELECT 1 FROM authors WHERE author_id = ANY($1::int[])", [ids])
-    .then((r) => Boolean(r.rows.length == ids.length));
+    .then((r) => Boolean(r.rows.length == ids?.length));
 }
