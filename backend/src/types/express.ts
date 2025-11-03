@@ -14,5 +14,7 @@ export type Middleware<
 > = (
   req: Request<Param, ResBody, ReqBody, Query>,
   res: Response<ResBody>,
-  next?: NextFunction
+  next: NextFunction
 ) => Promise<unknown> | unknown;
+
+export type Controller = Middleware;

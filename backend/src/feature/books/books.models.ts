@@ -152,6 +152,11 @@ export async function updateBook(id: number, options: BookDetail) {
   }
 }
 
+export async function deleteBook(id: number) {
+  await psqlPool.query("DELETE FROM books WHERE book_id = $1", [id]);
+  return;
+}
+
 export async function isBookExist(id: number) {
   return await psqlPool
     .query("SELECT 1 FROM books WHERE book_id = $1", [id])

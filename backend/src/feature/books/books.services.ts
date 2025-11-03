@@ -1,4 +1,4 @@
-import { copyFile, rm } from "fs/promises";
+import { readdir, copyFile, rm } from "fs/promises";
 import path from "path";
 import mime from "mime-types";
 import * as models from "./books.models.js";
@@ -41,7 +41,6 @@ export async function createBook(
   const { authors, genres } = detail;
   try {
     const isGenresExist = await models.isAuthorsExist(authors);
-
     if (!isGenresExist) {
       throw Error("Genre not exist");
     }
@@ -53,19 +52,8 @@ export async function createBook(
 
     const bookId = await models.createBook(detail);
 
-    if (file && file.mimetype.split("/")[0] === "image") {
-      const cwd = process.cwd();
-      const destFileName = bookId + "." + mime.extension(file.mimetype);
-      const srcFilePath = path.join(cwd, file.path);
-      const destFilePath = path.join(
-        cwd,
-        "public",
-        "image",
-        "books",
-        destFileName
-      );
-
-      await copyFile(srcFilePath, destFilePath);
+    if (file && file.mimetype.startsWith("image/")) {
+      await updateBookCover(bookId, file);
     }
   } catch (err) {
     throw err;
@@ -98,6 +86,70 @@ export async function updateBook(id: number, options: models.BookDetail) {
   }
 }
 
+export async function deleteBook(id: number) {
+  try {
+    const isBookExist = await models.isBookExist(id);
+    if (!isBookExist) {
+      throw Error("Book not exist");
+    }
+
+    await models.deleteBook(id);
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function getBookCoverData(id: number | string) {
+  try {
+    const imgDir = await readdir(COVER_IMAGE_DIR_PATH);
+
+    const filteredImgNames = imgDir.filter(
+      (file) => path.parse(file).name == String(id)
+    );
+    if (filteredImgNames.length === 0) {
+      return null;
+    }
+
+    const coverImgPath = path.join(COVER_IMAGE_DIR_PATH, filteredImgNames[0]);
+    const mimeType = mime.lookup(coverImgPath);
+
+    if (!mimeType || !mimeType.startsWith("image/")) {
+      return null;
+    }
+    return { mimeType, path: coverImgPath };
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function updateBookCover(
+  id: number | string,
+  file?: Express.Multer.File | undefined
+) {
+  try {
+    const imgDir = await readdir(COVER_IMAGE_DIR_PATH);
+
+    const filteredImgNames = imgDir.filter(
+      (file) => path.parse(file).name === id
+    );
+    filteredImgNames.forEach((img) => rm(path.join(COVER_IMAGE_DIR_PATH, img)));
+
+    if (file != undefined) {
+      const destFileName = id + "." + mime.extension(file.mimetype);
+      const srcFilePath = path.resolve(file.path);
+      const destFilePath = path.join(COVER_IMAGE_DIR_PATH, destFileName);
+
+      await copyFile(srcFilePath, destFilePath);
+    }
+  } catch (err) {
+    throw err;
+  } finally {
+    if (file) {
+      rm(path.resolve(file.path));
+    }
+  }
+}
+
 function structureBook(book: models.BookObject) {
   const genreId = book.genre_ids as number[];
   const genres: { id: number; name: string }[] = [];
@@ -119,3 +171,5 @@ function structureBook(book: models.BookObject) {
     reserveQueue: book.reserve_queue,
   };
 }
+
+const COVER_IMAGE_DIR_PATH = path.resolve("public", "image", "books");

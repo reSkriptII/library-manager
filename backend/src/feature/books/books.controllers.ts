@@ -1,9 +1,12 @@
+import { createReadStream } from "fs";
+import { Controller } from "types/express.js";
 import * as services from "./books.services.js";
 import {
   GetBooksList,
   GetBookById,
   CreateBookController,
   UpdateBook,
+  DeleteBookController,
 } from "./books.types.js";
 
 // book data
@@ -69,12 +72,70 @@ export const updateBook: UpdateBook.Controller = async function (req, res) {
     console.log(err);
   }
 };
-export const deleteBook = function () {};
+export const deleteBook: DeleteBookController = async function (req, res) {
+  const bookId = req.params.id;
+  if (isNaN(bookId)) {
+    return res.status(400).send();
+  }
+
+  try {
+    await services.deleteBook(bookId);
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 // cover
-export const getBookCover = function () {};
-export const updateBookCover = function () {};
-export const deleteBookCover = function () {};
+export const getBookCover: Controller = async function (req, res) {
+  const bookId = req.params.id;
+  if (isNaN(Number(bookId))) {
+    return res.status(400).send();
+  }
+
+  try {
+    const bookCoverImgData = await services.getBookCoverData(bookId);
+    if (bookCoverImgData == null) {
+      return res.status(404).send();
+    }
+
+    res.setHeader("Content-Type", bookCoverImgData?.mimeType);
+    createReadStream(bookCoverImgData.path).pipe(res);
+    return;
+  } catch (err) {
+    console.log(err);
+  }
+};
+export const updateBookCover: Controller = async function (req, res) {
+  const bookId = req.params.id;
+  if (isNaN(Number(bookId))) {
+    return res.status(400).send();
+  }
+
+  if (req.file == undefined || !req.file.mimetype.startsWith("image/")) {
+    return res.status(400).send();
+  }
+
+  try {
+    await services.updateBookCover(bookId, req.file);
+    return res.status(200).send();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const deleteBookCover: Controller = async function (req, res) {
+  const bookId = req.params.id;
+  if (isNaN(Number(bookId))) {
+    return res.status(400).send();
+  }
+
+  try {
+    await services.updateBookCover(bookId, undefined);
+    return res.status(200).send();
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 //book property
 export const getAuthorList = function () {};

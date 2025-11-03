@@ -28,8 +28,6 @@ export namespace GetBooksList {
 }
 
 export namespace GetBookById {
-  export type ReqParam = { id: number };
-
   export type ResBody = {
     id: number;
     title: string;
@@ -45,7 +43,7 @@ export namespace GetBookById {
     reserveQueue: number;
   } | null;
 
-  export type Controller = Middleware<ReqParam, {}, undefined, ResBody>;
+  export type Controller = Middleware<{ id: number }, {}, undefined, ResBody>;
 }
 //#endregion
 //#region Book modification
@@ -60,6 +58,7 @@ export namespace UpdateBook {
 
   export type Controller = Middleware<{ id: number }, {}, ReqBody>;
 }
+export type DeleteBookController = Middleware<{ id: number }>;
 //#endregion
 
 export type CreateAuthorController = Middleware<{}, {}, { author: string }>;
