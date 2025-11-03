@@ -40,12 +40,12 @@ export async function createBook(
 ) {
   const { authors, genres } = detail;
   try {
-    const isGenresExist = await models.isAuthorsExist(authors);
+    const isGenresExist = await models.isAuthorIdsExist(authors);
     if (!isGenresExist) {
       throw Error("Genre not exist");
     }
 
-    const isAuthorsExist = await models.isGenresExist(genres);
+    const isAuthorsExist = await models.isGenreIdsExist(genres);
     if (!isAuthorsExist) {
       throw Error("Author not exist");
     }
@@ -57,9 +57,6 @@ export async function createBook(
     }
   } catch (err) {
     throw err;
-  } finally {
-    if (file)
-      rm(path.join(process.cwd(), file.path)).catch((err) => console.log(err));
   }
 }
 
@@ -70,12 +67,12 @@ export async function updateBook(id: number, options: models.BookDetail) {
       throw new Error("Book not exist");
     }
 
-    const isGenresExist = await models.isGenresExist(options.genres);
+    const isGenresExist = await models.isGenreIdsExist(options.genres);
     if (!isGenresExist) {
       throw Error("Genre not exist");
     }
 
-    const isAuthorsExist = await models.isAuthorsExist(options.authors);
+    const isAuthorsExist = await models.isAuthorIdsExist(options.authors);
     if (!isAuthorsExist) {
       throw Error("Author not exist");
     }
@@ -143,13 +140,34 @@ export async function updateBookCover(
     }
   } catch (err) {
     throw err;
-  } finally {
-    if (file) {
-      rm(path.resolve(file.path));
-    }
   }
 }
 
+export async function createGenre(genre: string) {
+  try {
+    const isGenreUsed = await models.isGenreNameExist(genre);
+    if (isGenreUsed) {
+      throw new Error("Genre is used");
+    }
+
+    return await models.createGenre(genre);
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function createAuthor(author: string) {
+  try {
+    const isAuthorUsed = await models.isAuthorNameExist(author);
+    if (isAuthorUsed) {
+      throw new Error("Author is used");
+    }
+
+    return await models.createAuthor(author);
+  } catch (err) {
+    throw err;
+  }
+}
 function structureBook(book: models.BookObject) {
   const genreId = book.genre_ids as number[];
   const genres: { id: number; name: string }[] = [];

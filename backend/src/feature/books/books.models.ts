@@ -1,4 +1,5 @@
 import { psqlPool } from "#util/db.js";
+import { BookPropEntity } from "./books.types.js";
 
 export type BookObject = {
   id: number;
@@ -154,22 +155,57 @@ export async function updateBook(id: number, options: BookDetail) {
 
 export async function deleteBook(id: number) {
   await psqlPool.query("DELETE FROM books WHERE book_id = $1", [id]);
-  return;
 }
 
 export async function isBookExist(id: number) {
-  return await psqlPool
+  return psqlPool
     .query("SELECT 1 FROM books WHERE book_id = $1", [id])
     .then((r) => r.rows.length > 0);
 }
-export async function isGenresExist(ids: number[]) {
-  return await psqlPool
+
+export async function isGenreIdsExist(ids: number[]) {
+  return psqlPool
     .query("SELECT 1 FROM genres WHERE genre_id = ANY($1::int[])", [ids])
     .then((r) => r.rows.length == ids?.length);
 }
+export async function isGenreNameExist(genre: string) {
+  return psqlPool
+    .query("SELECT 1 FROM genres WHERE genre_name = $1", [genre])
+    .then((r) => r.rows.length > 0);
+}
+export async function getGenreList() {
+  return psqlPool
+    .query("SELECT genre_id as id, genre_name as name FROM genres")
+    .then((r) => r.rows as BookPropEntity[]);
+}
+export async function createGenre(genre: string) {
+  return await psqlPool
+    .query("INSERT INTO genres (genre_name) VALUES ($1) RETURNING genre_id", [
+      genre,
+    ])
+    .then((r) => r.rows[0]);
+}
 
-export async function isAuthorsExist(ids: number[]) {
+export async function isAuthorIdsExist(ids: number[]) {
   return await psqlPool
     .query("SELECT 1 FROM authors WHERE author_id = ANY($1::int[])", [ids])
     .then((r) => Boolean(r.rows.length == ids?.length));
+}
+export async function isAuthorNameExist(author: string) {
+  return psqlPool
+    .query("SELECT 1 FROM authors WHERE author_name = $1", [author])
+    .then((r) => r.rows.length > 0);
+}
+export async function getAuthorsList() {
+  return await psqlPool
+    .query("SELECT author_id as id, author_name as name FROM authors")
+    .then((r) => r.rows as BookPropEntity[]);
+}
+export async function createAuthor(author: string) {
+  return await psqlPool
+    .query(
+      "INSERT INTO authors (author_name) VALUES ($1) RETURNING author_id",
+      [author]
+    )
+    .then((r) => r.rows[0]);
 }

@@ -1,13 +1,18 @@
 import { createReadStream } from "fs";
 import { Controller } from "types/express.js";
 import * as services from "./books.services.js";
+import * as models from "./books.models.js";
 import {
   GetBooksList,
   GetBookById,
   CreateBookController,
   UpdateBook,
-  DeleteBookController,
+  GetAuthorsController,
+  GetGenresontroller,
+  CreateAuthorController,
+  CreateGenreController,
 } from "./books.types.js";
+import { cleanFile } from "#util/files.js";
 
 // book data
 export const getBookList: GetBooksList.Controller = async function (req, res) {
@@ -37,14 +42,14 @@ export const getBookById: GetBookById.Controller = async function (req, res) {
 };
 
 export const createBook: CreateBookController = async function (req, res) {
-  const bookDetail = req.body?.detail;
-
-  if (bookDetail == undefined) {
-    return res.status(400).send();
-  }
-
   try {
-    const { title, authors, genres } = JSON.parse(bookDetail);
+    const bookDetails = req.body?.details;
+
+    if (bookDetails == undefined) {
+      return res.status(400).send();
+    }
+
+    const { title, authors, genres } = JSON.parse(bookDetails);
 
     if (!title || !Array.isArray(authors) || !Array.isArray(genres)) {
       return res.status(400).send();
@@ -54,6 +59,8 @@ export const createBook: CreateBookController = async function (req, res) {
     res.status(204).send();
   } catch (err) {
     console.log(err);
+  } finally {
+    cleanFile(req.file);
   }
 };
 export const updateBook: UpdateBook.Controller = async function (req, res) {
@@ -70,16 +77,19 @@ export const updateBook: UpdateBook.Controller = async function (req, res) {
     return res.status(204).send();
   } catch (err) {
     console.log(err);
+  } finally {
+    cleanFile(req.file);
   }
 };
-export const deleteBook: DeleteBookController = async function (req, res) {
-  const bookId = req.params.id;
+export const deleteBook: Controller = async function (req, res) {
+  const bookId = Number(req.params.id);
   if (isNaN(bookId)) {
     return res.status(400).send();
   }
 
   try {
     await services.deleteBook(bookId);
+    res.status(204).send();
   } catch (err) {
     console.log(err);
   }
@@ -111,7 +121,7 @@ export const updateBookCover: Controller = async function (req, res) {
     return res.status(400).send();
   }
 
-  if (req.file == undefined || !req.file.mimetype.startsWith("image/")) {
+  if (req.file && !req.file.mimetype.startsWith("image/")) {
     return res.status(400).send();
   }
 
@@ -120,26 +130,53 @@ export const updateBookCover: Controller = async function (req, res) {
     return res.status(200).send();
   } catch (err) {
     console.log(err);
+  } finally {
+    cleanFile(req.file);
   }
 };
 
-export const deleteBookCover: Controller = async function (req, res) {
-  const bookId = req.params.id;
-  if (isNaN(Number(bookId))) {
-    return res.status(400).send();
-  }
-
+//book property
+export const getGenreList: GetGenresontroller = async function (req, res) {
   try {
-    await services.updateBookCover(bookId, undefined);
-    return res.status(200).send();
+    const genres = await models.getGenreList();
+    return res.status(200).send(genres);
+  } catch (err) {
+    console.log(err);
+  }
+};
+export const getAuthorList: GetAuthorsController = async function (req, res) {
+  try {
+    const authors = await models.getAuthorsList();
+    return res.status(200).send(authors);
   } catch (err) {
     console.log(err);
   }
 };
 
-//book property
-export const getAuthorList = function () {};
-export const getGenreList = function () {};
+export const createGenre: CreateGenreController = async function (req, res) {
+  let genre = req.body.genre;
+  if (genre == undefined) {
+    return res.status(400).send();
+  }
 
-export const createAuthor = function () {};
-export const createGenre = function () {};
+  try {
+    const genreId = await services.createGenre(genre);
+    return res.status(200).send({ id: genreId, name: genre });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const createAuthor: CreateAuthorController = async function (req, res) {
+  let author = req.body.author;
+  if (author == undefined) {
+    return res.status(400).send();
+  }
+
+  try {
+    const authorId = await services.createAuthor(author);
+    return res.status(200).send({ id: authorId, name: author });
+  } catch (err) {
+    console.log(err);
+  }
+};

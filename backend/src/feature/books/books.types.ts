@@ -48,7 +48,7 @@ export namespace GetBookById {
 //#endregion
 //#region Book modification
 
-export type CreateBookController = Middleware<{}, {}, { detail: string }>;
+export type CreateBookController = Middleware<{}, {}, { details: string }>;
 export namespace UpdateBook {
   export type ReqBody = {
     title: string;
@@ -58,8 +58,21 @@ export namespace UpdateBook {
 
   export type Controller = Middleware<{ id: number }, {}, ReqBody>;
 }
-export type DeleteBookController = Middleware<{ id: number }>;
 //#endregion
 
-export type CreateAuthorController = Middleware<{}, {}, { author: string }>;
-export type CreateGenreController = Middleware<{}, {}, { genre: string }>;
+export type BookPropEntity = { id: number; name: string };
+export type GetGenresontroller = Middleware<{}, {}, any, BookPropEntity[]>;
+export type GetAuthorsController = GetGenresontroller;
+
+export type CreateAuthorController = Middleware<
+  {},
+  {},
+  { author: string },
+  BookPropEntity
+>;
+export type CreateGenreController = Middleware<
+  {},
+  {},
+  { genre: string },
+  BookPropEntity
+>;
