@@ -61,7 +61,12 @@ export namespace UpdateBook {
 //#endregion
 
 export type BookPropEntity = { id: number; name: string };
-export type GetGenresontroller = Middleware<{}, {}, any, BookPropEntity[]>;
+export type GetGenresontroller = Middleware<
+  {},
+  { search?: string },
+  any,
+  BookPropEntity[]
+>;
 export type GetAuthorsController = GetGenresontroller;
 
 export type CreateAuthorController = Middleware<

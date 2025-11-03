@@ -173,9 +173,12 @@ export async function isGenreNameExist(genre: string) {
     .query("SELECT 1 FROM genres WHERE genre_name = $1", [genre])
     .then((r) => r.rows.length > 0);
 }
-export async function getGenreList() {
+export async function getGenreList(search?: string) {
   return psqlPool
-    .query("SELECT genre_id as id, genre_name as name FROM genres")
+    .query(
+      "SELECT genre_id as id, genre_name as name FROM genres WHERE genre_name ILIKE '%'|| $1 || '%'",
+      [search ?? ""]
+    )
     .then((r) => r.rows as BookPropEntity[]);
 }
 export async function createGenre(genre: string) {
@@ -196,9 +199,12 @@ export async function isAuthorNameExist(author: string) {
     .query("SELECT 1 FROM authors WHERE author_name = $1", [author])
     .then((r) => r.rows.length > 0);
 }
-export async function getAuthorsList() {
+export async function getAuthorsList(search?: string) {
   return await psqlPool
-    .query("SELECT author_id as id, author_name as name FROM authors")
+    .query(
+      "SELECT author_id as id, author_name as name FROM authors WHERE author_name ILIKE '%'|| $1 || '%'",
+      [search ?? ""]
+    )
     .then((r) => r.rows as BookPropEntity[]);
 }
 export async function createAuthor(author: string) {

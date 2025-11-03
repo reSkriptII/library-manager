@@ -137,16 +137,20 @@ export const updateBookCover: Controller = async function (req, res) {
 
 //book property
 export const getGenreList: GetGenresontroller = async function (req, res) {
+  const search = req.query.search;
+
   try {
-    const genres = await models.getGenreList();
+    const genres = await models.getGenreList(search);
     return res.status(200).send(genres);
   } catch (err) {
     console.log(err);
   }
 };
 export const getAuthorList: GetAuthorsController = async function (req, res) {
+  const search = req.query.search;
+
   try {
-    const authors = await models.getAuthorsList();
+    const authors = await models.getAuthorsList(search);
     return res.status(200).send(authors);
   } catch (err) {
     console.log(err);
