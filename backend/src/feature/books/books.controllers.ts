@@ -2,68 +2,74 @@ import { createReadStream } from "fs";
 import { Controller } from "types/express.js";
 import * as services from "./books.services.js";
 import * as models from "./books.models.js";
-import {
-  GetBooksList,
-  GetBookById,
-  CreateBookController,
-  UpdateBook,
-  GetAuthorsController,
-  GetGenresontroller,
-  CreateAuthorController,
-  CreateGenreController,
-} from "./books.types.js";
+import * as Books from "./books.types.js";
 import { cleanFile } from "#util/files.js";
+import { normalizedToIntArray } from "#util/request.js";
 
 // book data
-export const getBookList: GetBooksList.Controller = async function (req, res) {
-  try {
-    const books = await services.getBookSearch(req.query);
-    return res.status(200).send(books);
-  } catch (err) {
-    console.log("/books getBookList: ", err);
+export const getBookList: Books.GetBooksListCtrler = async function (req, res) {
+  const title = req.query.title;
+  const genre = normalizedToIntArray(req.query.genre, true);
+  const author = normalizedToIntArray(req.query.author, true);
+
+  if ((title && typeof title != "string") || !genre.valid || !author.valid) {
+    return res.status(400).send({ message: "Invalid query parameters" });
   }
+
+  const books = await services.getBookSearch({
+    title,
+    genre: genre.value,
+    author: author.value,
+  });
+
+  return res.status(200).send(books);
 };
-export const getBookById: GetBookById.Controller = async function (req, res) {
+
+export const getBookById: Books.GetBookByIdCtrler = async function (req, res) {
   const bookId = req.params.id;
-  if (isNaN(bookId)) {
-    return res.status(400).send();
+  if (!Number.isInteger(bookId)) {
+    return res.status(400).send({ message: "Invalid book ID" });
   }
 
-  try {
-    const book = await services.getBookById(bookId);
-    if (book == null) {
-      return res.status(404).send();
-    }
-
-    return res.status(200).send(book);
-  } catch (err) {
-    console.log(`/books/${req.params.id}`);
+  const book = await services.getBookById(bookId);
+  if (book == null) {
+    return res.status(404).send({ message: "Book not found" });
   }
+
+  return res.status(200).send(book);
 };
 
-export const createBook: CreateBookController = async function (req, res) {
+export const createBook: Books.CreateBookCtrler = async function (req, res) {
   try {
-    const bookDetails = req.body?.details;
-
-    if (bookDetails == undefined) {
-      return res.status(400).send();
+    if (req.body?.details) {
+      return res.status(400).send({ message: "Invalid book details" });
     }
 
-    const { title, authors, genres } = JSON.parse(bookDetails);
-
-    if (!title || !Array.isArray(authors) || !Array.isArray(genres)) {
-      return res.status(400).send();
+    let bookDetails;
+    try {
+      bookDetails = JSON.parse(req.body?.details);
+    } catch {
+      return res.status(400).send({ message: "Invalid book details" });
     }
 
-    await services.createBook({ title, authors, genres }, req.file);
-    res.status(204).send();
-  } catch (err) {
-    console.log(err);
+    const title = bookDetails.title;
+    const genres = normalizedToIntArray(bookDetails.genres);
+    const authors = normalizedToIntArray(bookDetails.authors);
+
+    if (typeof title !== "string" || !genres.valid || !authors.valid) {
+      return res.status(400).send({ message: "Invalid book details" });
+    }
+
+    const bookId = await services.createBook(
+      { title, genres: genres.value, authors: authors.value },
+      req.file
+    );
+    res.status(201).send({ id: bookId });
   } finally {
     cleanFile(req.file);
   }
 };
-export const updateBook: UpdateBook.Controller = async function (req, res) {
+export const updateBook: Books.UpdateBookCtrler = async function (req, res) {
   const bookId = req.params.id;
   const { title, genres, authors } = req.body ?? {};
 
@@ -136,7 +142,7 @@ export const updateBookCover: Controller = async function (req, res) {
 };
 
 //book property
-export const getGenreList: GetGenresontroller = async function (req, res) {
+export const getGenreList: Books.GetGenresCtrler = async function (req, res) {
   const search = req.query.search;
 
   try {
@@ -146,7 +152,7 @@ export const getGenreList: GetGenresontroller = async function (req, res) {
     console.log(err);
   }
 };
-export const getAuthorList: GetAuthorsController = async function (req, res) {
+export const getAuthorList: Books.GetAuthorsCtrler = async function (req, res) {
   const search = req.query.search;
 
   try {
@@ -157,7 +163,7 @@ export const getAuthorList: GetAuthorsController = async function (req, res) {
   }
 };
 
-export const createGenre: CreateGenreController = async function (req, res) {
+export const createGenre: Books.CreateGenreCtrler = async function (req, res) {
   let genre = req.body.genre;
   if (genre == undefined) {
     return res.status(400).send();
@@ -171,7 +177,10 @@ export const createGenre: CreateGenreController = async function (req, res) {
   }
 };
 
-export const createAuthor: CreateAuthorController = async function (req, res) {
+export const createAuthor: Books.CreateAuthorCtrler = async function (
+  req,
+  res
+) {
   let author = req.body.author;
   if (author == undefined) {
     return res.status(400).send();

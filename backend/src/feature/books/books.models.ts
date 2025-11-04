@@ -12,43 +12,17 @@ export type BookObject = {
   reserve_queue: number;
 };
 
-export async function getAllBooks(): Promise<BookObject[]> {
-  return psqlPool
-    .query(
-      `SELECT id, title, author_ids, author_names, genre_ids, genre_names,
-        a.book_id IS NOT NULL as lent,
-        COALESCE(b.reserve_queue, 0) as reserve_queue
-      FROM book_details books
-      LEFT JOIN (
-        SELECT DISTINCT book_id
-        FROM lends 
-        WHERE return_time IS NULL
-        GROUP BY book_id  
-      ) a ON books.id = a.book_id
-      LEFT JOIN 
-        (SELECT book_id, count(*) as reserve_queue
-        FROM reservations 
-        GROUP BY book_id
-        ) b ON books.id = b.book_id;`
-    )
-    .then((r) => r.rows);
-}
-
-type SearchParam = {
-  id?: number;
-  title?: string;
-  author?: number | number[];
-  genre?: number | number[];
+export type SearchParam = {
+  id?: number | null;
+  title?: string | null;
+  author?: number[] | null;
+  genre?: number[] | null;
 };
 
-export async function searchBooks({
-  id,
-  title,
-  author,
-  genre,
-}: SearchParam): Promise<BookObject[]> {
-  if (author != undefined && !Array.isArray(author)) author = [author];
-  if (genre != undefined && !Array.isArray(genre)) genre = [genre];
+export async function searchBooks(search: SearchParam): Promise<BookObject[]> {
+  const { id = null, title = null } = search;
+  const genre = search.genre ? [...new Set(search.genre)] : null;
+  const author = search.author ? [...new Set(search.author)] : null;
 
   return psqlPool
     .query(
@@ -73,7 +47,7 @@ export async function searchBooks({
           (SELECT book_id FROM book_authors WHERE author_id = ANY($3)))
         AND ($4::int[] IS NULL OR id IN
           (SELECT book_id FROM book_genres WHERE genre_id = ANY($4)))`,
-      [id, title, author ?? null, genre ?? null]
+      [id, title, author, genre]
     )
     .then((r) => r.rows);
 }
@@ -83,10 +57,10 @@ export type BookDetail = {
   genres: number[];
   authors: number[];
 };
-export async function createBook({ title, authors, genres }: BookDetail) {
-  if (!title || !Array.isArray(authors) || !Array.isArray(genres))
-    throw new TypeError("");
-
+export async function createBook(details: BookDetail) {
+  const title = details.title;
+  const genres = [...new Set(details.genres)];
+  const authors = [...new Set(details.authors)];
   const client = await psqlPool.connect();
   try {
     client.query("BEGIN");
@@ -95,19 +69,22 @@ export async function createBook({ title, authors, genres }: BookDetail) {
       .query("INSERT INTO books (title) VALUES ($1) RETURNING book_id", [title])
       .then((r) => r.rows[0].book_id);
 
-    await client.query(
-      `INSERT INTO book_authors (book_id, author_id) 
-    SELECT $1, author_id FROM UNNEST($2::int[]) as author_id`,
-      [bookId, authors]
-    );
-    await client.query(
-      `INSERT INTO book_genres (book_id, genre_id) 
+    await Promise.all([
+      genres.length &&
+        client.query(
+          `INSERT INTO book_genres (book_id, genre_id) 
     SELECT $1, genre_id FROM UNNEST($2::int[]) as genre_id`,
-      [bookId, genres]
-    );
+          [bookId, genres]
+        ),
+      authors.length &&
+        client.query(
+          `INSERT INTO book_authors (book_id, author_id) 
+    SELECT $1, author_id FROM UNNEST($2::int[]) as author_id`,
+          [bookId, authors]
+        ),
+    ]);
 
     client.query("COMMIT");
-
     return bookId;
   } catch (err) {
     client.query("ROLLBACK");

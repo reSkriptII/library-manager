@@ -1,5 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 
+interface ErrorResponse {
+  status?: string | number;
+  message?: string;
+}
 interface ParsedQs {
   [key: string]: undefined | string | ParsedQs | (string | ParsedQs)[];
 }
@@ -12,8 +16,8 @@ export type Middleware<
   ReqBody = any,
   ResBody = any,
 > = (
-  req: Request<Param, ResBody, ReqBody, Query>,
-  res: Response<ResBody>,
+  req: Request<Param, ResBody | ErrorResponse, ReqBody, Query>,
+  res: Response<ResBody | ErrorResponse>,
   next: NextFunction
 ) => Promise<unknown> | unknown;
 

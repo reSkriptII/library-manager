@@ -2,6 +2,20 @@ import type { Middleware } from "types/express.js";
 import { updateBook } from "./books.controllers.js";
 
 //#region Book retrieval
+type BookData = {
+  id: number;
+  title: string;
+  genres: {
+    id: number;
+    name: string;
+  }[];
+  authors: {
+    id: number;
+    name: string;
+  }[];
+  lent: boolean;
+  reserveQueue: number;
+};
 export namespace GetBooksList {
   export type ReqQuery = {
     title?: string;
@@ -9,46 +23,18 @@ export namespace GetBooksList {
     author?: number | number[];
   };
 
-  export type ResBody = {
-    id: number;
-    title: string;
-    genres: {
-      id: number;
-      name: string;
-    }[];
-    authors: {
-      id: number;
-      name: string;
-    }[];
-    lent: boolean;
-    reserveQueue: number;
-  }[];
-
-  export type Controller = Middleware<{}, ReqQuery, undefined, ResBody>;
+  export type Controller = Middleware<{}, ReqQuery, undefined, BookData[]>;
 }
-
-export namespace GetBookById {
-  export type ResBody = {
-    id: number;
-    title: string;
-    genres: {
-      id: number;
-      name: string;
-    }[];
-    authors: {
-      id: number;
-      name: string;
-    }[];
-    lent: boolean;
-    reserveQueue: number;
-  } | null;
-
-  export type Controller = Middleware<{ id: number }, {}, undefined, ResBody>;
-}
+export type GetBooksListCtrler = GetBooksList.Controller;
+export type GetBookByIdCtrler = Middleware<
+  { id: number },
+  {},
+  undefined,
+  BookData | null
+>;
 //#endregion
 //#region Book modification
-
-export type CreateBookController = Middleware<{}, {}, { details: string }>;
+export type CreateBookCtrler = Middleware<{}, {}, { details: string }>;
 export namespace UpdateBook {
   export type ReqBody = {
     title: string;
@@ -58,24 +44,25 @@ export namespace UpdateBook {
 
   export type Controller = Middleware<{ id: number }, {}, ReqBody>;
 }
+export type UpdateBookCtrler = UpdateBook.Controller;
 //#endregion
 
 export type BookPropEntity = { id: number; name: string };
-export type GetGenresontroller = Middleware<
+export type GetGenresCtrler = Middleware<
   {},
   { search?: string },
   any,
   BookPropEntity[]
 >;
-export type GetAuthorsController = GetGenresontroller;
+export type GetAuthorsCtrler = GetGenresCtrler;
 
-export type CreateAuthorController = Middleware<
+export type CreateAuthorCtrler = Middleware<
   {},
   {},
   { author: string },
   BookPropEntity
 >;
-export type CreateGenreController = Middleware<
+export type CreateGenreCtrler = Middleware<
   {},
   {},
   { genre: string },

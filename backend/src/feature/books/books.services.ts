@@ -2,83 +2,81 @@ import { readdir, copyFile, rm } from "fs/promises";
 import path from "path";
 import mime from "mime-types";
 import * as models from "./books.models.js";
-import type { GetBooksList } from "./books.types.js";
 
-type SearchParam = GetBooksList.ReqQuery;
-export async function getBookSearch(search: SearchParam) {
-  try {
-    let books: any[];
-
-    if (Object.keys(search).length > 0) {
-      books = await models.searchBooks(search);
-    } else {
-      books = await models.getAllBooks();
-    }
-
-    const structuredBooks = books.map((book) => structureBook(book));
-
-    return structuredBooks;
-  } catch (err) {
-    //TODO: handle db error
-    throw err;
-  }
+export async function getBookSearch(search: models.SearchParam) {
+  let books = await models.searchBooks(search);
+  const structuredBooks = books.map((book) => structureBook(book));
+  return structuredBooks;
 }
 
 export async function getBookById(id: number) {
-  try {
-    let book = (await models.searchBooks({ id }))?.[0];
-    if (book == undefined) return null;
-    return structureBook(book);
-  } catch (err) {
-    console.log(err);
-  }
+  const book = (await models.searchBooks({ id }))?.[0];
+  if (book == undefined) return null;
+  return structureBook(book);
 }
 
 export async function createBook(
-  detail: models.BookDetail,
+  details: models.BookDetail,
   file: Express.Multer.File | undefined
 ) {
-  const { authors, genres } = detail;
+  const genres = [...new Set(details.genres)];
+  const authors = [...new Set(details.authors)];
+  const [isGenreIdsExist, isAuthorIdsExist] = await Promise.all([
+    models.isAuthorIdsExist(authors),
+    models.isGenreIdsExist(genres),
+  ]);
+
+  if (!isGenreIdsExist || !isAuthorIdsExist) {
+    return {
+      success: false,
+      message: `${!isGenreIdsExist ? "Genre" : "Author"} not exist`,
+    };
+  }
   try {
-    const isGenresExist = await models.isAuthorIdsExist(authors);
-    if (!isGenresExist) {
-      throw Error("Genre not exist");
-    }
-
-    const isAuthorsExist = await models.isGenreIdsExist(genres);
-    if (!isAuthorsExist) {
-      throw Error("Author not exist");
-    }
-
-    const bookId = await models.createBook(detail);
+    const bookId = await models.createBook(details);
 
     if (file && file.mimetype.startsWith("image/")) {
       await updateBookCover(bookId, file);
     }
+    return { success: true, bookId };
   } catch (err) {
+    if (err instanceof Error && "code" in err) {
+      if (String(err.code).startsWith("23")) {
+        return { success: false, message: "Create book conflict" };
+      }
+    }
+
     throw err;
   }
 }
 
 export async function updateBook(id: number, options: models.BookDetail) {
   try {
-    const isBookExist = models.isBookExist(id);
+    const isBookExist = await models.isBookExist(id);
     if (!isBookExist) {
-      throw new Error("Book not exist");
+      return { ok: false, status: 404, message: "Book not found" };
     }
 
     const isGenresExist = await models.isGenreIdsExist(options.genres);
     if (!isGenresExist) {
-      throw Error("Genre not exist");
+      return { ok: false, status: 400, message: "Invalid genre" };
     }
 
     const isAuthorsExist = await models.isAuthorIdsExist(options.authors);
     if (!isAuthorsExist) {
-      throw Error("Author not exist");
+      return { ok: false, status: 400, message: "Invalid author" };
     }
 
     await models.updateBook(id, options);
   } catch (err) {
+    if (err instanceof Error && "code" in err) {
+      if (err.code === "22P02") {
+        return { ok: false, status: 400, message: "Invalid input type" };
+      } else if (String(err.code).startsWith("23")) {
+        return { ok: false, status: 400, message: "Conflict update" };
+      }
+    }
+
     throw err;
   }
 }
