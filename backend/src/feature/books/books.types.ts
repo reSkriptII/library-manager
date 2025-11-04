@@ -19,22 +19,27 @@ type BookData = {
 export namespace GetBooksList {
   export type ReqQuery = {
     title?: string;
-    genre?: number | number[];
-    author?: number | number[];
+    genre?: string | string[];
+    author?: string | string[];
   };
 
   export type Controller = Middleware<{}, ReqQuery, undefined, BookData[]>;
 }
 export type GetBooksListCtrler = GetBooksList.Controller;
 export type GetBookByIdCtrler = Middleware<
-  { id: number },
+  { id: string },
   {},
   undefined,
   BookData | null
 >;
 //#endregion
 //#region Book modification
-export type CreateBookCtrler = Middleware<{}, {}, { details: string }>;
+export type CreateBookCtrler = Middleware<
+  {},
+  {},
+  { details: string },
+  { bookId: number }
+>;
 export namespace UpdateBook {
   export type ReqBody = {
     title: string;

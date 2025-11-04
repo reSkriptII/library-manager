@@ -15,10 +15,14 @@ export async function getBookById(id: number) {
   return structureBook(book);
 }
 
+type CreateBookResult =
+  | { ok: false; message: string }
+  | { ok: true; bookId: number };
+
 export async function createBook(
   details: models.BookDetail,
   file: Express.Multer.File | undefined
-) {
+): Promise<CreateBookResult> {
   const genres = [...new Set(details.genres)];
   const authors = [...new Set(details.authors)];
   const [isGenreIdsExist, isAuthorIdsExist] = await Promise.all([
@@ -28,7 +32,7 @@ export async function createBook(
 
   if (!isGenreIdsExist || !isAuthorIdsExist) {
     return {
-      success: false,
+      ok: false,
       message: `${!isGenreIdsExist ? "Genre" : "Author"} not exist`,
     };
   }
@@ -38,58 +42,77 @@ export async function createBook(
     if (file && file.mimetype.startsWith("image/")) {
       await updateBookCover(bookId, file);
     }
-    return { success: true, bookId };
+    return { ok: true, bookId };
   } catch (err) {
     if (err instanceof Error && "code" in err) {
       if (String(err.code).startsWith("23")) {
-        return { success: false, message: "Create book conflict" };
+        return { ok: false, message: "Create book conflict" };
       }
     }
-
     throw err;
   }
 }
+type UpdateBookResult =
+  | { ok: false; status: number; message: string }
+  | { ok: true };
 
-export async function updateBook(id: number, options: models.BookDetail) {
+export async function updateBook(
+  id: number,
+  options: models.BookDetail
+): Promise<UpdateBookResult> {
+  const genres = [...new Set(options.genres)];
+  const authors = [...new Set(options.authors)];
+
+  const [isBookExist, isGenresExist, isAuthorsExist] = await Promise.all([
+    models.isBookExist(id),
+    models.isGenreIdsExist(genres),
+    models.isAuthorIdsExist(authors),
+  ]);
+
+  if (!isBookExist) {
+    return { ok: false, status: 404, message: "Book not found" };
+  }
+
+  if (!isGenresExist || !isAuthorsExist) {
+    return {
+      ok: false,
+      status: 400,
+      message: `${!isGenresExist ? "Genre" : "Author"} not exist`,
+    };
+  }
   try {
-    const isBookExist = await models.isBookExist(id);
-    if (!isBookExist) {
-      return { ok: false, status: 404, message: "Book not found" };
-    }
-
-    const isGenresExist = await models.isGenreIdsExist(options.genres);
-    if (!isGenresExist) {
-      return { ok: false, status: 400, message: "Invalid genre" };
-    }
-
-    const isAuthorsExist = await models.isAuthorIdsExist(options.authors);
-    if (!isAuthorsExist) {
-      return { ok: false, status: 400, message: "Invalid author" };
-    }
-
     await models.updateBook(id, options);
+    return { ok: true };
   } catch (err) {
     if (err instanceof Error && "code" in err) {
-      if (err.code === "22P02") {
-        return { ok: false, status: 400, message: "Invalid input type" };
-      } else if (String(err.code).startsWith("23")) {
+      if (String(err.code).startsWith("23")) {
         return { ok: false, status: 400, message: "Conflict update" };
       }
     }
-
     throw err;
   }
 }
 
-export async function deleteBook(id: number) {
-  try {
-    const isBookExist = await models.isBookExist(id);
-    if (!isBookExist) {
-      throw Error("Book not exist");
-    }
+type DeleteBookResult = UpdateBookResult;
+export async function deleteBook(id: number): Promise<DeleteBookResult> {
+  const isBookExist = await models.isBookExist(id);
+  if (!isBookExist) {
+    return { ok: false, status: 404, message: "Book not found" };
+  }
 
+  if (!(await models.isBookAvailable(id))) {
+    return { ok: false, status: 400, message: "Book is being used" };
+  }
+
+  try {
     await models.deleteBook(id);
+    return { ok: true };
   } catch (err) {
+    if (err instanceof Error && "code" in err) {
+      if (String(err.code).startsWith("23")) {
+        return { ok: false, status: 400, message: "Book is being used" };
+      }
+    }
     throw err;
   }
 }

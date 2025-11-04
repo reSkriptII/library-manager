@@ -31,7 +31,7 @@ export const getBookById: Books.GetBookByIdCtrler = async function (req, res) {
     return res.status(400).send({ message: "Invalid book ID" });
   }
 
-  const book = await services.getBookById(bookId);
+  const book = await services.getBookById(Number(bookId));
   if (book == null) {
     return res.status(404).send({ message: "Book not found" });
   }
@@ -60,45 +60,56 @@ export const createBook: Books.CreateBookCtrler = async function (req, res) {
       return res.status(400).send({ message: "Invalid book details" });
     }
 
-    const bookId = await services.createBook(
+    const createResult = await services.createBook(
       { title, genres: genres.value, authors: authors.value },
       req.file
     );
-    res.status(201).send({ id: bookId });
+
+    if (!createResult.ok) {
+      return res.status(400).send({ message: createResult.message });
+    }
+    res.status(201).send({ bookId: createResult.bookId });
   } finally {
     cleanFile(req.file);
   }
 };
 export const updateBook: Books.UpdateBookCtrler = async function (req, res) {
   const bookId = req.params.id;
-  const { title, genres, authors } = req.body ?? {};
-
-  if (bookId == undefined) return res.status(400).send();
-  if (title == undefined || !Array.isArray(genres) || !Array.isArray(authors)) {
-    return res.status(400).send();
+  if (Number.isInteger(bookId)) {
+    return res.status(400).send({ message: "Invalid book ID" });
   }
 
-  try {
-    await services.updateBook(bookId, { title, genres, authors });
-    return res.status(204).send();
-  } catch (err) {
-    console.log(err);
-  } finally {
-    cleanFile(req.file);
+  const title = req.body.title;
+  const genres = normalizedToIntArray(req.body.genres);
+  const authors = normalizedToIntArray(req.body.authors);
+
+  if (typeof title !== "string" || !genres.valid || !authors.valid) {
+    return res.status(400).send({ message: "Invalid book details" });
   }
+
+  const updateResult = await services.updateBook(bookId, {
+    title,
+    genres: genres.value,
+    authors: authors.value,
+  });
+  if (!updateResult.ok) {
+    return res
+      .status(updateResult.status)
+      .send({ message: updateResult.message });
+  }
+  return res.status(204).send();
 };
 export const deleteBook: Controller = async function (req, res) {
-  const bookId = Number(req.params.id);
-  if (isNaN(bookId)) {
-    return res.status(400).send();
+  const bookId = req.params.id;
+  if (Number.isInteger(bookId)) {
+    return res.status(400).send({ message: "Invalid book ID" });
   }
 
-  try {
-    await services.deleteBook(bookId);
-    res.status(204).send();
-  } catch (err) {
-    console.log(err);
+  const deleteResult = await services.deleteBook(Number(bookId));
+  if (!deleteResult.ok) {
+    return res.status(deleteResult.status).send(deleteResult.message);
   }
+  res.status(204).send();
 };
 
 // cover

@@ -73,13 +73,13 @@ export async function createBook(details: BookDetail) {
       genres.length &&
         client.query(
           `INSERT INTO book_genres (book_id, genre_id) 
-    SELECT $1, genre_id FROM UNNEST($2::int[]) as genre_id`,
+           SELECT $1, genre_id FROM UNNEST($2::int[]) as genre_id`,
           [bookId, genres]
         ),
       authors.length &&
         client.query(
           `INSERT INTO book_authors (book_id, author_id) 
-    SELECT $1, author_id FROM UNNEST($2::int[]) as author_id`,
+           SELECT $1, author_id FROM UNNEST($2::int[]) as author_id`,
           [bookId, authors]
         ),
     ]);
@@ -95,31 +95,36 @@ export async function createBook(details: BookDetail) {
 }
 
 export async function updateBook(id: number, options: BookDetail) {
+  const genres = [...new Set(options.genres)];
+  const authors = [...new Set(options.authors)];
+
   const client = await psqlPool.connect();
   try {
     await client.query("BEGIN");
-    await client.query("UPDATE books SET title = $2 WHERE book_id = $1", [
-      id,
-      options.title,
+
+    await Promise.all([
+      client.query("DELETE FROM book_genres WHERE book_id = $1", [id]),
+      client.query("DELETE FROM book_authors WHERE book_id = $1", [id]),
     ]);
 
-    await client.query("DELETE FROM book_genres WHERE book_id = $1", [id]);
-    if (options.genres.length > 0) {
-      await client.query(
-        `INSERT INTO book_genres (book_id, genre_id) 
-        SELECT $1, genre_id FROM UNNEST($2::int[]) AS genre_id`,
-        [id, options.genres]
-      );
-    }
-
-    await client.query("DELETE FROM book_authors WHERE book_id = $1", [id]);
-    if (options.authors.length > 0) {
-      await client.query(
-        `INSERT INTO book_authors(book_id, author_id) 
-        SELECT $1, genre_id FROM UNNEST($2::int[]) AS genre_id`,
-        [id, options.authors]
-      );
-    }
+    await Promise.all([
+      client.query("UPDATE books SET title = $2 WHERE book_id = $1", [
+        id,
+        options.title,
+      ]),
+      genres.length &&
+        client.query(
+          `INSERT INTO book_genres (book_id, genre_id) 
+          SELECT $1, genre_id FROM UNNEST($2::int[]) AS genre_id`,
+          [id, genres]
+        ),
+      authors.length &&
+        client.query(
+          `INSERT INTO book_authors(book_id, author_id) 
+          SELECT $1, genre_id FROM UNNEST($2::int[]) AS genre_id`,
+          [id, authors]
+        ),
+    ]);
 
     await client.query("COMMIT");
   } catch (err) {
@@ -138,6 +143,16 @@ export async function isBookExist(id: number) {
   return psqlPool
     .query("SELECT 1 FROM books WHERE book_id = $1", [id])
     .then((r) => r.rows.length > 0);
+}
+export async function isBookAvailable(id: number) {
+  return psqlPool
+    .query(
+      `SELECT 1 FROM reservations WHERE book_id = $1
+      UNION
+      SELECT 1 FROM lends WHERE return_time = null ANd book_id = $1`,
+      [id]
+    )
+    .then((r) => r.rows.length != 0);
 }
 
 export async function isGenreIdsExist(ids: number[]) {
