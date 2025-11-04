@@ -2,6 +2,7 @@ import { readdir, copyFile, rm } from "fs/promises";
 import path from "path";
 import mime from "mime-types";
 import * as models from "./books.models.js";
+import { FileError } from "#util/error.js";
 
 export async function getBookSearch(search: models.SearchParam) {
   let books = await models.searchBooks(search);
@@ -136,6 +137,15 @@ export async function getBookCoverData(id: number | string) {
     }
     return { mimeType, path: coverImgPath };
   } catch (err) {
+    if (err instanceof Error && "code" in err) {
+      if (err.code === "ENOENT" || err.code === "EACCES") {
+        throw new FileError(
+          err.code,
+          COVER_IMAGE_DIR_PATH,
+          "GET /books/:id/cover"
+        );
+      }
+    }
     throw err;
   }
 }
@@ -160,17 +170,26 @@ export async function updateBookCover(
       await copyFile(srcFilePath, destFilePath);
     }
   } catch (err) {
+    if (err instanceof Error && "code" in err) {
+      if (err.code === "ENOENT" || err.code === "EACCES") {
+        throw new FileError(
+          err.code,
+          COVER_IMAGE_DIR_PATH,
+          "GET /books/:id/cover"
+        );
+      }
+    }
     throw err;
   }
 }
 
 export async function createGenre(genre: string) {
-  try {
-    const isGenreUsed = await models.isGenreNameExist(genre);
-    if (isGenreUsed) {
-      throw new Error("Genre is used");
-    }
+  const isGenreUsed = await models.isGenreNameExist(genre);
+  if (isGenreUsed) {
+    return { ok: false, message: "Genre name is used" };
+  }
 
+  try {
     return await models.createGenre(genre);
   } catch (err) {
     throw err;

@@ -115,38 +115,32 @@ export const deleteBook: Controller = async function (req, res) {
 // cover
 export const getBookCover: Controller = async function (req, res) {
   const bookId = req.params.id;
-  if (isNaN(Number(bookId))) {
-    return res.status(400).send();
+  if (Number.isInteger(bookId)) {
+    return res.status(400).send({ message: "Invalid book ID" });
   }
 
-  try {
-    const bookCoverImgData = await services.getBookCoverData(bookId);
-    if (bookCoverImgData == null) {
-      return res.status(404).send();
-    }
-
-    res.setHeader("Content-Type", bookCoverImgData?.mimeType);
-    createReadStream(bookCoverImgData.path).pipe(res);
-    return;
-  } catch (err) {
-    console.log(err);
+  const bookCoverImgData = await services.getBookCoverData(bookId);
+  if (bookCoverImgData == null) {
+    return res.status(404).send({ message: "Image not found" });
   }
+
+  res.setHeader("Content-Type", bookCoverImgData?.mimeType);
+  createReadStream(bookCoverImgData.path).pipe(res);
+  return;
 };
 export const updateBookCover: Controller = async function (req, res) {
-  const bookId = req.params.id;
-  if (isNaN(Number(bookId))) {
-    return res.status(400).send();
-  }
-
-  if (req.file && !req.file.mimetype.startsWith("image/")) {
-    return res.status(400).send();
-  }
-
   try {
+    const bookId = req.params.id;
+    if (Number.isInteger(bookId)) {
+      return res.status(400).send({ message: "Invalid book ID" });
+    }
+
+    if (req.file && !req.file.mimetype.startsWith("image/")) {
+      return res.status(400).send({ message: "Invalid file type" });
+    }
+
     await services.updateBookCover(bookId, req.file);
-    return res.status(200).send();
-  } catch (err) {
-    console.log(err);
+    return res.status(204).send();
   } finally {
     cleanFile(req.file);
   }
@@ -155,37 +149,31 @@ export const updateBookCover: Controller = async function (req, res) {
 //book property
 export const getGenreList: Books.GetGenresCtrler = async function (req, res) {
   const search = req.query.search;
-
-  try {
-    const genres = await models.getGenreList(search);
-    return res.status(200).send(genres);
-  } catch (err) {
-    console.log(err);
+  if (search != undefined && typeof search !== "string") {
+    return res.status(400).send({ message: "Invalid search value" });
   }
+
+  const genres = await models.getGenreList(search);
+  return res.status(200).send(genres);
 };
 export const getAuthorList: Books.GetAuthorsCtrler = async function (req, res) {
   const search = req.query.search;
-
-  try {
-    const authors = await models.getAuthorsList(search);
-    return res.status(200).send(authors);
-  } catch (err) {
-    console.log(err);
+  if (search != undefined && typeof search !== "string") {
+    return res.status(400).send({ message: "Invalid search value" });
   }
+
+  const authors = await models.getAuthorsList(search);
+  return res.status(200).send(authors);
 };
 
 export const createGenre: Books.CreateGenreCtrler = async function (req, res) {
   let genre = req.body.genre;
-  if (genre == undefined) {
-    return res.status(400).send();
+  if (typeof genre !== "string") {
+    return res.status(400).send({ message: "Invalid value" });
   }
 
-  try {
-    const genreId = await services.createGenre(genre);
-    return res.status(200).send({ id: genreId, name: genre });
-  } catch (err) {
-    console.log(err);
-  }
+  const genreId = await services.createGenre(genre);
+  return res.status(200).send({ id: genreId, name: genre });
 };
 
 export const createAuthor: Books.CreateAuthorCtrler = async function (
