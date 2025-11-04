@@ -183,28 +183,44 @@ export async function updateBookCover(
   }
 }
 
-export async function createGenre(genre: string) {
+type CreatePropResult =
+  | { ok: false; message: string }
+  | { ok: true; id: number };
+
+export async function createGenre(genre: string): Promise<CreatePropResult> {
   const isGenreUsed = await models.isGenreNameExist(genre);
   if (isGenreUsed) {
     return { ok: false, message: "Genre name is used" };
   }
 
   try {
-    return await models.createGenre(genre);
+    const genreId = await models.createGenre(genre);
+    return { ok: true, id: genreId };
   } catch (err) {
+    if (err instanceof Error && "code" in err) {
+      if (err.code == "23505") {
+        return { ok: false, message: "Genre name is used" };
+      }
+    }
     throw err;
   }
 }
 
-export async function createAuthor(author: string) {
-  try {
-    const isAuthorUsed = await models.isAuthorNameExist(author);
-    if (isAuthorUsed) {
-      throw new Error("Author is used");
-    }
+export async function createAuthor(author: string): Promise<CreatePropResult> {
+  const isAuthorUsed = await models.isAuthorNameExist(author);
+  if (isAuthorUsed) {
+    return { ok: false, message: "Author name is used" };
+  }
 
-    return await models.createAuthor(author);
+  try {
+    const authorId = await models.createAuthor(author);
+    return { ok: true, id: authorId };
   } catch (err) {
+    if (err instanceof Error && "code" in err) {
+      if (err.code == "23505") {
+        return { ok: false, message: "Author name is used" };
+      }
+    }
     throw err;
   }
 }

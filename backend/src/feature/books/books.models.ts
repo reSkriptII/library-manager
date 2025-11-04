@@ -175,10 +175,11 @@ export async function getGenreList(search?: string) {
 }
 export async function createGenre(genre: string) {
   return await psqlPool
-    .query("INSERT INTO genres (genre_name) VALUES ($1) RETURNING genre_id", [
-      genre,
-    ])
-    .then((r) => r.rows[0]);
+    .query(
+      "INSERT INTO genres (genre_name) VALUES ($1) RETURNING genre_id as id",
+      [genre]
+    )
+    .then((r) => r.rows[0].id as number);
 }
 
 export async function isAuthorIdsExist(ids: number[]) {
@@ -202,8 +203,8 @@ export async function getAuthorsList(search?: string) {
 export async function createAuthor(author: string) {
   return await psqlPool
     .query(
-      "INSERT INTO authors (author_name) VALUES ($1) RETURNING author_id",
+      "INSERT INTO authors (author_name) VALUES ($1) RETURNING author_id as id",
       [author]
     )
-    .then((r) => r.rows[0]);
+    .then((r) => r.rows[0].id as number);
 }

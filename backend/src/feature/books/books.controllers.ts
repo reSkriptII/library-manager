@@ -167,28 +167,30 @@ export const getAuthorList: Books.GetAuthorsCtrler = async function (req, res) {
 };
 
 export const createGenre: Books.CreateGenreCtrler = async function (req, res) {
-  let genre = req.body.genre;
+  const genre = req.body.genre;
   if (typeof genre !== "string") {
     return res.status(400).send({ message: "Invalid value" });
   }
 
-  const genreId = await services.createGenre(genre);
-  return res.status(200).send({ id: genreId, name: genre });
+  const createResult = await services.createGenre(genre);
+  if (!createResult.ok) {
+    return res.status(400).send({ message: createResult.message });
+  }
+  return res.status(200).send({ id: createResult.id, name: genre });
 };
 
 export const createAuthor: Books.CreateAuthorCtrler = async function (
   req,
   res
 ) {
-  let author = req.body.author;
-  if (author == undefined) {
-    return res.status(400).send();
+  const author = req.body.author;
+  if (typeof author !== "string") {
+    return res.status(400).send({ message: "Invalid value" });
   }
 
-  try {
-    const authorId = await services.createAuthor(author);
-    return res.status(200).send({ id: authorId, name: author });
-  } catch (err) {
-    console.log(err);
+  const createResult = await services.createAuthor(author);
+  if (!createResult.ok) {
+    return res.status(400).send({ message: createResult.message });
   }
+  return res.status(200).send({ id: createResult.id, name: author });
 };
