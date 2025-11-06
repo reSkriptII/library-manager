@@ -7,6 +7,8 @@ import type {
   BookPropEntity,
 } from "#src/feature/books/books.types.js";
 import { login, logout } from "../helpers.js";
+import { response } from "express";
+import { title } from "process";
 
 describe("Books API", () => {
   describe("GET /books", () => {
@@ -138,7 +140,34 @@ describe("Books API", () => {
     });
   });
 
-  describe("PUT /books/:id", () => {});
+  describe("PUT /books/:id", () => {
+    it("update book details and return status 204", async () => {
+      const testBookDetails = [
+        { title: "test UPDATE #1", authors: [1], genres: [1, 2] },
+        { title: "test UPDATE #2", authors: [2, 3], genres: [1] },
+      ];
+      const authCookies = await login();
+      if (authCookies == null) {
+        expect(authCookies != null).toBe(true);
+        return;
+      }
+
+      const bookDetails = (await request(app).get("/books/2")).body;
+      let useDetailsIndex = 0;
+      if ((bookDetails.title = testBookDetails[0].title)) useDetailsIndex = 1;
+      const usingDetails = testBookDetails[useDetailsIndex];
+
+      const updateRes = await request(app)
+        .put("/books/3")
+        .send(usingDetails)
+        .set("Cookie", authCookies);
+
+      console.log(updateRes);
+      expect(updateRes.status).toBe(204);
+      const newBookDetailsRes = await request(app).get("/books/3");
+      expect(newBookDetailsRes.body.title).toBe(usingDetails.title);
+    });
+  });
   describe("DELETE /books/:id", () => {});
 
   describe("GET /books/:id/cover", () => {});
