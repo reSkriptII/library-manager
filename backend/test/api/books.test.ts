@@ -7,8 +7,6 @@ import type {
   BookPropEntity,
 } from "#src/feature/books/books.types.js";
 import { login, logout } from "../helpers.js";
-import { response } from "express";
-import { title } from "process";
 
 describe("Books API", () => {
   describe("GET /books", () => {
@@ -162,19 +160,123 @@ describe("Books API", () => {
         .send(usingDetails)
         .set("Cookie", authCookies);
 
-      console.log(updateRes);
       expect(updateRes.status).toBe(204);
       const newBookDetailsRes = await request(app).get("/books/3");
       expect(newBookDetailsRes.body.title).toBe(usingDetails.title);
+      expect(
+        newBookDetailsRes.body.genres.map((genre: BookPropEntity) => genre.id)
+      ).toEqual(usingDetails.genres);
+      expect(
+        newBookDetailsRes.body.authors.map(
+          (author: BookPropEntity) => author.id
+        )
+      ).toEqual(usingDetails.authors);
+
+      await logout(authCookies);
     });
   });
-  describe("DELETE /books/:id", () => {});
+  describe("DELETE /books/:id", () => {
+    it("delete book and return status 204", async () => {
+      const authCookies = await login();
+      if (authCookies == null) {
+        expect(authCookies != null).toBe(true);
+        return;
+      }
 
-  describe("GET /books/:id/cover", () => {});
-  describe("PUT /books/:id/cover", () => {});
+      const booksRes = await request(app).get("/books");
+      const lastBookId = booksRes.body.at(-1).id;
 
-  describe("GET /books/genre", () => {});
-  describe("GET /books/authors", () => {});
-  describe("POST /books/genre", () => {});
-  describe("POST /books/authors", () => {});
+      const deleteRes = await request(app)
+        .delete(`/books/${lastBookId}`)
+        .set("Cookie", authCookies);
+      expect(deleteRes.status).toBe(204);
+
+      const deletedBookRes = await request(app).get(`/books/${lastBookId}`);
+      expect(deletedBookRes.status).toBe(404);
+      await logout(authCookies);
+    });
+  });
+
+  //describe("GET /books/:id/cover", () => {});
+  //describe("PUT /books/:id/cover", () => {});
+
+  describe("GET /books/genre", () => {
+    it("return 200 with Array body", async () => {
+      const res = await request(app).get("/books/genres");
+
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
+    });
+
+    it("query search return 200 with matching result", async () => {
+      const res = await request(app).get("/books/genres?search=e");
+
+      expect(res.body).toContainLike((genre: BookPropEntity) =>
+        genre.name.includes("e")
+      );
+    });
+  });
+
+  describe("GET /books/authors", () => {
+    it("return 200 with Array body", async () => {
+      const res = await request(app).get("/books/authors");
+
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
+    });
+
+    it("query search return 200 with matching result", async () => {
+      const res = await request(app).get("/books/authors?search=i");
+
+      expect(res.body).toContainLike((author: BookPropEntity) =>
+        author.name.includes("i")
+      );
+    });
+  });
+
+  describe.skip("POST /books/genre", () => {
+    it("", async () => {
+      const authCookies = await login();
+      if (authCookies == null) {
+        expect(authCookies != null).toBe(true);
+        return;
+      }
+
+      //TODO: delete test genre - genre must be unique
+      const createRes = await request(app)
+        .post("/books/genres")
+        .set("Cookie", authCookies)
+        .send({ name: "testGenre" });
+      expect(createRes.status).toBe(200);
+
+      const genreSearchRes = await request(app).get(
+        `/books/genres?search=${createRes.body.id}`
+      );
+      expect(genreSearchRes.body).toContainLike((book: BookData) => {
+        book.genres.some((genre) => genre.name.includes("testGenre"));
+      });
+      await logout(authCookies);
+    });
+  });
+  describe.skip("POST /books/authors", () => {
+    it("", async () => {
+      const authCookies = await login();
+      if (authCookies == null) {
+        expect(authCookies != null).toBe(true);
+        return;
+      }
+
+      //TODO: delete test author - author must be unique
+      const createRes = await request(app)
+        .post("/books/authors")
+        .set("Cookie", authCookies)
+        .send({ name: "testAuthor" });
+      expect(createRes.status).toBe(200);
+
+      const authorSearchRes = await request(app).get(
+        `/books/authors?search=${createRes.body.id}`
+      );
+      await logout(authCookies);
+    });
+  });
 });

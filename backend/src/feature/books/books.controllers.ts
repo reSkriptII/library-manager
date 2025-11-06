@@ -114,8 +114,8 @@ export const updateBook: Books.UpdateBookCtrler = async function (req, res) {
   return res.status(204).send();
 };
 export const deleteBook: Controller = async function (req, res) {
-  const bookId = req.params.id;
-  if (Number.isInteger(bookId)) {
+  const bookId = Number(req.params.id);
+  if (!Number.isInteger(bookId)) {
     return res.status(400).send({ message: "Invalid book ID" });
   }
 

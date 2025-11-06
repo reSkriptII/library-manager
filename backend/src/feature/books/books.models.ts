@@ -46,7 +46,8 @@ export async function searchBooks(search: SearchParam): Promise<BookObject[]> {
         AND ($3::int[] IS NULL OR id IN 
           (SELECT book_id FROM book_authors WHERE author_id = ANY($3)))
         AND ($4::int[] IS NULL OR id IN
-          (SELECT book_id FROM book_genres WHERE genre_id = ANY($4)))`,
+          (SELECT book_id FROM book_genres WHERE genre_id = ANY($4)))
+      ORDER BY id`,
       [id, title, author, genre]
     )
     .then((r) => r.rows);
@@ -155,7 +156,7 @@ export async function isBookAvailable(id: number) {
       SELECT 1 FROM lends WHERE return_time = null ANd book_id = $1`,
       [id]
     )
-    .then((r) => r.rows.length != 0);
+    .then((r) => r.rows.length === 0);
 }
 
 export async function isGenreIdsExist(ids: number[]) {
