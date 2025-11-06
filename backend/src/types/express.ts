@@ -13,8 +13,8 @@ interface ParamsDictionary {
 export type Middleware<
   Param = ParamsDictionary,
   Query = ParsedQs,
-  ReqBody = any,
-  ResBody = any,
+  ReqBody = unknown,
+  ResBody = unknown,
 > = (
   req: Request<Param, ResBody | ErrorResponse, ReqBody, Query>,
   res: Response<ResBody | ErrorResponse>,

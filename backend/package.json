@@ -4,12 +4,14 @@
   "description": "",
   "main": "index.js",
   "imports": {
-    "#util/*": "./src/util/*"
+    "#src/*": "./src/*"
   },
   "scripts": {
+    "build": "tsc --project tsconfig.json",
     "dev": "nodemon src/index.js",
     "lint": "eslint ./src/* --ext .js,.ts,.tsx .",
-    "createdb": "node ./config/createdb.js"
+    "createdb": "node ./config/createdb.js",
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -39,11 +41,14 @@
     "@types/multer": "^2.0.0",
     "@types/node": "^24.7.1",
     "@types/pg": "^8.15.5",
+    "@types/supertest": "^6.0.3",
     "eslint": "^9.37.0",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
+    "supertest": "^7.1.4",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.0"
+    "typescript-eslint": "^8.46.0",
+    "vitest": "^4.0.7"
   }
 }

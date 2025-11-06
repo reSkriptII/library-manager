@@ -3,8 +3,8 @@ import { Controller } from "types/express.js";
 import * as services from "./books.services.js";
 import * as models from "./books.models.js";
 import * as Books from "./books.types.js";
-import { cleanFile } from "#util/files.js";
-import { normalizedToIntArray } from "#util/request.js";
+import { cleanFile } from "#src/util/files.js";
+import { normalizedToIntArray } from "#src/util/request.js";
 
 // book data
 export const getBookList: Books.GetBooksListCtrler = async function (req, res) {
@@ -26,7 +26,7 @@ export const getBookList: Books.GetBooksListCtrler = async function (req, res) {
 };
 
 export const getBookById: Books.GetBookByIdCtrler = async function (req, res) {
-  const bookId = req.params.id;
+  const bookId = Number(req.params.id);
   if (!Number.isInteger(bookId)) {
     return res.status(400).send({ message: "Invalid book ID" });
   }
@@ -57,7 +57,14 @@ export const createBook: Books.CreateBookCtrler = async function (req, res) {
     const authors = normalizedToIntArray(bookDetails.authors);
 
     if (typeof title !== "string" || !genres.valid || !authors.valid) {
-      return res.status(400).send({ message: "Invalid book details" });
+      let invalidFields: string[] = [];
+      if (typeof title !== "string") invalidFields.push("title");
+      if (!genres.valid) invalidFields.push("genres");
+      if (!authors.valid) invalidFields.push("authors");
+
+      return res
+        .status(400)
+        .send({ message: "Invalid book details: " + invalidFields.join(",") });
     }
 
     const createResult = await services.createBook(
@@ -84,7 +91,14 @@ export const updateBook: Books.UpdateBookCtrler = async function (req, res) {
   const authors = normalizedToIntArray(req.body.authors);
 
   if (typeof title !== "string" || !genres.valid || !authors.valid) {
-    return res.status(400).send({ message: "Invalid book details" });
+    let invalidFields: string[] = [];
+    if (typeof title !== "string") invalidFields.push("title");
+    if (!genres.valid) invalidFields.push("genres");
+    if (!authors.valid) invalidFields.push("authors");
+
+    return res
+      .status(400)
+      .send({ message: "Invalid book details: " + invalidFields.join(",") });
   }
 
   const updateResult = await services.updateBook(bookId, {

@@ -17,8 +17,9 @@ function normalizedToIntArray(
     return nullAllowed ? { valid: true, value: null } : { valid: false };
 
   const list = Array.isArray(param) ? param : [param];
-  for (const value in list) {
-    if (!Number.isInteger(value)) {
+  for (let i = 0; i < list.length; ++i) {
+    list[i] = Number(list[i]);
+    if (!Number.isInteger(list[i])) {
       return { valid: false };
     }
   }

@@ -1,4 +1,4 @@
-import { psqlPool } from "#util/db.js";
+import { psqlPool } from "#src/util/db.js";
 import { BookPropEntity } from "./books.types.js";
 
 export type BookObject = {
@@ -23,6 +23,7 @@ export async function searchBooks(search: SearchParam): Promise<BookObject[]> {
   const { id = null, title = null } = search;
   const genre = search.genre ? [...new Set(search.genre)] : null;
   const author = search.author ? [...new Set(search.author)] : null;
+  console.log(search);
 
   return psqlPool
     .query(

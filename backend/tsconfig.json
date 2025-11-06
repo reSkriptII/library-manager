@@ -4,11 +4,8 @@
     "target": "es2022",
     "outDir": "./dist",
     "rootDir": "./src/",
-    "baseUrl": "src",
-    "paths": {
-      "@util/*": ["util/*"]
-    }
+    "baseUrl": "src"
   },
   "inclued": ["src"],
-  "exclude": ["dist"]
+  "exclude": ["dist", "test"]
 }

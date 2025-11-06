@@ -2,10 +2,11 @@ import { readdir, copyFile, rm } from "fs/promises";
 import path from "path";
 import mime from "mime-types";
 import * as models from "./books.models.js";
-import { FileError } from "#util/error.js";
+import { FileError } from "#src/util/error.js";
 
 export async function getBookSearch(search: models.SearchParam) {
   let books = await models.searchBooks(search);
+  console.log(books);
   const structuredBooks = books.map((book) => structureBook(book));
   return structuredBooks;
 }

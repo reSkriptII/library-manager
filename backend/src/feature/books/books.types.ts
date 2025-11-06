@@ -2,7 +2,7 @@ import type { Middleware } from "types/express.js";
 import { updateBook } from "./books.controllers.js";
 
 //#region Book retrieval
-type BookData = {
+export type BookData = {
   id: number;
   title: string;
   genres: {

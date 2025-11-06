@@ -1,8 +1,8 @@
 import { Router } from "express";
 import multer from "multer";
 import * as controllers from "./books.controllers.js";
-import { authenticate } from "middleware/authenticate.js";
-import { checkRole } from "middleware/checkRole.js";
+import { authenticate } from "#src/middleware/authenticate.js";
+import { checkRole } from "#src/middleware/checkRole.js";
 
 const router = Router();
 const upload = multer({ dest: "./public/image/books" });
