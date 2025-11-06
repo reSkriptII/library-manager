@@ -1,5 +1,5 @@
-import { redisClient } from "#util/db.js";
-import { hashToken } from "#util/hashToken.js";
+import { redisClient } from "#src/util/db.js";
+import { hashToken } from "#src/util/hashToken.js";
 import { Request, Response } from "express";
 
 export async function logout(req: Request, res: Response) {

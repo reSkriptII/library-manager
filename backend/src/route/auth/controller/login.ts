@@ -1,9 +1,9 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
-import { psqlPool, redisClient } from "#util/db.js";
-import { sendResponse } from "#util/sendResponse.js";
-import { hashToken } from "#util/hashToken.js";
+import { psqlPool, redisClient } from "#src/util/db.js";
+import { sendResponse } from "#src/util/sendResponse.js";
+import { hashToken } from "#src/util/hashToken.js";
 
 const EMAIL_REGEXP =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;

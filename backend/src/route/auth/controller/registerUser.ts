@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
-import { psqlPool } from "#util/db.js";
-import { sendResponse } from "#util/sendResponse.js";
+import { psqlPool } from "#src/util/db.js";
+import { sendResponse } from "#src/util/sendResponse.js";
 
 export async function registerUser(req: Request, res: Response) {
   const { name, email, password } = req.body;

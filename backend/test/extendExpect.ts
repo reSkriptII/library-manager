@@ -11,7 +11,7 @@ expect.extend({
     recieved: ArrayLike<T>,
     checkFunction: (item: any, index: number, arr: ArrayLike<T>) => boolean
   ) {
-    if (typeof recieved !== "object" || Number.isInteger(recieved.length)) {
+    if (typeof recieved !== "object" || !Number.isInteger(recieved.length)) {
       return { message: () => "expected to recieve array-like", pass: false };
     }
 

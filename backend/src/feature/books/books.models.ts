@@ -23,7 +23,6 @@ export async function searchBooks(search: SearchParam): Promise<BookObject[]> {
   const { id = null, title = null } = search;
   const genre = search.genre ? [...new Set(search.genre)] : null;
   const author = search.author ? [...new Set(search.author)] : null;
-  console.log(search);
 
   return psqlPool
     .query(
@@ -85,7 +84,8 @@ export async function createBook(details: BookDetail) {
         ),
     ]);
 
-    client.query("COMMIT");
+    await client.query("COMMIT");
+    client.query("REFRESH MATERIALIZED VIEW book_details");
     return bookId;
   } catch (err) {
     client.query("ROLLBACK");
@@ -128,6 +128,7 @@ export async function updateBook(id: number, options: BookDetail) {
     ]);
 
     await client.query("COMMIT");
+    client.query("REFRESH MATERIALIZED VIEW book_details");
   } catch (err) {
     await client.query("ROLLBACK");
     throw err;
@@ -138,6 +139,7 @@ export async function updateBook(id: number, options: BookDetail) {
 
 export async function deleteBook(id: number) {
   await psqlPool.query("DELETE FROM books WHERE book_id = $1", [id]);
+  psqlPool.query("REFRESH MATERIALIZED VIEW book_details");
 }
 
 export async function isBookExist(id: number) {

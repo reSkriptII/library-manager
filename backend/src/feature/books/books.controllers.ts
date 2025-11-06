@@ -41,7 +41,7 @@ export const getBookById: Books.GetBookByIdCtrler = async function (req, res) {
 
 export const createBook: Books.CreateBookCtrler = async function (req, res) {
   try {
-    if (req.body?.details) {
+    if (!req.body?.details) {
       return res.status(400).send({ message: "Invalid book details" });
     }
 

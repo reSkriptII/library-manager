@@ -7,7 +7,7 @@ import cookieParser from "cookie-parser";
 import "./util/db.js";
 
 // import { bookRoute } from "./route/book/bookRoute.js";
-// import { authRoute } from "./route/auth/authRoute.js";
+import { authRoute } from "./route/auth/authRoute.js";
 // import { libRoute } from "./route/librarian/librarianRoute.js";
 // import { adminRoute } from "./route/admin/adminRoute.js";
 // import { userRoute } from "route/user/userRoute.js";
@@ -25,7 +25,7 @@ app.use(cookieParser());
 app.use("/books", books);
 
 // app.use("/", bookRoute);
-// app.use("/", authRoute);
+app.use("/", authRoute);
 
 // app.use("/lib", libRoute);
 // app.use("/admin", adminRoute);

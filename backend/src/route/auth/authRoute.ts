@@ -1,9 +1,9 @@
 import express from "express";
-import { authenticate } from "middleware/authenticate.js";
+import { authenticate } from "#src/middleware/authenticate.js";
 import { registerUser } from "./controller/registerUser.js";
 import { login } from "./controller/login.js";
 import { logout } from "./controller/logout.js";
-import { checkRole } from "middleware/checkRole.js";
+import { checkRole } from "#src/middleware/checkRole.js";
 
 const authRoute = express.Router();
 

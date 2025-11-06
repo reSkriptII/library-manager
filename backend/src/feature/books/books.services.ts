@@ -6,7 +6,7 @@ import { FileError } from "#src/util/error.js";
 
 export async function getBookSearch(search: models.SearchParam) {
   let books = await models.searchBooks(search);
-  console.log(books);
+
   const structuredBooks = books.map((book) => structureBook(book));
   return structuredBooks;
 }
