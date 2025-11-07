@@ -13,6 +13,7 @@ import { authRoute } from "./route/auth/authRoute.js";
 // import { userRoute } from "route/user/userRoute.js";
 
 import books from "./feature/books/books.routes.js";
+import loans from "./feature/loans/loans.routes.js";
 
 const app = express();
 if (!process.env.REFRESH_TOKEN_SECRET) {
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/books", books);
+app.use("/loans", loans);
 
 // app.use("/", bookRoute);
 app.use("/", authRoute);

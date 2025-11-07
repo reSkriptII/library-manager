@@ -33,15 +33,19 @@ export type SubmitLoansCtrler = SubmitLoans.Controller;
 
 export namespace SubmitReturn {
   export type ReqBody = {
-    borrower: number;
-    book: number;
+    borrowerId: number;
+    bookId: number;
   };
 
   export type ResBody = {
     returnTime: Date;
-    dueDate: Date;
     lateReturn: boolean;
   };
-  export type Controller = Middleware<{}, {}, ReqBody, ResBody>;
+  export type Controller = Middleware<
+    { id: string },
+    {},
+    ReqBody | undefined,
+    ResBody
+  >;
 }
 export type SubmitReturnCrler = SubmitReturn.Controller;

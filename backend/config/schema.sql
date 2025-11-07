@@ -2,7 +2,7 @@ BEGIN;
 
 DROP MATERIALIZED VIEW IF EXISTS book_details;
 DROP TABLE IF EXISTS books, authors, book_authors, genres, book_genres, 
-    book_series, users, lends,reservations CASCADE;
+    book_series, users, loans, reservations CASCADE;
 DROP TYPE IF EXISTS user_role;
 
 /* **********************************************************************
