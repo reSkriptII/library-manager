@@ -234,7 +234,7 @@ describe("Books API", () => {
     });
   });
 
-  describe.skip("POST /books/genre", () => {
+  describe("POST /books/genre", () => {
     it("", async () => {
       const authCookies = await login();
       if (authCookies == null) {
@@ -246,7 +246,7 @@ describe("Books API", () => {
       const createRes = await request(app)
         .post("/books/genres")
         .set("Cookie", authCookies)
-        .send({ name: "testGenre" });
+        .send({ genre: "testGenre" });
       expect(createRes.status).toBe(200);
 
       const genreSearchRes = await request(app).get(
@@ -255,10 +255,14 @@ describe("Books API", () => {
       expect(genreSearchRes.body).toContainLike((book: BookData) => {
         book.genres.some((genre) => genre.name.includes("testGenre"));
       });
+      expect(genreSearchRes.body).toContainLike(
+        (genre: BookPropEntity) =>
+          genre.id === createRes.body.id && genre.name === "testGenre"
+      );
       await logout(authCookies);
     });
   });
-  describe.skip("POST /books/authors", () => {
+  describe("POST /books/authors", () => {
     it("", async () => {
       const authCookies = await login();
       if (authCookies == null) {
@@ -270,11 +274,14 @@ describe("Books API", () => {
       const createRes = await request(app)
         .post("/books/authors")
         .set("Cookie", authCookies)
-        .send({ name: "testAuthor" });
+        .send({ author: "testAuthor" });
       expect(createRes.status).toBe(200);
-
       const authorSearchRes = await request(app).get(
         `/books/authors?search=${createRes.body.id}`
+      );
+      expect(authorSearchRes.body).toContainLike(
+        (author: BookPropEntity) =>
+          author.id === createRes.body.id && author.name === "testAuthor"
       );
       await logout(authCookies);
     });

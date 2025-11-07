@@ -1,5 +1,4 @@
 import type { Middleware } from "types/express.js";
-import { updateBook } from "./books.controllers.js";
 
 //#region Book retrieval
 export type BookData = {

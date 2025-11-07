@@ -102,9 +102,9 @@ export async function deleteBook(id: number): Promise<DeleteBookResult> {
     return { ok: false, status: 404, message: "Book not found" };
   }
 
-  // if (!(await models.isBookAvailable(id))) {
-  //   return { ok: false, status: 400, message: "Book is being used" };
-  // }
+  if (!(await models.isBookAvailable(id))) {
+    return { ok: false, status: 400, message: "Book is being used" };
+  }
 
   try {
     await models.deleteBook(id);
