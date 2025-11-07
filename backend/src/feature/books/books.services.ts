@@ -3,6 +3,7 @@ import path from "path";
 import mime from "mime-types";
 import * as models from "./books.models.js";
 import { FileError } from "#src/util/error.js";
+import * as bookModels from "#src/models/books.js";
 
 export async function getBookSearch(search: models.SearchParam) {
   let books = await models.searchBooks(search);
@@ -66,7 +67,7 @@ export async function updateBook(
   const authors = [...new Set(options.authors)];
 
   const [isBookExist, isGenresExist, isAuthorsExist] = await Promise.all([
-    models.isBookExist(id),
+    bookModels.isBookExist(id),
     models.isGenreIdsExist(genres),
     models.isAuthorIdsExist(authors),
   ]);
@@ -97,12 +98,12 @@ export async function updateBook(
 
 type DeleteBookResult = UpdateBookResult;
 export async function deleteBook(id: number): Promise<DeleteBookResult> {
-  const isBookExist = await models.isBookExist(id);
+  const isBookExist = await bookModels.isBookExist(id);
   if (!isBookExist) {
     return { ok: false, status: 404, message: "Book not found" };
   }
 
-  if (!(await models.isBookAvailable(id))) {
+  if (!(await bookModels.isBookAvailable(id))) {
     return { ok: false, status: 400, message: "Book is being used" };
   }
 

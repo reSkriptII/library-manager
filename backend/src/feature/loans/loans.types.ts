@@ -1,4 +1,5 @@
 import { Middleware } from "#src/types/express.js";
+
 export type LoanData = {
   id: number;
   borrower: number;
@@ -9,28 +10,26 @@ export type LoanData = {
   lateReturn: boolean | null;
   returnTime: Date | null;
 };
+
 export namespace Getloans {
   export type ReqQuery = { active?: boolean; borrower?: string; book?: string };
   export type ResBody = LoanData[];
+  export type Controller = Middleware<{}, ReqQuery, unknown, ResBody>;
 }
-export type GetLoansCtrler = Middleware<
-  {},
-  Getloans.ReqQuery,
-  unknown,
-  Getloans.ResBody
->;
+export type GetLoansCtrler = Getloans.Controller;
 
 export namespace SubmitLoans {
   export type ReqBody = {
-    borrower: number;
-    book: number;
+    borrowerId: number;
+    bookId: number;
   };
   export type ResBody = {
     id: number;
-    due_date: string;
+    dueDate: string;
   };
+  export type Controller = Middleware<{}, {}, ReqBody>;
 }
-export type SubmitLoansCtrler = Middleware<{}, {}, SubmitLoans.ReqBody>;
+export type SubmitLoansCtrler = SubmitLoans.Controller;
 
 export namespace SubmitReturn {
   export type ReqBody = {
@@ -43,10 +42,6 @@ export namespace SubmitReturn {
     dueDate: Date;
     lateReturn: boolean;
   };
+  export type Controller = Middleware<{}, {}, ReqBody, ResBody>;
 }
-export type SubmitReturnCrler = Middleware<
-  {},
-  {},
-  SubmitReturn.ReqBody,
-  SubmitReturn.ResBody
->;
+export type SubmitReturnCrler = SubmitReturn.Controller;

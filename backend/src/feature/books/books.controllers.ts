@@ -31,7 +31,7 @@ export const getBookById: Books.GetBookByIdCtrler = async function (req, res) {
     return res.status(400).send({ message: "Invalid book ID" });
   }
 
-  const book = await services.getBookById(Number(bookId));
+  const book = await services.getBookById(bookId);
   if (book == null) {
     return res.status(404).send({ message: "Book not found" });
   }
@@ -119,7 +119,7 @@ export const deleteBook: Controller = async function (req, res) {
     return res.status(400).send({ message: "Invalid book ID" });
   }
 
-  const deleteResult = await services.deleteBook(Number(bookId));
+  const deleteResult = await services.deleteBook(bookId);
   if (!deleteResult.ok) {
     return res.status(deleteResult.status).send(deleteResult.message);
   }
@@ -128,7 +128,7 @@ export const deleteBook: Controller = async function (req, res) {
 
 // cover
 export const getBookCover: Controller = async function (req, res) {
-  const bookId = req.params.id;
+  const bookId = Number(req.params.id);
   if (Number.isInteger(bookId)) {
     return res.status(400).send({ message: "Invalid book ID" });
   }
@@ -144,7 +144,7 @@ export const getBookCover: Controller = async function (req, res) {
 };
 export const updateBookCover: Controller = async function (req, res) {
   try {
-    const bookId = req.params.id;
+    const bookId = Number(req.params.id);
     if (Number.isInteger(bookId)) {
       return res.status(400).send({ message: "Invalid book ID" });
     }

@@ -54,10 +54,10 @@ CREATE TABLE book_genres (
 );
 
 /* **********************************************************************
- * lends and reservations
+ * loans and reservations
  */
-CREATE TABLE lends (
-    borrow_id SERIAL PRIMARY KEY,
+CREATE TABLE loans (
+    loan_id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users (user_id) ON DELETE RESTRICT,
     book_id INTEGER NOT NULL REFERENCES books (book_id) ON DELETE RESTRICT,
     borrow_time TIMESTAMP NOT NULL DEFAULT NOW(),

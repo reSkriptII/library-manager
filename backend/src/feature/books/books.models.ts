@@ -19,7 +19,7 @@ export type SearchParam = {
   genre?: number[] | null;
 };
 
-export async function searchBooks(search: SearchParam): Promise<BookObject[]> {
+export function searchBooks(search: SearchParam): Promise<BookObject[]> {
   const { id = null, title = null } = search;
   const genre = search.genre ? [...new Set(search.genre)] : null;
   const author = search.author ? [...new Set(search.author)] : null;
@@ -141,22 +141,6 @@ export async function updateBook(id: number, options: BookDetail) {
 export async function deleteBook(id: number) {
   await psqlPool.query("DELETE FROM books WHERE book_id = $1", [id]);
   psqlPool.query("REFRESH MATERIALIZED VIEW book_details");
-}
-
-export async function isBookExist(id: number) {
-  return psqlPool
-    .query("SELECT 1 FROM books WHERE book_id = $1", [id])
-    .then((r) => r.rows.length > 0);
-}
-export async function isBookAvailable(id: number) {
-  return psqlPool
-    .query(
-      `SELECT 1 FROM reservations WHERE book_id = $1
-      UNION
-      SELECT 1 FROM lends WHERE return_time = null ANd book_id = $1`,
-      [id]
-    )
-    .then((r) => r.rows.length === 0);
 }
 
 export async function isGenreIdsExist(ids: number[]) {
