@@ -1,12 +1,13 @@
 import request from "supertest";
 import { describe, it, expect } from "vitest";
 import "../extendExpect.js";
-import { app } from "#src/index.js";
+import { app } from "#src/app.js";
+import "../setup.js";
 import type {
   BookData,
   BookPropEntity,
 } from "#src/feature/books/books.types.js";
-import { login, logout } from "../helpers.js";
+import { login } from "../helpers.js";
 
 describe("Books API", () => {
   describe("GET /books", () => {
@@ -112,7 +113,7 @@ describe("Books API", () => {
     });
 
     it("create book and return status 201 with ID", async () => {
-      const authCookies = await login();
+      const authCookies = await login("admin");
       if (authCookies == null) {
         expect(authCookies != null).toBe(true);
         return;
@@ -133,8 +134,6 @@ describe("Books API", () => {
 
       const bookRes = await request(app).get(`/books/${bookId}`);
       expect(bookRes.status).toBe(200);
-
-      logout(authCookies);
     });
   });
 
@@ -144,7 +143,7 @@ describe("Books API", () => {
         { title: "test UPDATE #1", authors: [1], genres: [1, 2] },
         { title: "test UPDATE #2", authors: [2, 3], genres: [1] },
       ];
-      const authCookies = await login();
+      const authCookies = await login("admin");
       if (authCookies == null) {
         expect(authCookies != null).toBe(true);
         return;
@@ -171,13 +170,11 @@ describe("Books API", () => {
           (author: BookPropEntity) => author.id
         )
       ).toEqual(usingDetails.authors);
-
-      await logout(authCookies);
     });
   });
   describe("DELETE /books/:id", () => {
     it("delete book and return status 204", async () => {
-      const authCookies = await login();
+      const authCookies = await login("admin");
       if (authCookies == null) {
         expect(authCookies != null).toBe(true);
         return;
@@ -193,7 +190,6 @@ describe("Books API", () => {
 
       const deletedBookRes = await request(app).get(`/books/${lastBookId}`);
       expect(deletedBookRes.status).toBe(404);
-      await logout(authCookies);
     });
   });
 
@@ -236,7 +232,7 @@ describe("Books API", () => {
 
   describe("POST /books/genre", () => {
     it("", async () => {
-      const authCookies = await login();
+      const authCookies = await login("admin");
       if (authCookies == null) {
         expect(authCookies != null).toBe(true);
         return;
@@ -259,12 +255,11 @@ describe("Books API", () => {
         (genre: BookPropEntity) =>
           genre.id === createRes.body.id && genre.name === "testGenre"
       );
-      await logout(authCookies);
     });
   });
   describe("POST /books/authors", () => {
     it("", async () => {
-      const authCookies = await login();
+      const authCookies = await login("admin");
       if (authCookies == null) {
         expect(authCookies != null).toBe(true);
         return;
@@ -283,7 +278,6 @@ describe("Books API", () => {
         (author: BookPropEntity) =>
           author.id === createRes.body.id && author.name === "testAuthor"
       );
-      await logout(authCookies);
     });
   });
 });

@@ -32,7 +32,7 @@ export function searchBooks(search: SearchParam): Promise<BookObject[]> {
       FROM book_details books
       LEFT JOIN (
         SELECT DISTINCT book_id
-        FROM lends 
+        FROM loans
         WHERE return_time IS NULL
         GROUP BY book_id  
       ) a ON books.id = a.book_id
@@ -47,7 +47,10 @@ export function searchBooks(search: SearchParam): Promise<BookObject[]> {
           (SELECT book_id FROM book_authors WHERE author_id = ANY($3)))
         AND ($4::int[] IS NULL OR id IN
           (SELECT book_id FROM book_genres WHERE genre_id = ANY($4)))
-      ORDER BY id`,
+      ORDER BY 
+        ($2 IS NULL OR title = $2::text),
+        ($2 IS NULL OR title ILIKE $2::text || '%'), 
+        id`,
       [id, title, author, genre]
     )
     .then((r) => r.rows);
@@ -156,7 +159,9 @@ export async function isGenreNameExist(genre: string) {
 export async function getGenreList(search?: string) {
   return psqlPool
     .query(
-      "SELECT genre_id as id, genre_name as name FROM genres WHERE genre_name ILIKE '%'|| $1 || '%'",
+      `SELECT genre_id as id, genre_name as name FROM genres 
+      WHERE genre_name ILIKE '%'|| $1 || '%'
+      ORDER BY (genre_name = $1), (genre_name ILIKE  $1 || '&'), genre_id`,
       [search ?? ""]
     )
     .then((r) => r.rows as BookPropEntity[]);
@@ -183,7 +188,9 @@ export async function isAuthorNameExist(author: string) {
 export async function getAuthorsList(search?: string) {
   return await psqlPool
     .query(
-      "SELECT author_id as id, author_name as name FROM authors WHERE author_name ILIKE '%'|| $1 || '%'",
+      `SELECT author_id as id, author_name as name FROM authors 
+      WHERE author_name ILIKE '%'|| $1 || '%'
+      ORDER BY (author_name = $1), (author_name ILIKE $1 || '&' ), author_id`,
       [search ?? ""]
     )
     .then((r) => r.rows as BookPropEntity[]);

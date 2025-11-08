@@ -1,15 +1,32 @@
 import request from "supertest";
-import { app } from "#src/index.ts";
+import { app } from "#src/app.ts";
 
-export async function login() {
-  const login = await request(app).post("/login").send({
+const account = {
+  admin: {
     email: "admin@test.com",
     password: "admin1234",
+  },
+  librarian: {
+    email: "libralian@test.com",
+    password: "librarian1234",
+  },
+  user: {
+    email: "user@test.com",
+    password: "user1234",
+  },
+};
+
+const tokens: { admin?: string[]; librarian?: string[]; user?: string[] } = {};
+export async function login(acc: "admin" | "librarian" | "user") {
+  if (tokens[acc]) {
+    return tokens[acc];
+  }
+  const login = await request(app).post("/login").send({
+    email: account[acc].email,
+    password: account[acc].password,
   });
   if (login.status != 200) return null;
-  return login.headers["set-cookie"] as unknown as string[];
-}
-
-export async function logout(cookies: string[]) {
-  await request(app).post("/logout").set("Cookie", cookies);
+  const token = login.headers["set-cookie"] as unknown as string[];
+  tokens[acc] = token;
+  return token;
 }
