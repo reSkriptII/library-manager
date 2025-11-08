@@ -11,3 +11,16 @@ export function getUserById(id: number) {
     )
     .then((r) => r.rows[0] as UserData);
 }
+
+export function setUserName(id: number, name: string) {
+  return psqlPool.query("UPDATE users SET name = $2 WHERE user_id = $1", [
+    id,
+    name,
+  ]);
+}
+export function setUserRole(id: number, role: UserRole) {
+  return psqlPool.query("UPDATE users SET role = $2 WHERE user_id = $1", [
+    id,
+    role,
+  ]);
+}
