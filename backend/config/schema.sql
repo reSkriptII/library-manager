@@ -58,7 +58,7 @@ CREATE TABLE book_genres (
  */
 CREATE TABLE loans (
     loan_id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users (user_id) ON DELETE RESTRICT,
+    borrower_id INTEGER NOT NULL REFERENCES users (user_id) ON DELETE RESTRICT,
     book_id INTEGER NOT NULL REFERENCES books (book_id) ON DELETE RESTRICT,
     borrow_time TIMESTAMP NOT NULL DEFAULT NOW(),
     due_date TIMESTAMP DEFAULT NOW() + INTERVAL '10 days',

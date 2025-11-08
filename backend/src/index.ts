@@ -32,7 +32,6 @@ app.use("/", authRoute);
 // app.use("/lib", libRoute);
 // app.use("/admin", adminRoute);
 // app.use("/user", userRoute);
-
 app.listen(5000);
 
 export { app };

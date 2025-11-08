@@ -2,17 +2,17 @@ import { Middleware } from "#src/types/express.js";
 
 export type LoanData = {
   id: number;
-  borrower: number;
-  book: number;
-  borrowAt: Date;
-  dueDate: Date;
+  borrowerId: number;
+  bookId: number;
+  borrowTime: string;
+  dueDate: string;
   returned: boolean;
-  lateReturn: boolean | null;
-  returnTime: Date | null;
+  isLateReturn: boolean | null;
+  returnTime: string | null;
 };
 
 export namespace Getloans {
-  export type ReqQuery = { active?: boolean; borrower?: string; book?: string };
+  export type ReqQuery = { active?: string; borrower?: string; book?: string };
   export type ResBody = LoanData[];
   export type Controller = Middleware<{}, ReqQuery, unknown, ResBody>;
 }

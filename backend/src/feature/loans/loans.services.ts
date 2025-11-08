@@ -1,8 +1,28 @@
 import * as models from "./loans.models.js";
 import * as bookModels from "#src/models/books.js";
 import * as userModels from "#src/models/users.js";
-import { psqlPool } from "#src/util/db.js";
-import { OutgoingMessage } from "http";
+
+export async function getSearchLoans(search: models.SearchLoans) {
+  const loans = await models.searchLoans(search);
+  if (loans[0] == undefined) {
+    return { ok: false, message: "Loan not found" };
+  }
+
+  return {
+    ok: true,
+    loans: loans.map((loan) => ({
+      id: loan.loan_id,
+      bookId: loan.book_id,
+      borrowerId: loan.borrower_id,
+      borrowTime: loan.borrow_time.toISOString(),
+      dueDate: loan.due_date.toISOString(),
+      returned: loan.return_time != null,
+      isLateReturn:
+        loan.return_time == null ? null : loan.return_time > loan.due_date,
+      returnTime: loan.due_date.toISOString(),
+    })),
+  };
+}
 
 export type LoanBook =
   | { ok: true; id: number; dueDate: Date }
@@ -50,12 +70,12 @@ export async function returnBook(
   if (checkProps) {
     if (
       checkProps.bookId != loan.book_id ||
-      checkProps.borrowerId != loan.user_id
+      checkProps.borrowerId != loan.borrower_id
     ) {
       return {
         ok: false,
         status: 400,
-        message: "user ID and book ID don't match the loan",
+        message: "borrower ID and book ID don't match the loan",
       };
     }
   }
