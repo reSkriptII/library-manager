@@ -6,7 +6,7 @@ type role = "user" | "librarian" | "admin";
 
 export function checkRole(requiredRole: role) {
   return async function (req: Request, res: Response, next: NextFunction) {
-    if (!req.user || req.user?.role != undefined) {
+    if (!req.user) {
       return sendResponse(res, false, 401, "role error");
     }
     const userId = req.user?.id;

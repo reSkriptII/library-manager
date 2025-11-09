@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 
 import books from "./feature/books/books.routes.js";
 import loans from "./feature/loans/loans.routes.js";
+import users from "./feature/users/users.routes.js";
 import { authRoute } from "./route/auth/authRoute.js";
 
 const app = express();
@@ -20,6 +21,8 @@ app.use(cookieParser());
 
 app.use("/books", books);
 app.use("/loans", loans);
+app.use("/users", users);
+
 app.use("/", authRoute);
 // app.use("/", bookRoute);
 

@@ -2,8 +2,8 @@ import { readdir, rm, copyFile } from "fs/promises";
 import path from "path";
 import mime from "mime-types";
 import { FileError } from "#src/util/error.js";
-import * as models from "./users.model.js";
-import { isUserExist } from "#src/models/users.js";
+import * as models from "./users.models.js";
+import { isUserBorrowingBooks, isUserExist } from "#src/models/users.js";
 
 export async function getAvatarData(id: number) {
   try {
@@ -83,6 +83,21 @@ export async function setUserRole(id: number, role: UserRole) {
     return { ok: false, status: 404, message: "User not found" };
   }
   await models.setUserRole(id, role);
+}
+
+export async function deleteUser(id: number) {
+  if (!(await isUserExist(id))) {
+    return { ok: false, status: 404, message: "User not found" };
+  }
+  if (await isUserBorrowingBooks(id)) {
+    return {
+      ok: false,
+      status: 409,
+      message: "User has borrowed books. Please return borrowed books first",
+    };
+  }
+  await deleteUser(id);
+  return { ok: true };
 }
 
 const AVATAR_IMAGE_DIR_PATH = path.resolve("public", "image", "users");

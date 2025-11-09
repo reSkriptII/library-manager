@@ -1,6 +1,6 @@
 import { createReadStream } from "fs";
 import { Controller } from "#src/types/express.js";
-import * as models from "./users.model.js";
+import * as models from "./users.models.js";
 import * as services from "./users.services.js";
 import * as Users from "./users.types.js";
 import { cleanFile } from "#src/util/files.js";
@@ -15,7 +15,7 @@ export const getMe: Users.GetMeCtrler = async function (req, res) {
 
 export const getUserById: Users.GetUserCtrler = async function (req, res) {
   const userId = Number(req.params.id);
-  if (Number.isInteger(userId)) {
+  if (!Number.isInteger(userId)) {
     return res.status(400).send({ message: "Invalid user ID" });
   }
 
@@ -38,7 +38,7 @@ export const getMyAvatar: Controller = async function (req, res) {
 };
 export const getAvatar: Controller = async function (req, res) {
   const userId = Number(req.params.id);
-  if (Number.isInteger(userId)) {
+  if (!Number.isInteger(userId)) {
     return res.status(400).send({ message: "Invalid user ID" });
   }
 
@@ -68,7 +68,7 @@ export const setUserName: Users.SetUserNameCtrler = async function (req, res) {
   const userId = Number(req.params.id);
   const name = req.body.name;
 
-  if (Number.isInteger(userId)) {
+  if (!Number.isInteger(userId)) {
     return res.status(400).send({ message: "Invalid user ID" });
   }
   if (typeof name !== "string") {
@@ -81,7 +81,7 @@ export const setUserName: Users.SetUserNameCtrler = async function (req, res) {
 export const setUserRole: Users.SetUserRoleCtrler = async function (req, res) {
   const userId = Number(req.params.id);
   const role = req.body.role;
-  if (Number.isInteger(userId)) {
+  if (!Number.isInteger(userId)) {
     return res.status(400).send({ message: "Invalid user ID" });
   }
   if (role !== "user" && role !== "librarian" && role !== "admin") {
@@ -92,4 +92,13 @@ export const setUserRole: Users.SetUserRoleCtrler = async function (req, res) {
   return res.status(204).send();
 };
 
-export const deleteUser: Users.DeleteUserCtrler = async function (req, res) {};
+export const deleteUser: Users.DeleteUserCtrler = async function (req, res) {
+  const userId = Number(req.params.id);
+
+  if (!Number.isInteger(userId)) {
+    return res.status(400).send({ message: "Invalid user ID" });
+  }
+
+  await services.deleteUser(userId);
+  return res.status(204).send();
+};

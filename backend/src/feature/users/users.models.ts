@@ -24,3 +24,7 @@ export function setUserRole(id: number, role: UserRole) {
     role,
   ]);
 }
+
+export function deleteUser(id: number) {
+  return psqlPool.query("DELETE FROM users WHERE user_id = $1", [id]);
+}

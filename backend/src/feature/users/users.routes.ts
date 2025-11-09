@@ -16,7 +16,7 @@ router.delete("me/avatar", controllers.updateAvatar);
 
 router.use(checkRole("librarian"));
 
-router.get(":id", controllers.getUserById);
+router.get("/:id", controllers.getUserById);
 router.get("/:id/avatar", controllers.getAvatar);
 
 router.use(checkRole("admin"));
