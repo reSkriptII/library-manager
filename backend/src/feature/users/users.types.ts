@@ -23,4 +23,4 @@ export type SetUserRoleCtrler = Middleware<
 >;
 export type DeleteUserCtrler = Middleware<{ id: string }>;
 
-export type GetMyLoanCtrler = Middleware<{}, {}, unknown, LoanData>;
+export type GetMyLoanCtrler = Middleware<{}, {}, unknown, LoanData[]>;

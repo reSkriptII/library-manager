@@ -1,5 +1,5 @@
 declare global {
-  type UserRole = "user" | "librarian" | "admin";
+  type UserRole = "member" | "librarian" | "admin";
   namespace NodeJs {
     interface ProcessEnv {
       ACCESS_TOKEN_SECRET: string;

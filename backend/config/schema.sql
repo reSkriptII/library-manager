@@ -13,7 +13,7 @@ CREATE TYPE user_role AS ENUM ('member', 'librarian', 'admin');
 
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
+    name TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
     hashed_password TEXT NOT NULL,
     role user_role NOT NULL DEFAULT 'member',

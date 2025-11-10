@@ -1,0 +1,4 @@
+export const CONFIG = {
+  PASSWORD_MIN_LENGTH: 6,
+  MAX_BORROW_LIMIT: 10,
+};
