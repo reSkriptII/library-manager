@@ -1,31 +1,8 @@
 import { psqlPool } from "#src/util/db.js";
+import type { LoanObject } from "./loans.types.js";
 
-type LoanData = {
-  loan_id: number;
-  borrower_id: number;
-  book_id: number;
-  borrow_time: Date;
-  due_date: Date;
-  return_time: Date;
-};
+export { searchLoans, SearchLoans } from "#src/models/loans.js";
 
-export type SearchLoans = {
-  active?: boolean | null;
-  bookId?: number | null;
-  borrowerId?: number | null;
-};
-export function searchLoans(search: SearchLoans): Promise<LoanData[]> {
-  const { active = null, bookId = null, borrowerId = null } = search;
-  return psqlPool
-    .query(
-      `SELECT loan_id, borrower_id, book_id, borrow_time, due_date, return_time FROM loans
-    WHERE ($1 = false OR return_time IS NULL)
-      AND ($2::int IS NULL OR book_id = $2::int)
-      AND ($3::int IS NULL OR borrower_id = $3::int)`,
-      [active, bookId, borrowerId]
-    )
-    .then((r) => r.rows);
-}
 export function createLoans(bookId: number, borrowerId: number) {
   return psqlPool
     .query(
@@ -47,7 +24,7 @@ export function returnBook(loanId: number) {
     .then((r) => r.rows[0] as { return_time: Date; due_date: Date });
 }
 
-export function getLoanById(loanId: number): Promise<LoanData | null> {
+export function getLoanById(loanId: number): Promise<LoanObject | null> {
   return psqlPool
     .query(
       `SELECT loan_id, borrower_id, book_id, borrow_time, due_date, return_time FROM loans 

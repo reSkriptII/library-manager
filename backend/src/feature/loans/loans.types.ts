@@ -1,15 +1,7 @@
 import { Middleware } from "#src/types/express.js";
-
-export type LoanData = {
-  id: number;
-  borrowerId: number;
-  bookId: number;
-  borrowTime: string;
-  dueDate: string;
-  returned: boolean;
-  isLateReturn: boolean | null;
-  returnTime: string | null;
-};
+import { LoanData } from "#src/types/app.js";
+export { LoanObject } from "#src/types/models.js";
+export { LoanData };
 
 export namespace Getloans {
   export type ReqQuery = { active?: string; borrower?: string; book?: string };

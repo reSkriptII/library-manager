@@ -3,7 +3,8 @@ import path from "path";
 import mime from "mime-types";
 import { FileError } from "#src/util/error.js";
 import * as models from "./users.models.js";
-import { isUserBorrowingBooks, isUserExist } from "#src/models/users.js";
+import {} from "#src/models/users.js";
+import { searchLoans } from "#src/models/loans.js";
 
 export async function getAvatarData(id: number) {
   try {
@@ -72,24 +73,24 @@ export async function updateAvatar(
   }
 }
 export async function setUserName(id: number, name: string) {
-  if (!(await isUserExist(id))) {
+  if (!(await models.isUserExist(id))) {
     return { ok: false, status: 404, message: "User not found" };
   }
   await models.setUserName(id, name);
 }
 
 export async function setUserRole(id: number, role: UserRole) {
-  if (!(await isUserExist(id))) {
+  if (!(await models.isUserExist(id))) {
     return { ok: false, status: 404, message: "User not found" };
   }
   await models.setUserRole(id, role);
 }
 
 export async function deleteUser(id: number) {
-  if (!(await isUserExist(id))) {
+  if (!(await models.isUserExist(id))) {
     return { ok: false, status: 404, message: "User not found" };
   }
-  if (await isUserBorrowingBooks(id)) {
+  if (await models.isUserHasActiveLoan(id)) {
     return {
       ok: false,
       status: 409,
@@ -98,6 +99,22 @@ export async function deleteUser(id: number) {
   }
   await deleteUser(id);
   return { ok: true };
+}
+
+export async function getMyLoan(id: number) {
+  const loans = await searchLoans({ borrowerId: id });
+
+  return loans.map((loan) => ({
+    id: loan.loan_id,
+    bookId: loan.book_id,
+    borrowerId: loan.borrower_id,
+    borrowTime: loan.borrow_time.toISOString(),
+    dueDate: loan.due_date.toISOString(),
+    returned: loan.return_time != null,
+    isLateReturn:
+      loan.return_time == null ? null : loan.return_time > loan.due_date,
+    returnTime: loan.due_date.toISOString(),
+  }));
 }
 
 const AVATAR_IMAGE_DIR_PATH = path.resolve("public", "image", "users");

@@ -1,11 +1,7 @@
 import type { Middleware } from "#src/types/express.js";
+import { LoanData, UserData } from "#src/types/app.js";
 
-export type UserData = {
-  id: number;
-  name: string;
-  email: string;
-  role: "member" | "librarian" | "admin";
-};
+export type { LoanData, UserData };
 
 export type GetMeCtrler = Middleware<{}, {}, unknown, UserData | null>;
 export type GetUserCtrler = Middleware<
@@ -14,7 +10,7 @@ export type GetUserCtrler = Middleware<
   unknown,
   UserData | null
 >;
-export type DeleteUserCtrler = Middleware<{ id: string }>;
+
 export type SetUserNameCtrler = Middleware<
   { id: string },
   {},
@@ -25,3 +21,6 @@ export type SetUserRoleCtrler = Middleware<
   {},
   { role: string }
 >;
+export type DeleteUserCtrler = Middleware<{ id: string }>;
+
+export type GetMyLoanCtrler = Middleware<{}, {}, unknown, LoanData>;

@@ -1,16 +1,9 @@
 import { psqlPool } from "#src/util/db.js";
 import { BookPropEntity } from "./books.types.js";
+export { isBookExist, isBookAvailable } from "#src/models/books.js";
+import type { BookObject } from "./books.types.js";
 
-export type BookObject = {
-  id: number;
-  title: string;
-  author_ids: number[];
-  author_names: string[];
-  genre_ids: number[];
-  genre_names: string[];
-  lent: boolean;
-  reserve_queue: number;
-};
+export type { BookObject };
 
 export type SearchParam = {
   id?: number | null;

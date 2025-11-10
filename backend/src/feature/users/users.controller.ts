@@ -6,7 +6,7 @@ import * as Users from "./users.types.js";
 import { cleanFile } from "#src/util/files.js";
 
 export const getMe: Users.GetMeCtrler = async function (req, res) {
-  const user = await models.getUserById(req.user?.id as number);
+  const user = await models.getUserById(req.user.id);
   if (!user) {
     return res.status(404).send({ message: "User not found" });
   }
@@ -27,7 +27,7 @@ export const getUserById: Users.GetUserCtrler = async function (req, res) {
 };
 
 export const getMyAvatar: Controller = async function (req, res) {
-  const bookCoverImgData = await services.getAvatarData(req.user?.id as number);
+  const bookCoverImgData = await services.getAvatarData(req.user.id);
   if (bookCoverImgData == null) {
     return res.status(404).send({ message: "Image not found" });
   }
@@ -57,7 +57,7 @@ export const updateAvatar: Controller = async function (req, res) {
       return res.status(400).send({ message: "Invalid file type" });
     }
 
-    await services.updateAvatar(req.user?.id as number, req.file);
+    await services.updateAvatar(req.user.id, req.file);
     return res.status(204).send();
   } finally {
     if (req.file) cleanFile(req.file);
@@ -101,4 +101,10 @@ export const deleteUser: Users.DeleteUserCtrler = async function (req, res) {
 
   await services.deleteUser(userId);
   return res.status(204).send();
+};
+
+export const getMyLoan: Users.GetMyLoanCtrler = async function (req, res) {
+  const userId = req.user.id;
+  const loans = await services.getMyLoan(userId);
+  return res.status(200).send(loans);
 };

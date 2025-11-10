@@ -1,5 +1,16 @@
 import type { Middleware } from "types/express.js";
 
+export type BookObject = {
+  id: number;
+  title: string;
+  author_ids: number[];
+  author_names: string[];
+  genre_ids: number[];
+  genre_names: string[];
+  lent: boolean;
+  reserve_queue: number;
+};
+
 //#region Book retrieval
 export type BookData = {
   id: number;

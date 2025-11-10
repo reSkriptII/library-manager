@@ -14,6 +14,8 @@ router.get("/me/avatar", controllers.getMyAvatar);
 router.put("me/avatar", upload.single("avatar"), controllers.updateAvatar);
 router.delete("me/avatar", controllers.updateAvatar);
 
+router.get("/me/loans", controllers.getMyLoan);
+
 router.use(checkRole("librarian"));
 
 router.get("/:id", controllers.getUserById);

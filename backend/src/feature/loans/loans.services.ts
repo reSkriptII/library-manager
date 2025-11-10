@@ -1,6 +1,7 @@
 import * as models from "./loans.models.js";
 import * as bookModels from "#src/models/books.js";
 import * as userModels from "#src/models/users.js";
+import type { LoanData } from "./loans.types.js";
 
 export async function getSearchLoans(search: models.SearchLoans) {
   const loans = await models.searchLoans(search);

@@ -18,8 +18,7 @@ router.get("/genres", controllers.getGenreList);
 router.get("/:id", controllers.getBookById);
 
 // admin privilege
-router.use(authenticate);
-router.use(checkRole("admin"));
+router.use(authenticate, checkRole("admin"));
 
 router.post("/", upload.single("coverImage"), controllers.createBook);
 router.put("/:id", controllers.updateBook);
