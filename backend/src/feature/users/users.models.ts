@@ -1,5 +1,17 @@
 import { psqlPool } from "#src/util/db.js";
-export { getUserById, isUserExist } from "#src/models/users.js";
+export { isUserExist } from "#src/models/users.js";
+import type { UserData } from "./users.types.js";
+
+export function getUserById(id: number) {
+  return psqlPool
+    .query(
+      `SELECT user_id as id, name, email, role
+      FROM users
+      WHERE user_id = $1`,
+      [id]
+    )
+    .then((r) => r.rows[0] as UserData);
+}
 
 export function setUserName(id: number, name: string) {
   return psqlPool.query("UPDATE users SET name = $2 WHERE user_id = $1", [

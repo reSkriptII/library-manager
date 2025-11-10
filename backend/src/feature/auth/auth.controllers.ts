@@ -1,14 +1,41 @@
 import { Controller } from "#src/types/express.js";
-import { ENV } from "#src/config/env.js";
 import { CONFIG } from "#src/config/constant.js";
 import * as services from "./auth.service.js";
 import type * as Auth from "./auth.types.js";
+import {
+  clearJwtCookie,
+  delActiveRefreshToken,
+  setJwtCookie,
+} from "#src/util/authToken.js";
 
 const EMAIL_REGEXP =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
-export const login: Auth.LoginCntrler = async function (req, res) {};
-export const logout: Controller = async function (req, res) {};
+export const login: Auth.LoginCntrler = async function (req, res) {
+  const email = req.body?.email;
+  const password = req.body?.password;
+
+  if (EMAIL_REGEXP.test(email) === false) {
+    return res.status(400).send({ message: "invalid email" });
+  }
+  if (password?.length < CONFIG.PASSWORD_MIN_LENGTH) {
+    return res.status(400).send({ message: "invalid password" });
+  }
+
+  const result = await services.login(email, password);
+  if (!result.ok) {
+    return res.status(result.status).send({ message: result.message });
+  }
+  setJwtCookie(res, result.accessToken, result.refreshToken);
+  return res.status(204).send();
+};
+
+export const logout: Controller = async function (req, res) {
+  delActiveRefreshToken(req.cookies?.refresh_token);
+  clearJwtCookie(res);
+
+  return res.status(204).send();
+};
 
 export const registerUser: Auth.RegisterUserCtrler = async function (req, res) {
   if (!req.body?.details) {
@@ -24,7 +51,7 @@ export const registerUser: Auth.RegisterUserCtrler = async function (req, res) {
 
   const { name, email, password, role } = bookDetails;
   const isEmailValid = EMAIL_REGEXP.test(email);
-  const isPasswordValid = password.length >= CONFIG.PASSWORD_MIN_LENGTH;
+  const isPasswordValid = password?.length >= CONFIG.PASSWORD_MIN_LENGTH;
   const isRoleValid = role === "member" || role === "librarian";
   if (
     typeof name !== "string" ||

@@ -14,5 +14,6 @@ export const ENV = {
   // DATABASE_URL: requireEnv("DATABASE_URL")
   ACCESS_TOKEN_SECRET: requireEnv("ACCESS_TOKEN_SECRET"),
   REFRESH_TOKEN_SECRET: requireEnv("REFERSH_TOKEN_SECRET"),
+
   CORS_ORIGIN: process.env.CORS_ORIGIN ?? "http://localhost:5173",
 };

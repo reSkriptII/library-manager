@@ -84,7 +84,7 @@ export const setUserRole: Users.SetUserRoleCtrler = async function (req, res) {
   if (!Number.isInteger(userId)) {
     return res.status(400).send({ message: "Invalid user ID" });
   }
-  if (role !== "user" && role !== "librarian" && role !== "admin") {
+  if (role !== "member" && role !== "librarian" && role !== "admin") {
     return res.status(400).send({ message: "Invalid role" });
   }
 
