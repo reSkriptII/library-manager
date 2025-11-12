@@ -1,6 +1,6 @@
-import { authenticate } from "#src/middleware/authenticate.js";
-import { checkRole } from "#src/middleware/checkRole.js";
 import { Router } from "express";
+import { authenticate } from "../../middleware/authenticate.js";
+import { checkRole } from "../../middleware/checkRole.js";
 import { loanBook, returnBook, getLoans } from "./loans.controller.js";
 
 const router = Router();

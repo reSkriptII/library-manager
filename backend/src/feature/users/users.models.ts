@@ -1,6 +1,7 @@
-import { psqlPool } from "#src/util/db.js";
-export { isUserExist } from "#src/models/users.js";
+import { psqlPool } from "../../util/db.js";
 import type { UserData } from "./users.types.js";
+
+export { isUserExist } from "../../models/users.js";
 
 export function getUserById(id: number) {
   return psqlPool

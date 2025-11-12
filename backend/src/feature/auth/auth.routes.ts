@@ -1,7 +1,7 @@
 import { Router } from "express";
+import { authenticate } from "../../middleware/authenticate.js";
+import { checkRole } from "../../middleware/checkRole.js";
 import * as controllers from "./auth.controllers.js";
-import { authenticate } from "#src/middleware/authenticate.js";
-import { checkRole } from "#src/middleware/checkRole.js";
 
 const router = Router();
 

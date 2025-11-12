@@ -1,8 +1,7 @@
 import { psqlPool } from "../../util/db.js";
-import { BookPropEntity } from "./books.types.js";
-export { isBookExist, isBookAvailable } from "#src/models/books.js";
-import type { BookObject } from "./books.types.js";
+import { BookPropEntity, BookObject } from "./books.types.js";
 
+export { isBookExist, isBookAvailable } from "../../models/books.js";
 export type { BookObject };
 
 export type SearchParam = {

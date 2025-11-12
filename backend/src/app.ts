@@ -2,16 +2,10 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-// import { bookRoute } from "./route/book/bookRoute.js";
-
-// import { libRoute } from "./route/librarian/librarianRoute.js";
-// import { adminRoute } from "./route/admin/adminRoute.js";
-// import { userRoute } from "route/user/userRoute.js";
-
-import books from "./feature/books/books.routes.js";
-import loans from "./feature/loans/loans.routes.js";
-import users from "./feature/users/users.routes.js";
-import auth from "./feature/auth/auth.routes.js";
+import booksRoutes from "./feature/books/books.routes.js";
+import loansRoutes from "./feature/loans/loans.routes.js";
+import usersRoutes from "./feature/users/users.routes.js";
+import authRoutes from "./feature/auth/auth.routes.js";
 
 const app = express();
 
@@ -19,9 +13,17 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/books", books);
-app.use("/loans", loans);
-app.use("/users", users);
-app.use("/auth", auth);
+app.use("/books", booksRoutes);
+app.use("/loans", loansRoutes);
+app.use("/users", usersRoutes);
+app.use("/auth", authRoutes);
+
+app.use((req, res) => {
+  res.status(404).send({ message: "Route not found" });
+});
+app.use((err: unknown, req: unknown, res: express.Response, next: unknown) => {
+  console.log(err);
+  return res.status(500);
+});
 
 export { app };

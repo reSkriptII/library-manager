@@ -32,6 +32,6 @@ export { normalizedToIntArray };
 
 export function cleanFile(file: Express.Multer.File | undefined) {
   if (file) {
-    rm(path.resolve(file.path));
+    rm(path.resolve(file.path)).catch(() => {});
   }
 }

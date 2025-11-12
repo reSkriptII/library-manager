@@ -1,7 +1,7 @@
 import * as services from "./loans.services.js";
 import * as Loans from "./loans.types.js";
 
-export const getLoans: Loans.GetLoansCtrler = async function (req, res) {
+export const getLoans: Loans.GetLoansCtrler = async function (req, res, next) {
   const { active, book: bookId, borrower: borrowerId } = req.query;
 
   const isActiveNotValid = Array.isArray(req.query.active);
@@ -17,11 +17,16 @@ export const getLoans: Loans.GetLoansCtrler = async function (req, res) {
       .send({ message: `Invalid query parameter: ${field.join(", ")}` });
   }
 
-  const loans = await services.getSearchLoans({
-    active: active != undefined ? ["", "true", "1"].includes(active) : false,
-    bookId: bookId ? Number(bookId) : null,
-    borrowerId: borrowerId ? Number(borrowerId) : null,
-  });
+  let loans;
+  try {
+    loans = await services.getSearchLoans({
+      active: active != undefined ? ["", "true", "1"].includes(active) : false,
+      bookId: bookId ? Number(bookId) : null,
+      borrowerId: borrowerId ? Number(borrowerId) : null,
+    });
+  } catch (error) {
+    return next(error);
+  }
 
   if (!loans.ok) {
     return res.status(400).send({ message: loans.message });
@@ -29,7 +34,11 @@ export const getLoans: Loans.GetLoansCtrler = async function (req, res) {
   return res.status(200).send(loans.loans);
 };
 
-export const loanBook: Loans.SubmitLoansCtrler = async function (req, res) {
+export const loanBook: Loans.SubmitLoansCtrler = async function (
+  req,
+  res,
+  next
+) {
   const bookId = Number(req.body?.bookId);
   const borrowerId = Number(req.body?.borrowerId);
 
@@ -40,7 +49,12 @@ export const loanBook: Loans.SubmitLoansCtrler = async function (req, res) {
     return res.status(400).send({ message: `Invalid ${field.join(", ")}` });
   }
 
-  const loan = await services.loanBook(bookId, borrowerId);
+  let loan;
+  try {
+    loan = await services.loanBook(bookId, borrowerId);
+  } catch (error) {
+    return next(error);
+  }
 
   if (!loan.ok) {
     return res.status(400).send(loan.message);
@@ -51,7 +65,11 @@ export const loanBook: Loans.SubmitLoansCtrler = async function (req, res) {
     .send({ id: loan.id, dueDate: loan.dueDate.toISOString() });
 };
 
-export const returnBook: Loans.SubmitReturnCrler = async function (req, res) {
+export const returnBook: Loans.SubmitReturnCrler = async function (
+  req,
+  res,
+  next
+) {
   const loanId = Number(req.params.id);
 
   if (!Number.isInteger(loanId)) {
@@ -66,11 +84,16 @@ export const returnBook: Loans.SubmitReturnCrler = async function (req, res) {
     }
   }
 
-  const returnResult = await services.returnBook(loanId, req.body);
-  if (!returnResult.ok) {
-    return res
-      .status(returnResult.status)
-      .send({ message: returnResult.message });
+  let returnResult;
+  try {
+    returnResult = await services.returnBook(loanId, req.body);
+    if (!returnResult.ok) {
+      return res
+        .status(returnResult.status)
+        .send({ message: returnResult.message });
+    }
+  } catch (error) {
+    return next(error);
   }
   const { returnTime, lateReturn } = returnResult;
   return res.status(200).send({ returnTime, lateReturn });

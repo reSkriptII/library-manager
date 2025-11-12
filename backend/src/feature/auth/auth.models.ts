@@ -1,4 +1,4 @@
-import { psqlPool } from "#src/util/db.js";
+import { psqlPool } from "../../util/db.js";
 
 type UserData = {
   id: number;

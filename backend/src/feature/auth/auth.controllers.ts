@@ -1,17 +1,17 @@
-import { Controller } from "#src/types/express.js";
-import { CONFIG } from "#src/config/constant.js";
-import * as services from "./auth.service.js";
-import type * as Auth from "./auth.types.js";
 import {
   clearJwtCookie,
   delActiveRefreshToken,
   setJwtCookie,
-} from "#src/util/authToken.js";
+} from "../../util/authToken.js";
+import { CONFIG } from "../../config/constant.js";
+import * as services from "./auth.service.js";
+import type * as Auth from "./auth.types.js";
+import type { Controller } from "../../types/express.js";
 
 const EMAIL_REGEXP =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
-export const login: Auth.LoginCntrler = async function (req, res) {
+export const login: Auth.LoginCntrler = async function (req, res, next) {
   const email = req.body?.email;
   const password = req.body?.password;
 
@@ -22,7 +22,13 @@ export const login: Auth.LoginCntrler = async function (req, res) {
     return res.status(400).send({ message: "invalid password" });
   }
 
-  const result = await services.login(email, password);
+  let result;
+  try {
+    result = await services.login(email, password);
+  } catch (error) {
+    return next(error);
+  }
+
   if (!result.ok) {
     return res.status(result.status).send({ message: result.message });
   }
@@ -37,7 +43,11 @@ export const logout: Controller = async function (req, res) {
   return res.status(204).send();
 };
 
-export const registerUser: Auth.RegisterUserCtrler = async function (req, res) {
+export const registerUser: Auth.RegisterUserCtrler = async function (
+  req,
+  res,
+  next
+) {
   if (!req.body?.details) {
     return res.status(400).send({ message: "Invalid new user details" });
   }
@@ -69,7 +79,12 @@ export const registerUser: Auth.RegisterUserCtrler = async function (req, res) {
       .send({ message: "Invalid book details: " + invalidFields.join(",") });
   }
 
-  const result = await services.registerUser({ name, email, password, role });
+  let result;
+  try {
+    result = await services.registerUser({ name, email, password, role });
+  } catch (error) {
+    return next(error);
+  }
 
   if (!result.ok) {
     return res.status(400).send({ message: result.message });

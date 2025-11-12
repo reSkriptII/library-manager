@@ -1,5 +1,5 @@
-import { psqlPool } from "#src/util/db.js";
-import { LoanObject } from "#src/types/models.js";
+import { psqlPool } from "../util/db.js";
+import { LoanObject } from "../types/models.js";
 
 export type SearchLoans = {
   active?: boolean | null;

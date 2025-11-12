@@ -1,7 +1,7 @@
-import { Middleware } from "#src/types/express.js";
-import { LoanData } from "#src/types/app.js";
-export { LoanObject } from "#src/types/models.js";
-export { LoanData };
+import type { Middleware } from "../../types/express.js";
+import type { LoanData } from "#src/types/app.js";
+export type { LoanObject } from "#src/types/models.js";
+export type { LoanData };
 
 export namespace Getloans {
   export type ReqQuery = { active?: string; borrower?: string; book?: string };

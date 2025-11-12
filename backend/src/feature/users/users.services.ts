@@ -1,10 +1,10 @@
 import { readdir, rm, copyFile } from "fs/promises";
 import path from "path";
 import mime from "mime-types";
-import { FileError } from "#src/util/error.js";
+import { ENV } from "../../config/env.js";
+import { searchLoans } from "../../models/loans.js";
+import { FileError } from "../../util/error.js";
 import * as models from "./users.models.js";
-import { searchLoans } from "#src/models/loans.js";
-import { ENV } from "#src/config/env.js";
 
 export async function getAvatarData(id: number) {
   try {

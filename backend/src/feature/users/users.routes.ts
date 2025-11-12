@@ -1,7 +1,7 @@
-import { authenticate } from "#src/middleware/authenticate.js";
-import { checkRole } from "#src/middleware/checkRole.js";
 import { Router } from "express";
 import multer from "multer";
+import { authenticate } from "../../middleware/authenticate.js";
+import { checkRole } from "../../middleware/checkRole.js";
 import * as controllers from "./users.controller.js";
 
 const router = Router();

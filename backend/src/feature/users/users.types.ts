@@ -1,5 +1,5 @@
-import type { Middleware } from "#src/types/express.js";
-import { LoanData, UserData } from "#src/types/app.js";
+import type { Middleware } from "../../types/express.js";
+import type { LoanData, UserData } from "../../types/app.js";
 
 export type { LoanData, UserData };
 

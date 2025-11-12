@@ -1,15 +1,15 @@
 import jwt from "jsonwebtoken";
-import { NextFunction, Request, Response } from "express";
+import { ENV } from "../config/env.js";
 import { redisClient } from "../util/db.js";
-import { hashToken } from "#src/util/authToken.js";
-import { ENV } from "#src/config/env.js";
+import { hashToken } from "../util/authToken.js";
 import {
   clearJwtCookie,
   createAccessToken,
   createRefreshToken,
   setActiveRefreshToken,
   setJwtCookie,
-} from "#src/util/authToken.js";
+} from "../util/authToken.js";
+import type { NextFunction, Request, Response } from "express";
 
 export async function authenticate(
   req: Request,

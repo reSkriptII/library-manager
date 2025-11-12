@@ -1,4 +1,4 @@
-import type { Middleware } from "types/express.js";
+import type { Middleware } from "../../types/express.js";
 
 export type BookObject = {
   id: number;

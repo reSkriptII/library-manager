@@ -1,10 +1,10 @@
 import { readdir, copyFile, rm } from "fs/promises";
 import path from "path";
 import mime from "mime-types";
+import { ENV } from "../../config/env.js";
+import { FileError } from "../../util/error.js";
 import * as models from "./books.models.js";
-import { FileError } from "#src/util/error.js";
-import * as bookModels from "#src/models/books.js";
-import { ENV } from "#src/config/env.js";
+import * as bookModels from "../../models/books.js";
 
 export async function getBookSearch(search: models.SearchParam) {
   let books = await models.searchBooks(search);

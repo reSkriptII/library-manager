@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import { ENV } from "#src/config/env.js";
-import { CONFIG } from "#src/config/constant.js";
+import { ENV } from "../config/env.js";
+import { CONFIG } from "../config/constant.js";
 import { redisClient } from "./db.js";
 import type { Response } from "express";
 

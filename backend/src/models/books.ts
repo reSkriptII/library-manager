@@ -1,4 +1,4 @@
-import { psqlPool } from "#src/util/db.js";
+import { psqlPool } from "../util/db.js";
 
 export function isBookExist(id: number) {
   return psqlPool

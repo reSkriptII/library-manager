@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { psqlPool } from "../util/db.js";
 
 export function checkRole(requiredRole: UserRole) {

@@ -1,10 +1,10 @@
 import bcrypt from "bcrypt";
-import * as models from "./auth.models.js";
 import {
   createAccessToken,
   createRefreshToken,
   setActiveRefreshToken,
-} from "#src/util/authToken.js";
+} from "../../util/authToken.js";
+import * as models from "./auth.models.js";
 
 type Login =
   | { ok: true; accessToken: string; refreshToken: string }

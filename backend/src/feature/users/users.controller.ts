@@ -1,33 +1,52 @@
 import { createReadStream } from "fs";
-import { Controller } from "#src/types/express.js";
+import { cleanFile } from "../../util/request.js";
 import * as models from "./users.models.js";
 import * as services from "./users.services.js";
 import * as Users from "./users.types.js";
-import { cleanFile } from "#src/util/request.js";
+import type { Controller } from "../../types/express.js";
 
-export const getMe: Users.GetMeCtrler = async function (req, res) {
-  const user = await models.getUserById(req.user.id);
-  if (!user) {
-    return res.status(404).send({ message: "User not found" });
+export const getMe: Users.GetMeCtrler = async function (req, res, next) {
+  try {
+    const user = await models.getUserById(req.user.id);
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+    return res.status(200).send(user);
+  } catch (error) {
+    return next(error);
   }
-  return res.status(200).send(user);
 };
 
-export const getUserById: Users.GetUserCtrler = async function (req, res) {
+export const getUserById: Users.GetUserCtrler = async function (
+  req,
+  res,
+  next
+) {
   const userId = Number(req.params.id);
   if (!Number.isInteger(userId)) {
     return res.status(400).send({ message: "Invalid user ID" });
   }
 
-  const user = await models.getUserById(userId);
+  let user;
+  try {
+    const user = await models.getUserById(userId);
+  } catch (error) {
+    return next(error);
+  }
+
   if (!user) {
     return res.status(404).send({ message: "User not found" });
   }
   return res.status(200).send(user);
 };
 
-export const getMyAvatar: Controller = async function (req, res) {
-  const bookCoverImgData = await services.getAvatarData(req.user.id);
+export const getMyAvatar: Controller = async function (req, res, next) {
+  let bookCoverImgData;
+  try {
+    bookCoverImgData = await services.getAvatarData(req.user.id);
+  } catch (error) {
+    return next(error);
+  }
   if (bookCoverImgData == null) {
     return res.status(404).send({ message: "Image not found" });
   }
@@ -36,13 +55,19 @@ export const getMyAvatar: Controller = async function (req, res) {
   createReadStream(bookCoverImgData.path).pipe(res);
   return;
 };
-export const getAvatar: Controller = async function (req, res) {
+export const getAvatar: Controller = async function (req, res, next) {
   const userId = Number(req.params.id);
   if (!Number.isInteger(userId)) {
     return res.status(400).send({ message: "Invalid user ID" });
   }
 
-  const bookCoverImgData = await services.getAvatarData(userId);
+  let bookCoverImgData;
+  try {
+    bookCoverImgData = await services.getAvatarData(userId);
+  } catch (error) {
+    return next(error);
+  }
+
   if (bookCoverImgData == null) {
     return res.status(404).send({ message: "Image not found" });
   }
@@ -51,7 +76,7 @@ export const getAvatar: Controller = async function (req, res) {
   createReadStream(bookCoverImgData.path).pipe(res);
 };
 
-export const updateAvatar: Controller = async function (req, res) {
+export const updateAvatar: Controller = async function (req, res, next) {
   try {
     if (req.file && !req.file.mimetype.startsWith("image/")) {
       return res.status(400).send({ message: "Invalid file type" });
@@ -59,12 +84,18 @@ export const updateAvatar: Controller = async function (req, res) {
 
     await services.updateAvatar(req.user.id, req.file);
     return res.status(204).send();
+  } catch (error) {
+    return next(error);
   } finally {
     if (req.file) cleanFile(req.file);
   }
 };
 
-export const setUserName: Users.SetUserNameCtrler = async function (req, res) {
+export const setUserName: Users.SetUserNameCtrler = async function (
+  req,
+  res,
+  next
+) {
   const userId = Number(req.params.id);
   const name = req.body.name;
 
@@ -75,10 +106,18 @@ export const setUserName: Users.SetUserNameCtrler = async function (req, res) {
     return res.status(400).send({ message: "Invalid name" });
   }
 
-  await services.setUserName(userId, name);
-  return res.status(204).send();
+  try {
+    await services.setUserName(userId, name);
+    return res.status(204).send();
+  } catch (error) {
+    return next(error);
+  }
 };
-export const setUserRole: Users.SetUserRoleCtrler = async function (req, res) {
+export const setUserRole: Users.SetUserRoleCtrler = async function (
+  req,
+  res,
+  next
+) {
   const userId = Number(req.params.id);
   const role = req.body.role;
   if (!Number.isInteger(userId)) {
@@ -88,23 +127,43 @@ export const setUserRole: Users.SetUserRoleCtrler = async function (req, res) {
     return res.status(400).send({ message: "Invalid role" });
   }
 
-  await services.setUserRole(userId, role);
-  return res.status(204).send();
+  try {
+    await services.setUserRole(userId, role);
+    return res.status(204).send();
+  } catch (error) {
+    return next(error);
+  }
 };
 
-export const deleteUser: Users.DeleteUserCtrler = async function (req, res) {
+export const deleteUser: Users.DeleteUserCtrler = async function (
+  req,
+  res,
+  next
+) {
   const userId = Number(req.params.id);
 
   if (!Number.isInteger(userId)) {
     return res.status(400).send({ message: "Invalid user ID" });
   }
 
-  await services.deleteUser(userId);
-  return res.status(204).send();
+  try {
+    await services.deleteUser(userId);
+    return res.status(204).send();
+  } catch (error) {
+    return next(error);
+  }
 };
 
-export const getMyLoan: Users.GetMyLoanCtrler = async function (req, res) {
-  const userId = req.user.id;
-  const loans = await services.getMyLoan(userId);
-  return res.status(200).send(loans);
+export const getMyLoan: Users.GetMyLoanCtrler = async function (
+  req,
+  res,
+  next
+) {
+  try {
+    const userId = req.user.id;
+    const loans = await services.getMyLoan(userId);
+    return res.status(200).send(loans);
+  } catch (error) {
+    return next(error);
+  }
 };

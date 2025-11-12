@@ -1,4 +1,4 @@
-import type { Middleware } from "#src/types/express.js";
+import type { Middleware } from "../../types/express.js";
 
 export namespace Login {
   export type ReqBody = {
