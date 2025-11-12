@@ -12,7 +12,7 @@ import { login } from "../helpers.js";
 describe("Books API", () => {
   describe("GET /books", () => {
     it("return status 200 and Array body without query param", async () => {
-      const res = await request(app).get("/books/");
+      const res = await request(app).get("/books");
 
       expect(res.status).toBe(200);
       expect(Array.isArray(res.body)).toBe(true);

@@ -5,7 +5,7 @@ import { checkRole } from "#src/middleware/checkRole.js";
 
 const router = Router();
 
-router.get("/login", controllers.login);
+router.post("/login", controllers.login);
 router.post("/logout", authenticate, controllers.logout);
 
 router.post(

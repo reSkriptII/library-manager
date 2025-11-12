@@ -3,7 +3,7 @@ import { Controller } from "#src/types/express.js";
 import * as models from "./users.models.js";
 import * as services from "./users.services.js";
 import * as Users from "./users.types.js";
-import { cleanFile } from "#src/util/files.js";
+import { cleanFile } from "#src/util/request.js";
 
 export const getMe: Users.GetMeCtrler = async function (req, res) {
   const user = await models.getUserById(req.user.id);

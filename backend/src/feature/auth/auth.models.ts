@@ -11,7 +11,7 @@ type UserData = {
 export function getUserByEmail(email: string) {
   return psqlPool
     .query(
-      "SELECT user_id as id, name, email, hashed_password, role WHERE email = $1",
+      "SELECT user_id as id, name, email, hashed_password, role FROM users WHERE email = $1",
       [email]
     )
     .then((r) => r.rows[0] as UserData);

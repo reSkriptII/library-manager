@@ -23,11 +23,8 @@ export function createRefreshToken(userId: number) {
   return refreshToken;
 }
 
-export async function setActiveRefreshToken(
-  userId: number,
-  refreshToken: string
-) {
-  await redisClient.set("auth:refresh:" + hashToken(refreshToken), userId, {
+export function setActiveRefreshToken(userId: number, refreshToken: string) {
+  return redisClient.set("auth:refresh:" + hashToken(refreshToken), userId, {
     expiration: { type: "EX", value: CONFIG.ACCESS_TOKEN_EXP_SECOND },
   });
 }

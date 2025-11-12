@@ -10,7 +10,7 @@
     "build": "tsc --project tsconfig.json",
     "dev": "nodemon src/index.js",
     "lint": "eslint ./src/* --ext .js,.ts,.tsx .",
-    "createdb": "node ./config/createdb.js",
+    "createdb": "node ./database/createdb.js",
     "test": "vitest"
   },
   "keywords": [],

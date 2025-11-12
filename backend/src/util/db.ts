@@ -9,7 +9,7 @@ const redisClient = await createClient({
     process.abort();
   })
   .connect();
-await redisClient.set("test", "hi");
+
 const psqlPool = new Pool();
 
 export { psqlPool, redisClient };

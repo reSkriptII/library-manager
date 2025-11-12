@@ -1,3 +1,6 @@
+import { rm } from "fs/promises";
+import path from "path";
+
 type Normalized<Value> = { valid: true; value: Value } | { valid: false };
 
 function normalizedToIntArray(param: unknown): Normalized<number[]>;
@@ -25,5 +28,10 @@ function normalizedToIntArray(
   }
   return { valid: true, value: list as number[] };
 }
-
 export { normalizedToIntArray };
+
+export function cleanFile(file: Express.Multer.File | undefined) {
+  if (file) {
+    rm(path.resolve(file.path));
+  }
+}

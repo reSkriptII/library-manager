@@ -1,7 +1,8 @@
 import { psqlPool } from "#src/util/db.js";
 import type { LoanObject } from "./loans.types.js";
 
-export { searchLoans, SearchLoans } from "#src/models/loans.js";
+export { searchLoans } from "#src/models/loans.js";
+export type { SearchLoans } from "#src/models/loans.js";
 
 export function createLoans(bookId: number, borrowerId: number) {
   return psqlPool

@@ -21,11 +21,11 @@ export async function login(acc: "admin" | "librarian" | "user") {
   if (tokens[acc]) {
     return tokens[acc];
   }
-  const login = await request(app).post("/login").send({
+  const login = await request(app).post("/auth/login").send({
     email: account[acc].email,
     password: account[acc].password,
   });
-  if (login.status != 200) return null;
+  if (login.status != 204) return null;
   const token = login.headers["set-cookie"] as unknown as string[];
   tokens[acc] = token;
   return token;

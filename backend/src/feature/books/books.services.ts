@@ -4,6 +4,7 @@ import mime from "mime-types";
 import * as models from "./books.models.js";
 import { FileError } from "#src/util/error.js";
 import * as bookModels from "#src/models/books.js";
+import { ENV } from "#src/config/env.js";
 
 export async function getBookSearch(search: models.SearchParam) {
   let books = await models.searchBooks(search);
@@ -122,7 +123,7 @@ export async function deleteBook(id: number): Promise<DeleteBookResult> {
 
 export async function getBookCoverData(id: number | string) {
   try {
-    const imgDir = await readdir(COVER_IMAGE_DIR_PATH);
+    const imgDir = await readdir(ENV.COVER_IMAGE_DIR_PATH);
 
     const filteredImgNames = imgDir.filter(
       (file) => path.parse(file).name == String(id)
@@ -131,7 +132,10 @@ export async function getBookCoverData(id: number | string) {
       return null;
     }
 
-    const coverImgPath = path.join(COVER_IMAGE_DIR_PATH, filteredImgNames[0]);
+    const coverImgPath = path.join(
+      ENV.COVER_IMAGE_DIR_PATH,
+      filteredImgNames[0]
+    );
     const mimeType = mime.lookup(coverImgPath);
 
     if (!mimeType || !mimeType.startsWith("image/")) {
@@ -143,7 +147,7 @@ export async function getBookCoverData(id: number | string) {
       if (err.code === "ENOENT" || err.code === "EACCES") {
         throw new FileError(
           err.code,
-          COVER_IMAGE_DIR_PATH,
+          ENV.COVER_IMAGE_DIR_PATH,
           "GET /books/:id/cover"
         );
       }
@@ -157,17 +161,19 @@ export async function updateBookCover(
   file?: Express.Multer.File | undefined
 ) {
   try {
-    const imgDir = await readdir(COVER_IMAGE_DIR_PATH);
+    const imgDir = await readdir(ENV.COVER_IMAGE_DIR_PATH);
 
     const filteredImgNames = imgDir.filter(
       (file) => path.parse(file).name === id
     );
-    filteredImgNames.forEach((img) => rm(path.join(COVER_IMAGE_DIR_PATH, img)));
+    filteredImgNames.forEach((img) =>
+      rm(path.join(ENV.COVER_IMAGE_DIR_PATH, img))
+    );
 
     if (file != undefined) {
       const destFileName = id + "." + mime.extension(file.mimetype);
       const srcFilePath = path.resolve(file.path);
-      const destFilePath = path.join(COVER_IMAGE_DIR_PATH, destFileName);
+      const destFilePath = path.join(ENV.COVER_IMAGE_DIR_PATH, destFileName);
 
       await copyFile(srcFilePath, destFilePath);
     }
@@ -176,7 +182,7 @@ export async function updateBookCover(
       if (err.code === "ENOENT" || err.code === "EACCES") {
         throw new FileError(
           err.code,
-          COVER_IMAGE_DIR_PATH,
+          ENV.COVER_IMAGE_DIR_PATH,
           "GET /books/:id/cover"
         );
       }
@@ -247,5 +253,3 @@ function structureBook(book: models.BookObject) {
     reserveQueue: book.reserve_queue,
   };
 }
-
-const COVER_IMAGE_DIR_PATH = path.resolve("public", "image", "books");

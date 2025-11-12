@@ -3,8 +3,8 @@ import { Controller } from "types/express.js";
 import * as services from "./books.services.js";
 import * as models from "./books.models.js";
 import * as Books from "./books.types.js";
-import { cleanFile } from "#src/util/files.js";
-import { normalizedToIntArray } from "#src/util/request.js";
+import { cleanFile } from "../../util/request.js";
+import { normalizedToIntArray } from "../../util/request.js";
 
 // book data
 export const getBookList: Books.GetBooksListCtrler = async function (req, res) {

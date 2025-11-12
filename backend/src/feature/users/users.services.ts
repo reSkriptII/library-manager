@@ -3,12 +3,12 @@ import path from "path";
 import mime from "mime-types";
 import { FileError } from "#src/util/error.js";
 import * as models from "./users.models.js";
-import {} from "#src/models/users.js";
 import { searchLoans } from "#src/models/loans.js";
+import { ENV } from "#src/config/env.js";
 
 export async function getAvatarData(id: number) {
   try {
-    const imgDir = await readdir(AVATAR_IMAGE_DIR_PATH);
+    const imgDir = await readdir(ENV.AVATAR_IMAGE_DIR_PATH);
 
     const filteredImgNames = imgDir.filter(
       (file) => path.parse(file).name == String(id)
@@ -17,7 +17,10 @@ export async function getAvatarData(id: number) {
       return null;
     }
 
-    const coverImgPath = path.join(AVATAR_IMAGE_DIR_PATH, filteredImgNames[0]);
+    const coverImgPath = path.join(
+      ENV.AVATAR_IMAGE_DIR_PATH,
+      filteredImgNames[0]
+    );
     const mimeType = mime.lookup(coverImgPath);
 
     if (!mimeType || !mimeType.startsWith("image/")) {
@@ -29,7 +32,7 @@ export async function getAvatarData(id: number) {
       if (err.code === "ENOENT" || err.code === "EACCES") {
         throw new FileError(
           err.code,
-          AVATAR_IMAGE_DIR_PATH,
+          ENV.AVATAR_IMAGE_DIR_PATH,
           "GET /books/:id/cover"
         );
       }
@@ -43,19 +46,19 @@ export async function updateAvatar(
   file?: Express.Multer.File | undefined
 ) {
   try {
-    const imgDir = await readdir(AVATAR_IMAGE_DIR_PATH);
+    const imgDir = await readdir(ENV.AVATAR_IMAGE_DIR_PATH);
 
     const filteredImgNames = imgDir.filter(
       (file) => path.parse(file).name === id
     );
     filteredImgNames.forEach((img) =>
-      rm(path.join(AVATAR_IMAGE_DIR_PATH, img))
+      rm(path.join(ENV.AVATAR_IMAGE_DIR_PATH, img))
     );
 
     if (file != undefined) {
       const destFileName = id + "." + mime.extension(file.mimetype);
       const srcFilePath = path.resolve(file.path);
-      const destFilePath = path.join(AVATAR_IMAGE_DIR_PATH, destFileName);
+      const destFilePath = path.join(ENV.AVATAR_IMAGE_DIR_PATH, destFileName);
 
       await copyFile(srcFilePath, destFilePath);
     }
@@ -64,7 +67,7 @@ export async function updateAvatar(
       if (err.code === "ENOENT" || err.code === "EACCES") {
         throw new FileError(
           err.code,
-          AVATAR_IMAGE_DIR_PATH,
+          ENV.AVATAR_IMAGE_DIR_PATH,
           "GET /users/*/avartar"
         );
       }
@@ -116,5 +119,3 @@ export async function getMyLoan(id: number) {
     returnTime: loan.due_date.toISOString(),
   }));
 }
-
-const AVATAR_IMAGE_DIR_PATH = path.resolve("public", "image", "users");

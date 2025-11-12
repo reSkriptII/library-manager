@@ -1,9 +1,10 @@
+import path from "path";
 import dotenv from "dotenv";
 dotenv.config();
 
 function requireEnv(key: string) {
   const value = process.env[key];
-  if (value !== "string")
+  if (typeof value !== "string")
     throw new Error("Missing environment variable: " + key);
   return value;
 }
@@ -13,7 +14,10 @@ export const ENV = {
   PORT: Number(process.env.PORT ?? 5000),
   // DATABASE_URL: requireEnv("DATABASE_URL")
   ACCESS_TOKEN_SECRET: requireEnv("ACCESS_TOKEN_SECRET"),
-  REFRESH_TOKEN_SECRET: requireEnv("REFERSH_TOKEN_SECRET"),
+  REFRESH_TOKEN_SECRET: requireEnv("REFRESH_TOKEN_SECRET"),
 
   CORS_ORIGIN: process.env.CORS_ORIGIN ?? "http://localhost:5173",
+
+  AVATAR_IMAGE_DIR_PATH: path.resolve("public", "image", "users"),
+  COVER_IMAGE_DIR_PATH: path.resolve("public", "image", "books"),
 };
