@@ -1,7 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { createContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import type { userContextType, user } from "type";
 
 export const UserContext = createContext<userContextType | null>(null);
 

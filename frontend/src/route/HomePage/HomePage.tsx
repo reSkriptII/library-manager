@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDebounce } from "#hook/useDebounce.ts";
+import { useDebounce } from "@/hooks/useDebounce.ts";
 
 import { HeaderBar } from "#component/HeaderBar/HeaderBar.jsx";
 import { SearchField } from "../../component/SearchField.js";

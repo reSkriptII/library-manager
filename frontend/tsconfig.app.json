@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
+      "@/*": ["./src/*"],
       "@hook/*": ["hook/*"],
       "@component/*": ["component/*"]
     },
@@ -30,5 +31,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src", "lib"]
 }

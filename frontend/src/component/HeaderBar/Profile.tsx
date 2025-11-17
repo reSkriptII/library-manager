@@ -1,13 +1,12 @@
 import { useContext, useState } from "react";
 import { ProfileMenu } from "./ProfileMenu";
-import type { user } from "#root/type.d.ts";
-import { UserContext } from "#root/hook/UseProvider.js";
+import { UserContext } from "@/contexts/UserContext";
 
 export default function Profile() {
   const context = useContext(UserContext);
-  if (!context) throw new Error("userContext not found");
-  const { user } = context;
-
+  // if (!context) throw new Error("userContext not found");
+  //const { user } = context;
+  const user = null;
   const [isMenuCollasped, setIsMenuCollasped] = useState(true);
 
   return (
