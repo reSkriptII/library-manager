@@ -11,8 +11,8 @@ router.use(authenticate);
 
 router.get("/me", controllers.getMe);
 router.get("/me/avatar", controllers.getMyAvatar);
-router.put("me/avatar", upload.single("avatar"), controllers.updateAvatar);
-router.delete("me/avatar", controllers.updateAvatar);
+router.put("/me/avatar", upload.single("avatar"), controllers.updateAvatar);
+router.delete("/me/avatar", controllers.updateAvatar);
 
 router.get("/me/loans", controllers.getMyLoan);
 

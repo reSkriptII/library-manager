@@ -25,7 +25,7 @@ export function createRefreshToken(userId: number) {
 
 export function setActiveRefreshToken(userId: number, refreshToken: string) {
   return redisClient.set("auth:refresh:" + hashToken(refreshToken), userId, {
-    expiration: { type: "EX", value: CONFIG.ACCESS_TOKEN_EXP_SECOND },
+    expiration: { type: "EX", value: CONFIG.REFRESH_TOKEN_EXP_SECOND },
   });
 }
 export async function delActiveRefreshToken(refreshToken?: string) {
@@ -51,7 +51,7 @@ export function setJwtCookie(
   });
   res.cookie("refresh_token", refreshToken, {
     httpOnly: true,
-    expires: new Date(Date.now() + CONFIG.ACCESS_TOKEN_EXP_SECOND * 1000),
+    expires: new Date(Date.now() + CONFIG.REFRESH_TOKEN_EXP_SECOND * 1000),
   });
 }
 export function clearJwtCookie(res: Response) {

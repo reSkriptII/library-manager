@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { ProfileMenu } from "./ProfileMenu";
-import { UserContext } from "@/contexts/UserContext";
+import { UserContext } from "#root/features/users/contexts.tsx";
 
 export default function Profile() {
   const context = useContext(UserContext);

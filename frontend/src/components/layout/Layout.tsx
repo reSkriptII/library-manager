@@ -1,14 +1,16 @@
 import { Outlet } from "react-router";
+import { Toaster } from "sonner";
 import { Header } from "./Header";
 export function Layout() {
   return (
     <>
+      <Toaster position="top-center" />
       <Header />
-      <div className="flex flex-grow flex-col">
+      <main className="flex flex-grow flex-col">
         <div className="container mx-auto my-2 flex flex-grow flex-col px-4 md:px-8">
           <Outlet />
         </div>
-      </div>
+      </main>
     </>
   );
 }
