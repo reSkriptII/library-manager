@@ -8,6 +8,7 @@ export function useDebounce(
 ): () => void {
   const timeoutRef = useRef<number | null>(null);
   const fnRef = useRef(fn);
+  const isWaitingRef = useRef(false);
 
   useEffect(() => {
     fnRef.current = fn;
@@ -19,8 +20,14 @@ export function useDebounce(
         clearTimeout(timeoutRef.current);
       }
 
+      if (!isWaitingRef.current) {
+        fnRef.current(...args);
+        isWaitingRef.current = true;
+      }
+
       timeoutRef.current = setTimeout(() => {
         fnRef.current(...args);
+        isWaitingRef.current = false;
       }, delay);
     },
     [delay],

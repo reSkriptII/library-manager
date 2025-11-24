@@ -1,16 +1,17 @@
+import { useState } from "react";
+import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogOverlay,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "../ui/dialog";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Label } from "../ui/label";
 import { toast } from "sonner";
 import { login } from "@/features/users/api.ts";
-import { useState } from "react";
-import { useUser } from "#root/features/users/hooks.ts";
+import { useUser } from "@/features/users/hooks.ts";
 
 type LoginModalProps = {
   open: boolean;
@@ -48,35 +49,37 @@ export function LoginModal({ open, onClose, setOpen }: LoginModalProps) {
     >
       <DialogOverlay />
       <DialogContent className="sm:w-98">
-        <DialogTitle className="text-4xl">Log in</DialogTitle>
-        <div className="mb-4 flex flex-col gap-2">
-          <div>
-            <label htmlFor="email">Email</label>
-            <Input
-              id="email"
-              type="email"
-              onChange={(e) => setEmail(e.target.value)}
-            />
+        <form>
+          <DialogTitle className="mb-6 text-4xl">Log in</DialogTitle>
+          <div className="mb-8 flex flex-col gap-4">
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
           </div>
-          <div>
-            <label htmlFor="password">Password</label>
-            <Input
-              id="password"
-              type="password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button
-            type="submit"
-            className="w-full"
-            onClick={handleLogin}
-            disabled={isSubmitting}
-          >
-            Log in
-          </Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button
+              type="submit"
+              className="w-full"
+              onClick={handleLogin}
+              disabled={isSubmitting}
+            >
+              Log in
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

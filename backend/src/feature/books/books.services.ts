@@ -242,7 +242,7 @@ function structureBook(book: models.BookObject) {
   const authorId = book.author_ids as number[];
   const authors: { id: number; name: string }[] = [];
   authorId.forEach((id, index) =>
-    authors.push({ id, name: book.genre_names[index] })
+    authors.push({ id, name: book.author_names[index] })
   );
   return {
     id: book.id,

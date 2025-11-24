@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="90" height="80" viewBox="0 0 90 80">
+  <g id="burgericon" class="icon">
+    <rect class="frstbar" x="10" y="10" width="70" height="12" rx="7" ry="7" fill="#414141"/>
+    <rect class="scndbar" x="10" y="35" width="70" height="12" rx="7" ry="7" fill="#414141"/>
+    <rect class="thrdbar" x="10" y="60" width="70" height="12" rx="7" ry="7" fill="#414141"/>
+  </g>
+</svg>
