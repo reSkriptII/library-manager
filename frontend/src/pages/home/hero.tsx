@@ -1,3 +1,4 @@
+import { LoginButton } from "#root/components/layout/LoginButton.tsx";
 import { Button } from "#root/components/ui/button.tsx";
 
 export function Hero() {
@@ -7,7 +8,7 @@ export function Hero() {
         <h1 className="mb-8 text-2xl">
           Welcome to <span className="text-3xl font-bold">The Library</span>
         </h1>
-        <Button>Log in</Button>
+        <LoginButton />
       </div>
     </div>
   );

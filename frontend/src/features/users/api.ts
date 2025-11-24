@@ -19,13 +19,12 @@ export async function login(payload: { email: string; password: string }) {
 }
 
 export async function logout() {
-  alert("logout");
+  await api.post("/auth/logout");
 }
+
 export async function getUser() {
   try {
-    const user = await api
-      .get("/users/me", { withCredentials: true })
-      .then((r) => r.data);
+    const user = await api.get("/users/me").then((r) => r.data);
     return user;
   } catch (error) {
     if (error instanceof AxiosError) {

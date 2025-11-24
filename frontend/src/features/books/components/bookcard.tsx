@@ -45,12 +45,12 @@ export function BookCard({ book }: { book: BookData }) {
               ))}
             </ul>
           </div>
-          <p className="mb-6 text-lg font-bold">
+          <div className="mb-6 text-lg font-bold">
             Availability:
             <div className="pl-2 text-base font-normal">
               {isAvailable ? "available" : "not available"}
             </div>
-          </p>
+          </div>
         </div>
       </CardContent>
     </Card>

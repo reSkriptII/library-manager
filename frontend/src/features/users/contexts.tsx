@@ -10,7 +10,7 @@ export type User = {
 
 export type userProviderState = {
   user: User | null;
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
 };
 
 export const UserContext = createContext<userProviderState | null>(null);

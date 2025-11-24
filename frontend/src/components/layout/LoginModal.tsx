@@ -3,6 +3,7 @@ import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogOverlay,
   DialogTitle,
@@ -49,6 +50,10 @@ export function LoginModal({ open, onClose, setOpen }: LoginModalProps) {
     >
       <DialogOverlay />
       <DialogContent className="sm:w-98">
+        <DialogDescription className="sr-only">
+          Enter your email address and password to securely sign in to your
+          account.
+        </DialogDescription>
         <form>
           <DialogTitle className="mb-6 text-4xl">Log in</DialogTitle>
           <div className="mb-8 flex flex-col gap-4">
