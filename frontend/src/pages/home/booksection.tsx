@@ -27,6 +27,7 @@ type SearchProps = {
   filter: BookFilter;
   setFilter: (filter: BookFilter) => void;
 };
+
 export function Search({ filter, setFilter }: SearchProps) {
   return (
     <div>

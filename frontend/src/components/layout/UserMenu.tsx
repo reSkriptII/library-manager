@@ -5,13 +5,18 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
-import { API_BASE_URL } from "@/env";
-import { logout } from "@/features/users/api.ts";
-import { useUser } from "#root/features/users/hooks.ts";
+import { Input } from "../ui/input";
 import { toast } from "sonner";
+import { API_BASE_URL } from "@/env";
+import { changeAvatar, logout } from "@/features/users/api.ts";
+import { useUser } from "@/features/users/hooks.ts";
+import { Label } from "../ui/label";
+import { useState } from "react";
 
 export function UserMenu() {
+  const [lastAvatarUpdate, setLastAvatarUpdate] = useState(0);
   const { setUser } = useUser();
+
   async function handleLogout() {
     try {
       await logout();
@@ -22,17 +27,57 @@ export function UserMenu() {
       console.log(err);
     }
   }
+
+  async function handleAvatarChange(file: File | null) {
+    try {
+      await changeAvatar(file);
+      setLastAvatarUpdate(Date.now());
+      toast.success(`${file ? "change" : "remove"} avatar successfully`);
+    } catch (err) {
+      console.log(err);
+      toast.error("error change avatar");
+    }
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="size-10 rounded-full bg-black">
         <Avatar>
-          <AvatarImage src={API_BASE_URL + "/users/me/avatar"} alt="avatar" />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarImage
+            src={API_BASE_URL + "/users/me/avatar?t=" + lastAvatarUpdate}
+            alt="avatar"
+          />
+          <AvatarFallback>
+            <AvatarImage src="/avatar-icon-dark.svg" alt="no avatar" />
+          </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-24">
-        <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
+      <DropdownMenuContent className="w-52">
+        <DropdownMenuItem asChild>
+          <Label className="text-sm font-normal" htmlFor="avatar-file">
+            <img src="/avatar-icon.svg" className="size-4" aria-hidden />
+            Change avatar image
+          </Label>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="ml-6"
+          onClick={() => handleAvatarChange(null)}
+        >
+          Remove avatar image
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>
+          <img src="/logout.svg" className="size-4" aria-hidden />
+          Log out
+        </DropdownMenuItem>
       </DropdownMenuContent>
+      <Input
+        type="file"
+        hidden
+        id="avatar-file"
+        onChange={(e) => {
+          alert("test");
+          if (e.target.files) handleAvatarChange(e.target.files[0]);
+        }}
+      />
     </DropdownMenu>
   );
 }

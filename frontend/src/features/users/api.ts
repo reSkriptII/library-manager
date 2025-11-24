@@ -1,5 +1,6 @@
 import { AxiosError } from "axios";
 import { api } from "@/lib/api.ts";
+import { toast } from "sonner";
 
 export async function login(payload: { email: string; password: string }) {
   try {
@@ -34,4 +35,16 @@ export async function getUser() {
       }
     }
   }
+}
+
+export async function changeAvatar(file: File | null) {
+  if (!file) {
+    await api.put("/users/me/avatar");
+    return;
+  }
+
+  const body = new FormData();
+  body.append("avatar", file);
+
+  await api.put("/users/me/avatar", body);
 }

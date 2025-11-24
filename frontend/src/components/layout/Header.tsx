@@ -18,7 +18,7 @@ export function Header() {
           {user ? (
             <>
               <NavLink to="/loan">My loan</NavLink>
-              {user.role == "member" && (
+              {user.role !== "member" && (
                 <NavLink to="/dashboard">Dashboard</NavLink>
               )}
               <UserMenu />

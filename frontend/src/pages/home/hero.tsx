@@ -1,5 +1,4 @@
 import { LoginButton } from "#root/components/layout/LoginButton.tsx";
-import { Button } from "#root/components/ui/button.tsx";
 
 export function Hero() {
   return (

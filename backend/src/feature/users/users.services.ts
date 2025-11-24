@@ -49,7 +49,7 @@ export async function updateAvatar(
     const imgDir = await readdir(ENV.AVATAR_IMAGE_DIR_PATH);
 
     const filteredImgNames = imgDir.filter(
-      (file) => path.parse(file).name === id
+      (file) => path.parse(file).name === String(id)
     );
     filteredImgNames.forEach((img) =>
       rm(path.join(ENV.AVATAR_IMAGE_DIR_PATH, img))
