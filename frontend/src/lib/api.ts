@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "#root/components/layout/env.ts";
+import { API_BASE_URL } from "#root/env.ts";
 import axios from "axios";
 import { toast } from "sonner";
 

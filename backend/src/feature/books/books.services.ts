@@ -250,6 +250,6 @@ function structureBook(book: models.BookObject) {
     genres,
     authors,
     lent: book.lent,
-    reserveQueue: book.reserve_queue,
+    reserveQueue: Number(book.reserve_queue),
   };
 }

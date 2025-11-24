@@ -8,7 +8,7 @@ export function Header() {
   const { user } = useUser();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b">
+    <header className="bg-background sticky top-0 z-50 w-full border-b">
       <div className="container m-auto flex h-14 items-center px-4 md:px-12">
         <NavLink to="/">
           <Logo />

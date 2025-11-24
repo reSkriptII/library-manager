@@ -16,7 +16,7 @@ export function BookSection() {
   return (
     <section className="py-12">
       <Search filter={filter} setFilter={setFilter} />
-      <div className="grid grid-cols-5">
+      <div className="my-8 grid grid-cols-2 gap-2 lg:grid-cols-3">
         {books && books.map((book) => <BookCard book={book} key={book.id} />)}
       </div>
     </section>

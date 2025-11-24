@@ -164,7 +164,7 @@ export const deleteBook: Controller = async function (req, res, next) {
 // cover
 export const getBookCover: Controller = async function (req, res, next) {
   const bookId = Number(req.params.id);
-  if (Number.isInteger(bookId)) {
+  if (!Number.isInteger(bookId)) {
     return res.status(400).send({ message: "Invalid book ID" });
   }
 
@@ -185,7 +185,7 @@ export const getBookCover: Controller = async function (req, res, next) {
 export const updateBookCover: Controller = async function (req, res, next) {
   try {
     const bookId = Number(req.params.id);
-    if (Number.isInteger(bookId)) {
+    if (!Number.isInteger(bookId)) {
       return res.status(400).send({ message: "Invalid book ID" });
     }
 

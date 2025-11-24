@@ -40,9 +40,10 @@ export function searchBooks(search: SearchParam): Promise<BookObject[]> {
         AND ($4::int[] IS NULL OR id IN
           (SELECT book_id FROM book_genres WHERE genre_id = ANY($4)))
       ORDER BY 
-        ($2 IS NULL OR title = $2::text),
-        ($2 IS NULL OR title ILIKE $2::text || '%'), 
-        id`,
+        ($2 IS NULL OR title = $2::text) DESC,
+        ($2 IS NULL OR title ILIKE $2::text || '%') DESC,
+        title ASC, 
+        id ASC`,
       [id, title, author, genre]
     )
     .then((r) => r.rows);

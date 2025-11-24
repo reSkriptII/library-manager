@@ -5,7 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
-import { API_BASE_URL } from "./env";
+import { API_BASE_URL } from "@/env";
 import { logout } from "@/features/users/api.ts";
 
 export function UserMenu() {

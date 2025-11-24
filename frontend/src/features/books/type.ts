@@ -15,7 +15,8 @@ export type BookData = {
   reserveQueue: number;
 };
 
-type SearchBookProps = {
-  filter: BookFilter;
-  setFilter: (books: BookFilter) => void;
+export type BookFilter = {
+  title: string;
+  genres: BookPropEntity[];
+  author: BookPropEntity | null;
 };
