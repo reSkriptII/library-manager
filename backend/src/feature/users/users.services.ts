@@ -110,6 +110,7 @@ export async function getMyLoan(id: number) {
   return loans.map((loan) => ({
     id: loan.loan_id,
     bookId: loan.book_id,
+    bookTitle: loan.title,
     borrowerId: loan.borrower_id,
     borrowTime: loan.borrow_time.toISOString(),
     dueDate: loan.due_date.toISOString(),

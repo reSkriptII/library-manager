@@ -1,12 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import { getUser } from "./api";
-
-export type User = {
-  id: number;
-  name: string;
-  email: string;
-  role: "member" | "librarian" | "admin";
-};
+import type { User } from "./types";
 
 export type userProviderState = {
   user: User | null;
@@ -19,10 +13,14 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
+    let isMount = true;
     (async () => {
       const user = await getUser();
-      if (user) setUser(user);
+      if (isMount) setUser(user);
     })();
+    return () => {
+      isMount = false;
+    };
   }, []);
 
   return (

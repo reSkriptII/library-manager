@@ -10,10 +10,13 @@ export function searchLoans(search: SearchLoans): Promise<LoanObject[]> {
   const { active = null, bookId = null, borrowerId = null } = search;
   return psqlPool
     .query(
-      `SELECT loan_id, borrower_id, book_id, borrow_time, due_date, return_time FROM loans
-    WHERE ($1 = false OR return_time IS NULL)
-      AND ($2::int IS NULL OR book_id = $2::int)
-      AND ($3::int IS NULL OR borrower_id = $3::int)`,
+      `SELECT loan_id, loans.borrower_id, loans.book_id, books.title
+        loans.borrow_time, loans.due_date, loans.return_time 
+      FROM loans
+      LEFT JOIN books ON books.book_id = loans.book_id
+      WHERE ($1 = false OR return_time IS NULL)
+        AND ($2::int IS NULL OR book_id = $2::int)
+        AND ($3::int IS NULL OR borrower_id = $3::int)`,
       [active, bookId, borrowerId]
     )
     .then((r) => r.rows);

@@ -23,9 +23,11 @@ export async function logout() {
   await api.post("/auth/logout");
 }
 
-export async function getUser() {
+export async function getUser(id?: number) {
   try {
-    const user = await api.get("/users/me").then((r) => r.data);
+    const user = await api
+      .get(id ? `/users/${id}` : "/users/me")
+      .then((r) => r.data);
     return user;
   } catch (error) {
     if (error instanceof AxiosError) {

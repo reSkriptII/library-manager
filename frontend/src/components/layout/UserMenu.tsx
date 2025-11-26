@@ -40,14 +40,15 @@ export function UserMenu() {
   }
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="size-10 rounded-full bg-black">
+      <DropdownMenuTrigger className="size-10 overflow-hidden rounded-full border bg-black">
         <Avatar>
           <AvatarImage
             src={API_BASE_URL + "/users/me/avatar?t=" + lastAvatarUpdate}
             alt="avatar"
+            className="size-10 object-cover"
           />
           <AvatarFallback>
-            <AvatarImage src="/avatar-icon-dark.svg" alt="no avatar" />
+            <img src="/avatar-icon-dark.svg" alt="no avatar" />
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -74,7 +75,6 @@ export function UserMenu() {
         hidden
         id="avatar-file"
         onChange={(e) => {
-          alert("test");
           if (e.target.files) handleAvatarChange(e.target.files[0]);
         }}
       />

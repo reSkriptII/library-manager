@@ -1,6 +1,7 @@
 import * as models from "./loans.models.js";
 import * as bookModels from "#src/models/books.js";
 import * as userModels from "#src/models/users.js";
+import { CONFIG } from "#src/config/constant.js";
 
 export async function getSearchLoans(search: models.SearchLoans) {
   const loans = await models.searchLoans(search);
@@ -13,6 +14,7 @@ export async function getSearchLoans(search: models.SearchLoans) {
     loans: loans.map((loan) => ({
       id: loan.loan_id,
       bookId: loan.book_id,
+      bookTitle: loan.title,
       borrowerId: loan.borrower_id,
       borrowTime: loan.borrow_time.toISOString(),
       dueDate: loan.due_date.toISOString(),
@@ -48,7 +50,11 @@ export async function loanBook(
     return { ok: false, message: "User not found" };
   }
 
-  const loan = await models.createLoans(bookId, bookId);
+  const loan = await models.createLoans(
+    bookId,
+    borrowerId,
+    CONFIG.BORROW_INTERVAL
+  );
   return { ok: true, id: loan.id, dueDate: new Date(loan.due_date) };
 }
 

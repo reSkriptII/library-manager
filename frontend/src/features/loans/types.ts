@@ -1,10 +1,3 @@
-export type UserData = {
-  id: number;
-  name: string;
-  email: string;
-  role: "member" | "librarian" | "admin";
-};
-
 export type LoanData = {
   id: number;
   borrowerId: number;

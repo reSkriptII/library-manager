@@ -4,11 +4,15 @@ import type { LoanObject } from "./loans.types.js";
 export { searchLoans } from "../../models/loans.js";
 export type { SearchLoans } from "../../models/loans.js";
 
-export function createLoans(bookId: number, borrowerId: number) {
+export function createLoans(
+  bookId: number,
+  borrowerId: number,
+  borrowInterval: string
+) {
   return psqlPool
     .query(
-      "INSERT INTO loans (borrower_id, book_id) VALUES ($1, $2) RETURNING loan_id as id, due_date",
-      [borrowerId, bookId]
+      "INSERT INTO loans (borrower_id, book_id, due_date) VALUES ($1, $2, NOW() + INTERVAL $3) RETURNING loan_id as id, due_date",
+      [borrowerId, bookId, borrowInterval]
     )
     .then((r) => r.rows[0] as { id: number; due_date: string });
 }

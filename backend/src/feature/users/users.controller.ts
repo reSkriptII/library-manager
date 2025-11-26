@@ -29,7 +29,7 @@ export const getUserById: Users.GetUserCtrler = async function (
 
   let user;
   try {
-    const user = await models.getUserById(userId);
+    user = await models.getUserById(userId);
   } catch (error) {
     return next(error);
   }

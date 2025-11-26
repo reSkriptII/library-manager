@@ -38,7 +38,6 @@ export async function authenticate(
       return res.status(401).send({ message: "token malformed" });
     }
     if (!isTokenInSession) {
-      clearJwtCookie(res);
       return res.status(401).send({ message: "token expired/revoked" });
     }
 
