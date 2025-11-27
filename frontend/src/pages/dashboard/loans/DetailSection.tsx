@@ -5,29 +5,36 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
-import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent, CardTitle } from "@/components/ui/card.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
+import { useGetUser } from "#root/features/users/hooks.ts";
 
 type DetailSectionProps = {
-  user?: User | null;
-  book?: { id: number; title: string } | null;
-  dueDate?: Date | null;
-  validBook: boolean;
+  borrowerId: number;
+  book: { id: number; title: string } | null;
+  dueDate: Date | null;
+  showDisclaimer: boolean;
+  disclaimer: string;
 };
 
 export function DetailSection({
-  user,
+  borrowerId,
   book,
   dueDate,
-  validBook,
+  showDisclaimer,
+  disclaimer,
 }: DetailSectionProps) {
   return (
     <section className="my-4">
       <div className="grid gap-4 sm:grid-cols-2">
-        <BookCard book={book} dueDate={dueDate} valid={validBook} />
-        <BorrowerCard user={user} />
+        <BookCard
+          book={book}
+          dueDate={dueDate}
+          showDisclaimer={showDisclaimer}
+          disclaimer={disclaimer}
+        />
+        <BorrowerCard borrowerId={borrowerId} />
       </div>
     </section>
   );
@@ -36,10 +43,16 @@ export function DetailSection({
 type BookCardProps = {
   book?: { id: number; title: string } | null;
   dueDate?: Date | null;
-  valid: boolean;
+  showDisclaimer: boolean;
+  disclaimer: string;
 };
 
-function BookCard({ book, dueDate, valid }: BookCardProps) {
+function BookCard({
+  book,
+  dueDate,
+  showDisclaimer,
+  disclaimer,
+}: BookCardProps) {
   return (
     <Card>
       <CardContent className="h-38">
@@ -72,20 +85,17 @@ function BookCard({ book, dueDate, valid }: BookCardProps) {
             </div>
           </div>
         </div>
-        {!valid && (
-          <p className="mt-1 text-center font-bold">
-            This book isn't borrowed by user
-          </p>
-        )}
-        {valid && extractDate(dueDate) < new Date() && (
-          <p className="mt-1 text-center font-bold">Late</p>
+        {showDisclaimer && (
+          <p className="mt-1 text-center font-bold">{disclaimer}</p>
         )}
       </CardContent>
     </Card>
   );
 }
 
-function BorrowerCard({ user }: { user?: User | null }) {
+function BorrowerCard({ borrowerId }: { borrowerId: number }) {
+  const borrower = useGetUser(borrowerId);
+
   return (
     <Card className="h-full">
       <CardContent>
@@ -94,8 +104,8 @@ function BorrowerCard({ user }: { user?: User | null }) {
           <Avatar className="size-16 lg:size-24">
             <AvatarImage
               src={
-                user
-                  ? API_BASE_URL + `/users/${user.id}/avatar`
+                borrower
+                  ? API_BASE_URL + `/users/${borrower.id}/avatar`
                   : "/avatar-icon.svg"
               }
             />
@@ -106,11 +116,11 @@ function BorrowerCard({ user }: { user?: User | null }) {
           <div className="grow">
             <div>
               <Label htmlFor="name">Name</Label>
-              <Input readOnly id="name" value={user?.name ?? "-"} />
+              <Input readOnly id="name" value={borrower?.name ?? "-"} />
             </div>
             <div className="mt-2">
               <Label htmlFor="email">Email</Label>
-              <Input readOnly id="email" value={user?.email ?? "-"} />
+              <Input readOnly id="email" value={borrower?.email ?? "-"} />
             </div>
           </div>
         </div>

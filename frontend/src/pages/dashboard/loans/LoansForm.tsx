@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { Switch } from "@/components/ui/switch.tsx";
 
-export type LoanFilter = {
+export type Search = {
   borrowerId: number;
   bookId: number;
   bookTitle: string;
@@ -10,11 +10,11 @@ export type LoanFilter = {
 };
 
 type LoansFormProps = {
-  filter: LoanFilter;
-  onChange: (filter: LoanFilter) => void;
+  search: Search;
+  onChange: (search: Search) => void;
 };
 
-export function LoansForm({ filter, onChange }: LoansFormProps) {
+export function LoansForm({ search: filter, onChange }: LoansFormProps) {
   return (
     <div className="block items-center gap-8 lg:flex">
       <div className="flex flex-col gap-2 lg:w-2/3">

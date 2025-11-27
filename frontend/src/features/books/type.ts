@@ -16,7 +16,7 @@ export type BookData = {
 };
 
 export type BookFilter = {
-  title: string;
-  genres: BookPropEntity[];
-  author: BookPropEntity | null;
+  title?: string;
+  genres?: BookPropEntity[];
+  author?: BookPropEntity | null;
 };

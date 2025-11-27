@@ -11,9 +11,9 @@ export function useBookList(filter: BookFilter) {
     let isMount = true;
 
     const params = {
-      title: filter.title !== "" ? filter.title : undefined,
-      genre: filter.genres.map((genre) => genre.id),
-      author: filter.author?.id,
+      title: filter.title && filter.title !== "" ? filter.title : undefined,
+      genre: filter.genres && filter.genres.map((genre) => genre.id),
+      author: filter.author && filter.author?.id,
     };
 
     (async () => {

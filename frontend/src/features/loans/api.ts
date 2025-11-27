@@ -1,7 +1,7 @@
 import { api } from "#root/lib/api.ts";
 import { AxiosError } from "axios";
 
-export async function submitLoans(loanReqBody: {
+export async function makeLoan(loanReqBody: {
   borrowerId: number;
   bookId: number;
 }) {
