@@ -4,26 +4,21 @@ import * as userModels from "#src/models/users.js";
 import { CONFIG } from "#src/config/constant.js";
 
 export async function getSearchLoans(search: models.SearchLoans) {
+  console.log(search);
   const loans = await models.searchLoans(search);
-  if (loans[0] == undefined) {
-    return { ok: false, message: "Loan not found" };
-  }
 
-  return {
-    ok: true,
-    loans: loans.map((loan) => ({
-      id: loan.loan_id,
-      bookId: loan.book_id,
-      bookTitle: loan.title,
-      borrowerId: loan.borrower_id,
-      borrowTime: loan.borrow_time.toISOString(),
-      dueDate: loan.due_date.toISOString(),
-      returned: loan.return_time != null,
-      isLateReturn:
-        loan.return_time == null ? null : loan.return_time > loan.due_date,
-      returnTime: loan.due_date.toISOString(),
-    })),
-  };
+  return loans.map((loan) => ({
+    id: loan.loan_id,
+    bookId: loan.book_id,
+    bookTitle: loan.title,
+    borrowerId: loan.borrower_id,
+    borrowTime: loan.borrow_time.toISOString(),
+    dueDate: loan.due_date.toISOString(),
+    returned: loan.return_time != null,
+    isLateReturn:
+      loan.return_time == null ? null : loan.return_time > loan.due_date,
+    returnTime: loan.due_date.toISOString(),
+  }));
 }
 
 export type LoanBook =

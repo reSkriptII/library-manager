@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import qs from "qs";
 import { api } from "@/lib/api.ts";
-import type { BookFilter, BookPropEntity } from "../type";
+import type { BookFilter } from "../type";
 import type { BookData } from "../type";
 
-export function useBooks(filter: BookFilter) {
+export function useBookList(filter: BookFilter) {
   const [books, setBooks] = useState<BookData[]>([]);
 
   useEffect(() => {
@@ -26,9 +26,9 @@ export function useBooks(filter: BookFilter) {
           },
         });
 
-        setBooks(res.data);
+        if (isMount) setBooks(res.data);
       } catch {
-        setBooks([]);
+        if (isMount) setBooks([]);
       }
     })();
 

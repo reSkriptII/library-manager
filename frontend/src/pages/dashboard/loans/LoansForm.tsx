@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { Switch } from "@/components/ui/switch.tsx";
 
-export type LoansFilter = {
+export type LoanFilter = {
   borrowerId: number;
   bookId: number;
   bookTitle: string;
@@ -10,8 +10,8 @@ export type LoansFilter = {
 };
 
 type LoansFormProps = {
-  filter: LoansFilter;
-  onChange: (filter: LoansFilter) => void;
+  filter: LoanFilter;
+  onChange: (filter: LoanFilter) => void;
 };
 
 export function LoansForm({ filter, onChange }: LoansFormProps) {
@@ -59,6 +59,7 @@ export function LoansForm({ filter, onChange }: LoansFormProps) {
           <div className="mt-1 flex items-center space-x-2 text-sm">
             <span>Borrow</span>
             <Switch
+              defaultChecked
               id="airplane-mode"
               onCheckedChange={(isCheck) =>
                 onChange({ ...filter, mode: isCheck ? "return" : "borrow" })

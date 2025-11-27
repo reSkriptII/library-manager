@@ -11,7 +11,7 @@ export function createLoans(
 ) {
   return psqlPool
     .query(
-      "INSERT INTO loans (borrower_id, book_id, due_date) VALUES ($1, $2, NOW() + INTERVAL $3) RETURNING loan_id as id, due_date",
+      "INSERT INTO loans (borrower_id, book_id, due_date) VALUES ($1, $2, NOW() + $3::interval) RETURNING loan_id as id, due_date",
       [borrowerId, bookId, borrowInterval]
     )
     .then((r) => r.rows[0] as { id: number; due_date: string });

@@ -4,7 +4,11 @@ export type { LoanObject } from "#src/types/models.js";
 export type { LoanData };
 
 export namespace Getloans {
-  export type ReqQuery = { active?: string; borrower?: string; book?: string };
+  export type ReqQuery = {
+    active?: string;
+    borrowerId?: string;
+    bookId?: string;
+  };
   export type ResBody = LoanData[];
   export type Controller = Middleware<{}, ReqQuery, unknown, ResBody>;
 }

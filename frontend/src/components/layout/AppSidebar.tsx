@@ -1,5 +1,5 @@
 import { Book, CalendarClock, UserRoundPen, UserRoundPlus } from "lucide-react";
-import { NavLink, useNavigate } from "react-router";
+import { NavLink } from "react-router";
 import {
   Sidebar,
   SidebarContent,

@@ -10,7 +10,7 @@ export function DashboardLayout() {
   const { user } = useUser();
   const navigate = useNavigate();
   useEffect(() => {
-    // if (!user || user.role === "member") navigate("/");
+    if (!user || user.role === "member") navigate("/");
   }, [user]);
 
   return (
