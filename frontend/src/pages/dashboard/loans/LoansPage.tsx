@@ -16,7 +16,7 @@ export function LoansPage() {
 
   return (
     <>
-      <h1 className="mb-4 text-2xl font-bold">Borrow & Return books</h1>
+      <h1 className="mt-8 mb-4 text-2xl font-bold">Borrow & Return books</h1>
       <LoansForm search={search} onChange={setSearch} />
       {search.mode === "borrow" ? (
         <BorrowBookSection search={search} setSearch={setSearch} />

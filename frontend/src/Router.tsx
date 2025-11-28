@@ -4,6 +4,7 @@ import { HomePage } from "./pages/home/HomePage";
 import { DashboardLayout } from "./components/layout/DashboardLayout";
 import { LoansPage } from "./pages/dashboard/loans/LoansPage";
 import { MyLoansPage } from "./pages/myloans/MyLoansPage";
+import { RegisterPage } from "./pages/dashboard/RegisterPage";
 
 export function Router() {
   return (
@@ -14,6 +15,7 @@ export function Router() {
       </Route>
       <Route path="/dashboard" element={<DashboardLayout />}>
         <Route path="/dashboard/loans" element={<LoansPage />} />
+        <Route path="/dashboard/register" element={<RegisterPage />} />
       </Route>
     </Routes>
   );

@@ -17,7 +17,7 @@ export function MyLoansPage() {
 
   return (
     <>
-      <h1 className="mb-4 text-2xl font-bold">Borrow & Return books</h1>
+      <h1 className="mt-8 mb-4 text-2xl font-bold">My Loans</h1>
       <LoanTable loans={loans} />
     </>
   );

@@ -4,7 +4,7 @@ import { SidebarProvider, SidebarTrigger } from "../ui/sidebar";
 import { Toaster } from "sonner";
 import { useUser } from "#root/features/users/hooks.ts";
 import { Header } from "./Header";
-import { AppSidebar } from "./AppSidebar";
+import { DashboardSidebar } from "./DashboardSidebar";
 
 export function DashboardLayout() {
   const { user } = useUser();
@@ -20,7 +20,7 @@ export function DashboardLayout() {
       <Toaster position="top-center" />
       <Header />
       <SidebarProvider defaultOpen={true}>
-        <AppSidebar />
+        <DashboardSidebar />
 
         <main className="flex flex-grow flex-col">
           <SidebarTrigger className="fixed rounded-l-none border border-l-0" />

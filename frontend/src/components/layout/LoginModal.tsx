@@ -24,13 +24,15 @@ export function LoginModal({ open, onClose, setOpen }: LoginModalProps) {
   const { setUser } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   async function handleLogin(e: any) {
     e.preventDefault();
-    setIsSubmitting(true);
+    if (!email || !password)
+      return toast.error("email or password can't be empty");
+    setLoading(true);
     const user = await login({ email, password });
-    setIsSubmitting(false);
+    setLoading(false);
     if (!user) {
       toast.error("Incorrect email or password");
       return;
@@ -63,6 +65,7 @@ export function LoginModal({ open, onClose, setOpen }: LoginModalProps) {
                 id="email"
                 type="email"
                 onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </div>
             <div>
@@ -71,6 +74,8 @@ export function LoginModal({ open, onClose, setOpen }: LoginModalProps) {
                 id="password"
                 type="password"
                 onChange={(e) => setPassword(e.target.value)}
+                minLength={6}
+                required
               />
             </div>
           </div>
@@ -79,7 +84,7 @@ export function LoginModal({ open, onClose, setOpen }: LoginModalProps) {
               type="submit"
               className="w-full"
               onClick={handleLogin}
-              disabled={isSubmitting}
+              disabled={loading}
             >
               Log in
             </Button>

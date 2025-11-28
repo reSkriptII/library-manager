@@ -50,3 +50,21 @@ export async function changeAvatar(file: File | null) {
 
   await api.put("/users/me/avatar", body);
 }
+
+type RegisterReqBody = { name: string; email: string; password: string };
+export async function registerUser(registerReqBody: RegisterReqBody) {
+  try {
+    await api.post("/users", registerReqBody);
+    return { ok: true };
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      const status = err.status as number;
+      if (status >= 400) {
+        return {
+          ok: false,
+          message: err.response?.data.message,
+        };
+      }
+    }
+  }
+}

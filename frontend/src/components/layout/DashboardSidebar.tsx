@@ -10,12 +10,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useUser } from "#root/features/users/hooks.ts";
-export function AppSidebar() {
+import { useUser } from "@/features/users/hooks.ts";
+
+export function DashboardSidebar() {
   const { user } = useUser();
 
   return (
-    <Sidebar className="top-14">
+    <Sidebar className="top-14 h-[calc(100vh-56px)]">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
