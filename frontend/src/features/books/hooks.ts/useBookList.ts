@@ -4,7 +4,7 @@ import { api } from "@/lib/api.ts";
 import type { BookFilter } from "../type";
 import type { BookData } from "../type";
 
-export function useBookList(filter: BookFilter) {
+export function useBookList(filter: BookFilter, refresh?: any) {
   const [books, setBooks] = useState<BookData[]>([]);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export function useBookList(filter: BookFilter) {
     return () => {
       isMount = false;
     };
-  }, [filter.title, filter.author, filter.genres]);
+  }, [filter.title, filter.author, filter.genres, refresh]);
 
   return books;
 }

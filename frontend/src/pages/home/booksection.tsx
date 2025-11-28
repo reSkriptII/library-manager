@@ -11,7 +11,6 @@ export function BookSection() {
   const [filter, setFilter] = useState<BookFilter>(filterDefault);
   const debouncedFilter = useDebounceValue(filter, 500);
   const books = useBookList(debouncedFilter);
-  console.log(books);
 
   return (
     <section className="py-12">

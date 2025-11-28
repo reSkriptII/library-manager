@@ -12,7 +12,7 @@ import { API_BASE_URL } from "@/env.ts";
 
 type LoanTableProps = {
   loans: LoanData[];
-  onSelect: (loan: LoanData) => void;
+  onSelect?: (loan: LoanData) => void;
 };
 
 export function LoanTable({ loans, onSelect }: LoanTableProps) {
@@ -22,12 +22,12 @@ export function LoanTable({ loans, onSelect }: LoanTableProps) {
         <TableCaption>borrowed books</TableCaption>
         <TableHeader>
           <TableRow className="flex">
-            <TableHead className="w-20">Cover</TableHead>
-            <TableHead className="w-6">ID</TableHead>
-            <TableHead className="w-14">BookID</TableHead>
-            <TableHead className="w-52">Title</TableHead>
-            <TableHead className="w-32">Borrow date</TableHead>
-            <TableHead className="w-32">due date</TableHead>
+            <TableHead className="w-20 text-center">Cover</TableHead>
+            <TableHead className="w-6 text-center">ID</TableHead>
+            <TableHead className="w-14 text-center">BookID</TableHead>
+            <TableHead className="w-52 text-center">Title</TableHead>
+            <TableHead className="w-32 text-center">Borrow date</TableHead>
+            <TableHead className="w-32 text-center">due date</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -35,7 +35,7 @@ export function LoanTable({ loans, onSelect }: LoanTableProps) {
             <TableRow
               key={loan.bookId}
               className="flex items-center"
-              onClick={() => onSelect(loan)}
+              onClick={() => onSelect?.(loan)}
             >
               <TableCell className="flex h-24 w-20 items-center justify-center overflow-hidden">
                 <img
@@ -47,8 +47,8 @@ export function LoanTable({ loans, onSelect }: LoanTableProps) {
                   }}
                 />
               </TableCell>
-              <TableCell className="w-6">{loan.borrowerId}</TableCell>
-              <TableCell className="w-14">{loan.bookId}</TableCell>
+              <TableCell className="w-6 text-center">{loan.id}</TableCell>
+              <TableCell className="w-14 text-center">{loan.bookId}</TableCell>
               <TableCell className="w-52">{loan.bookTitle}</TableCell>
               <TableCell className="w-32">
                 {loan?.borrowTime

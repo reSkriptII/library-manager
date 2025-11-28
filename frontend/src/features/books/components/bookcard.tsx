@@ -32,6 +32,10 @@ export function BookCard({ book }: { book: BookData }) {
             className="w-full"
             src={API_BASE_URL + `/books/${book.id}/cover`}
             alt={`cover image of ${book.title}`}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = "/book.svg";
+            }}
           />
         </div>
         <div className="flex-grow">
@@ -39,7 +43,10 @@ export function BookCard({ book }: { book: BookData }) {
             <div>Tags:</div>
             <ul className="inline-flex flex-wrap gap-2 rounded-md text-sm font-medium whitespace-nowrap">
               {book.genres.map((genre) => (
-                <li className="bg-background dark:bg-input/30 dark:border-input flex items-center justify-center gap-2 rounded-md border px-2 text-base font-normal whitespace-nowrap shadow-xs">
+                <li
+                  key={genre.id}
+                  className="bg-background dark:bg-input/30 dark:border-input flex items-center justify-center gap-2 rounded-md border px-2 text-base font-normal whitespace-nowrap shadow-xs"
+                >
                   {genre.name}
                 </li>
               ))}

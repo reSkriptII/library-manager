@@ -17,7 +17,7 @@ export function Header() {
         <div className="flex flex-1 items-center justify-end gap-8">
           {user ? (
             <>
-              <NavLink to="/loan">My loan</NavLink>
+              <NavLink to="/myloans">My loan</NavLink>
               {user.role !== "member" && (
                 <NavLink to="/dashboard">Dashboard</NavLink>
               )}

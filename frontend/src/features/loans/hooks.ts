@@ -30,3 +30,25 @@ export function useLoans(borrowerId: number | null, refresh: any) {
 
   return loans;
 }
+
+export function useMyLoans() {
+  const [loans, setLoans] = useState<LoanData[]>([]);
+
+  useEffect(() => {
+    let isMount = true;
+    (async () => {
+      try {
+        const res = await api.get("/users/me/loans");
+        if (isMount) setLoans(res.data);
+      } catch {
+        if (isMount) setLoans([]);
+      }
+    })();
+
+    return () => {
+      isMount = false;
+    };
+  }, []);
+
+  return loans;
+}

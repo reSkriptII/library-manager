@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useRef } from "react";
 import { getUser } from "./api";
 import type { User } from "./types";
 
@@ -11,10 +11,12 @@ export const UserContext = createContext<userProviderState | null>(null);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const loading = useRef(false);
 
   useEffect(() => {
     let isMount = true;
     (async () => {
+      if (loading.current) return;
       const user = await getUser();
       if (isMount) setUser(user);
     })();

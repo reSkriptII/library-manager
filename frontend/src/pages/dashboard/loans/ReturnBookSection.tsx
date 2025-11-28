@@ -17,7 +17,7 @@ type ReturnSectionProps = {
 export function ReturnBookSection({ search, setSearch }: ReturnSectionProps) {
   const [selectedLoan, setSelectedLoan] = useState<LoanData | null>(null);
   const refreshRef = useRef(0);
-  const selectedBook = useBook(selectedLoan?.bookId ?? null);
+  const selectedBook = useBook(search?.bookId ?? null);
   const loans = useLoans(search.borrowerId, refreshRef.current);
 
   const dueDate = selectedLoan?.dueDate ? new Date(selectedLoan.dueDate) : null;
@@ -41,11 +41,15 @@ export function ReturnBookSection({ search, setSearch }: ReturnSectionProps) {
         }
         dueDate={dueDate}
         disclaimer="This book isn't borrowed by user"
-        showDisclaimer={!search.bookId || !isBookInLoans}
+        showDisclaimer={Boolean(search.bookId && !isBookInLoans)}
       />
       <SubmitReturnButton
         loanId={selectedLoan?.id ?? null}
         disabled={!isBookInLoans}
+        onAfterSubmit={() => {
+          setSearch({ ...search, bookId: 0 });
+          ++refreshRef.current;
+        }}
       />
       <LoanTable
         loans={
@@ -59,26 +63,37 @@ export function ReturnBookSection({ search, setSearch }: ReturnSectionProps) {
   );
 }
 
-type SubmitReturnButtonProps = { loanId: number | null; disabled: boolean };
-function SubmitReturnButton({ loanId, disabled }: SubmitReturnButtonProps) {
+type SubmitReturnButtonProps = {
+  loanId: number | null;
+  disabled: boolean;
+  onAfterSubmit?: () => void;
+};
+function SubmitReturnButton({
+  loanId,
+  disabled,
+  onAfterSubmit,
+}: SubmitReturnButtonProps) {
+  const [loading, setLoading] = useState(false);
   async function handleSubmit() {
     if (!loanId) return toast.error("Invalid loan");
-
+    setLoading(true);
     const res = await returnLoans(loanId);
     if (res?.ok) {
-      return toast.success("successfully return a book");
+      toast.success("successfully return a book");
     } else {
-      return toast.error(res?.message ?? "unknow error");
+      toast.error(res?.message ?? "unknow error");
     }
+    setLoading(false);
+    onAfterSubmit?.();
   }
 
   return (
     <Button
       className="text-xl sm:col-span-2"
-      disabled={disabled}
+      disabled={disabled || loading}
       onClick={handleSubmit}
     >
-      Borrow Book
+      {loading ? "loading" : "Return Book"}
     </Button>
   );
 }

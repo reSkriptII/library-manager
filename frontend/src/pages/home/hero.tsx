@@ -15,7 +15,7 @@ export function Hero() {
         {user ? (
           user.role === "member" ? (
             <Button>
-              <NavLink to="/loan">You borrowed books</NavLink>
+              <NavLink to="/loan">Your borrowed books</NavLink>
             </Button>
           ) : (
             <Button>

@@ -4,7 +4,6 @@ import * as userModels from "#src/models/users.js";
 import { CONFIG } from "#src/config/constant.js";
 
 export async function getSearchLoans(search: models.SearchLoans) {
-  console.log(search);
   const loans = await models.searchLoans(search);
 
   return loans.map((loan) => ({

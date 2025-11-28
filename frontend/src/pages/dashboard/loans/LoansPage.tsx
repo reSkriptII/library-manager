@@ -11,7 +11,7 @@ const loanFilterDefault: Search = {
   mode: "return",
 };
 
-export function LoansPages() {
+export function LoansPage() {
   const [search, setSearch] = useState<Search>(loanFilterDefault);
 
   return (
