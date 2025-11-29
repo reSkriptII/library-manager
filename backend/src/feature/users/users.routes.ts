@@ -20,6 +20,7 @@ router.use(checkRole("librarian"));
 
 router.get("/:id", controllers.getUserById);
 router.get("/:id/avatar", controllers.getAvatar);
+router.post("/", controllers.registerUser);
 
 router.use(checkRole("admin"));
 

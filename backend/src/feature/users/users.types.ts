@@ -10,6 +10,11 @@ export type GetUserCtrler = Middleware<
   unknown,
   UserData | null
 >;
+export namespace RegisterUser {
+  export type ReqBody = { name: string; email: string; password: string };
+  export type Controller = Middleware<{}, {}, ReqBody>;
+}
+export type RegisterUserCtrler = RegisterUser.Controller;
 
 export type SetUserNameCtrler = Middleware<
   { id: string },

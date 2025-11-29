@@ -50,7 +50,7 @@ export async function createBook(
   } catch (err) {
     if (err instanceof Error && "code" in err) {
       if (String(err.code).startsWith("23")) {
-        return { ok: false, message: "Create book conflict" };
+        return { ok: false, message: "Error creating book" };
       }
     }
     throw err;

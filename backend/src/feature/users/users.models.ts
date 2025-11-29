@@ -14,6 +14,37 @@ export function getUserById(id: number) {
     .then((r) => r.rows[0] as UserData);
 }
 
+type SearchUser = {
+  name?: string | null;
+  email?: string | null;
+  role?: UserRole | null;
+};
+export function searchUserExist(search: SearchUser) {
+  const { name = null, email = null, role = null } = search;
+  return psqlPool
+    .query(
+      `SELECT 1 FROM users
+    WHERE ($1::text IS NULL OR name = $1)
+      AND ($2::text IS NULL OR email= $2)
+      AND ($3::user_role IS NULL OR role = $3)`,
+      [name, email, role]
+    )
+    .then((r) => Boolean(r.rows[0]));
+}
+
+export function createUser(
+  name: string,
+  email: string,
+  hashedPassword: string
+) {
+  return psqlPool
+    .query(
+      "INSERT INTO users (name, email, hashed_password) VALUES ($1, $2, $3) RETURNING user_id",
+      [name, email, hashedPassword]
+    )
+    .then((r) => r.rows[0]?.user_id as number);
+}
+
 export function setUserName(id: number, name: string) {
   return psqlPool.query("UPDATE users SET name = $2 WHERE user_id = $1", [
     id,

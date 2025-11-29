@@ -44,12 +44,21 @@ export async function loanBook(
     return { ok: false, message: "User not found" };
   }
 
-  const loan = await models.createLoans(
-    bookId,
-    borrowerId,
-    CONFIG.BORROW_INTERVAL
-  );
-  return { ok: true, id: loan.id, dueDate: new Date(loan.due_date) };
+  try {
+    const loan = await models.createLoans(
+      bookId,
+      borrowerId,
+      CONFIG.BORROW_INTERVAL
+    );
+    return { ok: true, id: loan.id, dueDate: new Date(loan.due_date) };
+  } catch (err) {
+    if (err instanceof Error && "code" in err) {
+      if (String(err.code).startsWith("23")) {
+        return { ok: false, message: "Error creating loan" };
+      }
+    }
+    throw err;
+  }
 }
 
 export type ReturnBook =

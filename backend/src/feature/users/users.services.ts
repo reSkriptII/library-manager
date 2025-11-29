@@ -1,6 +1,7 @@
 import { readdir, rm, copyFile } from "fs/promises";
 import path from "path";
 import mime from "mime-types";
+import bcrypt from "bcrypt";
 import { ENV } from "../../config/env.js";
 import { searchLoans } from "../../models/loans.js";
 import { FileError } from "../../util/error.js";
@@ -75,6 +76,39 @@ export async function updateAvatar(
     throw err;
   }
 }
+
+export async function registerUser(
+  name: string,
+  email: string,
+  password: string
+) {
+  const [isNameUsed, isEmailUsed] = await Promise.all([
+    models.searchUserExist({ name }),
+    models.searchUserExist({ email }),
+  ]);
+  console.log(isNameUsed, isEmailUsed);
+  if (isNameUsed) {
+    return { ok: false, message: "name already exist" };
+  }
+  if (isEmailUsed) {
+    return { ok: false, message: "email already used" };
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  try {
+    const newUserId = await models.createUser(name, email, hashedPassword);
+    return { ok: true, id: newUserId };
+  } catch (err: any) {
+    if (err instanceof Error && "code" in err) {
+      if (String(err.code).startsWith("23")) {
+        return { ok: false, message: "Error creating user" };
+      }
+    }
+    throw err;
+  }
+}
+
 export async function setUserName(id: number, name: string) {
   if (!(await models.isUserExist(id))) {
     return { ok: false, status: 404, message: "User not found" };

@@ -36,7 +36,7 @@ export function RegisterPage() {
             <Input
               id="name"
               type="text"
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               required
             />
           </div>
@@ -45,7 +45,7 @@ export function RegisterPage() {
             <Input
               id="email"
               type="email"
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>

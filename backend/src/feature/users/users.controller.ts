@@ -1,4 +1,5 @@
 import { createReadStream } from "fs";
+import { CONFIG } from "#src/config/constant.js";
 import { cleanFile } from "../../util/request.js";
 import * as models from "./users.models.js";
 import * as services from "./users.services.js";
@@ -88,6 +89,44 @@ export const updateAvatar: Controller = async function (req, res, next) {
     return next(error);
   } finally {
     if (req.file) cleanFile(req.file);
+  }
+};
+
+const EMAIL_REGEXP =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+export const registerUser: Users.RegisterUserCtrler = async function (
+  req,
+  res,
+  next
+) {
+  try {
+    const { name, email, password } = req.body;
+    console.log(req.body);
+    const isNameInvalid = typeof name !== "string";
+    const isEmailInvalid = !EMAIL_REGEXP.test(email);
+    const isPasswordInvalid =
+      typeof password !== "string" ||
+      password.length < CONFIG.PASSWORD_MIN_LENGTH;
+
+    if (isNameInvalid || isEmailInvalid || isPasswordInvalid) {
+      const errorField = [];
+      if (isNameInvalid) errorField.push("name");
+      if (isEmailInvalid) errorField.push("email");
+      if (isPasswordInvalid) errorField.push("password");
+      return res
+        .status(400)
+        .send({ message: "Invalid field: " + errorField.join(",") });
+    }
+
+    const registration = await services.registerUser(name, email, password);
+    if (!registration.ok) {
+      return res.status(400).send({ message: registration.message });
+    }
+
+    return res.status(201).send({ id: registration.id });
+  } catch (error) {
+    next(error);
   }
 };
 
