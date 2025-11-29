@@ -6,9 +6,11 @@ import {
   PopoverContent,
 } from "@/components/ui/popover.tsx";
 import { ChevronsUpDown, CirclePlus, CircleX, X } from "lucide-react";
-import { TagsSelect } from "@/components/tagsselect.tsx";
+import { TagListSelect, TagsSelect } from "@/components/tagsselect.tsx";
 import { useGenres, useAuthors } from "../hooks.ts/useBookProps";
 import type { BookFilter } from "../type";
+
+export const filterDefault = { title: "", genres: [], author: null };
 
 type SearchBookProps = {
   filter: BookFilter;
@@ -30,41 +32,25 @@ export function SearchBook({ filter, setFilter }: SearchBookProps) {
           />
         </PopoverTrigger>
         <PopoverContent align="start">
-          <div className="mb-4 flex flex-col">
-            Genres:
-            <div className="flex flex-wrap gap-1">
-              {filter.genres.map((currentGenre) => (
-                <Button
-                  variant="outline"
-                  onClick={() =>
-                    setFilter({
-                      ...filter,
-                      genres: filter.genres.filter(
-                        (genre) => genre.id !== currentGenre.id,
-                      ),
-                    })
-                  }
-                >
-                  {currentGenre.name}
-                  <X />
-                </Button>
-              ))}
-
-              <TagsSelect
-                name="genre"
-                options={genres}
-                onSelect={(value) =>
-                  setFilter({ ...filter, genres: [...filter.genres, value] })
-                }
-              >
-                <Button variant="outline" className="text-xs text-neutral-400">
-                  <CirclePlus />
-                  Add genre
-                </Button>
-              </TagsSelect>
-            </div>
-          </div>
-          <div className="flex flex-col">
+          <TagListSelect
+            label="Genre"
+            selectedTags={filter.genres}
+            name="genre"
+            edit
+            options={genres}
+            onSelect={(value) =>
+              setFilter({ ...filter, genres: [...filter.genres, value] })
+            }
+            onRemove={(genre) =>
+              setFilter({
+                ...filter,
+                genres: filter.genres.filter(
+                  (currentGenre) => genre.id !== currentGenre.id,
+                ),
+              })
+            }
+          />
+          <div className="mt-4 flex flex-col">
             Author:
             <TagsSelect
               name="author"

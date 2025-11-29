@@ -1,11 +1,12 @@
-import { SearchBook } from "@/features/books/components/searchbook.tsx";
+import {
+  SearchBook,
+  filterDefault,
+} from "@/features/books/components/searchbook.tsx";
 import { useState } from "react";
 import type { BookFilter } from "@/features/books/type";
 import { useBookList } from "#root/features/books/hooks.ts/useBookList.ts";
 import { useDebounceValue } from "#root/hooks/useDebounceValue.ts";
 import { BookCard } from "@/features/books/components/bookcard.tsx";
-
-const filterDefault = { title: "", genres: [], author: null };
 
 export function BookSection() {
   const [filter, setFilter] = useState<BookFilter>(filterDefault);

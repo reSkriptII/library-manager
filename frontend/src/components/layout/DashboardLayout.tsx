@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Outlet, useNavigate } from "react-router";
 import { SidebarProvider, SidebarTrigger } from "../ui/sidebar";
 import { Toaster } from "sonner";
@@ -8,10 +8,12 @@ import { DashboardSidebar } from "./DashboardSidebar";
 
 export function DashboardLayout() {
   const { user } = useUser();
+  const userRef = useRef(user);
   const navigate = useNavigate();
   useEffect(() => {
+    userRef.current = user;
     setTimeout(() => {
-      if (!user || user.role === "member") navigate("/");
+      if (!userRef.current || userRef.current.role === "member") navigate("/");
     }, 500);
   }, [user]);
 

@@ -61,3 +61,54 @@ export function TagsSelect({
     </Popover>
   );
 }
+
+import { Button } from "./ui/button";
+import type { BookPropEntity } from "#root/features/books/type.ts";
+import { X, CirclePlus } from "lucide-react";
+
+type TagListSelectProps = {
+  label?: string;
+  selectedTags: BookPropEntity[];
+  edit: boolean;
+  name: string;
+  options: BookPropEntity[] | null;
+  onSelect: (tag: BookPropEntity) => void;
+  onRemove: (tag: BookPropEntity) => void;
+};
+
+export function TagListSelect({
+  label,
+  selectedTags,
+  edit,
+  name,
+  options,
+  onSelect,
+  onRemove,
+}: TagListSelectProps) {
+  return (
+    <div className="flex flex-col">
+      {label ?? name}
+      <div className="flex flex-wrap gap-1">
+        {selectedTags.map((tag) => (
+          <Button variant="outline" onClick={() => onRemove(tag)}>
+            {tag.name}
+            {edit && <X />}
+          </Button>
+        ))}
+
+        {edit && (
+          <TagsSelect
+            name={name}
+            options={options}
+            onSelect={(value) => onSelect(value)}
+          >
+            <Button variant="outline" className="text-xs text-neutral-400">
+              <CirclePlus />
+              Add {name}
+            </Button>
+          </TagsSelect>
+        )}
+      </div>
+    </div>
+  );
+}

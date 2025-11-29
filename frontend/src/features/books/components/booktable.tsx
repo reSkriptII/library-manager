@@ -35,7 +35,7 @@ export function BookTable({ books, onSelect, caption }: BookTableProps) {
           {books.map((book) => (
             <TableRow
               key={book.id}
-              className="flex items-center"
+              className="flex items-center py-2"
               onClick={() => onSelect(book)}
             >
               <TableCell className="flex h-24 w-20 items-center justify-center overflow-hidden">
