@@ -1,6 +1,5 @@
 import { AxiosError } from "axios";
 import { api } from "@/lib/api.ts";
-import { toast } from "sonner";
 
 export async function login(payload: { email: string; password: string }) {
   try {

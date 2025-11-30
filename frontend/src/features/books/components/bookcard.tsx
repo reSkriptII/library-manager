@@ -5,7 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "#root/components/ui/card.tsx";
+} from "@/components/ui/card.tsx";
 import { CircleCheck, CircleMinus } from "lucide-react";
 import type { BookData } from "../type";
 

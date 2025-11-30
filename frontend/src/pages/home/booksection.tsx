@@ -4,8 +4,8 @@ import {
 } from "@/features/books/components/searchbook.tsx";
 import { useState } from "react";
 import type { BookFilter } from "@/features/books/type";
-import { useBookList } from "#root/features/books/hooks.ts/useBookList.ts";
-import { useDebounceValue } from "#root/hooks/useDebounceValue.ts";
+import { useBookList } from "@/features/books/hooks.ts/useBookList.ts";
+import { useDebounceValue } from "@/hooks/useDebounceValue.ts";
 import { BookCard } from "@/features/books/components/bookcard.tsx";
 
 export function BookSection() {

@@ -1,4 +1,4 @@
-import { api } from "#root/lib/api.ts";
+import { api } from "@/lib/api.ts";
 import { AxiosError } from "axios";
 
 export async function makeLoan(loanReqBody: {

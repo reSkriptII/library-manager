@@ -1,6 +1,4 @@
-"use client";
-
-import * as React from "react";
+import { useState } from "react";
 import {
   Command,
   CommandEmpty,
@@ -28,7 +26,7 @@ export function TagsSelect({
   options,
   onSelect,
 }: TagsSelectProps) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

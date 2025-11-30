@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { UserContext } from "#root/features/users/contexts.tsx";
+import { UserContext } from "./contexts.tsx";
 import type { User } from "./types";
 import { getUser } from "./api";
 

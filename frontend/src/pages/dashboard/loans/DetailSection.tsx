@@ -128,10 +128,3 @@ function BorrowerCard({ borrowerId }: { borrowerId: number }) {
     </Card>
   );
 }
-
-function extractDate(date?: Date | null) {
-  if (!date) {
-    return new Date(0);
-  }
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-}

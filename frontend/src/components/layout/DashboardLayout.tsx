@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { Outlet, useNavigate } from "react-router";
 import { SidebarProvider, SidebarTrigger } from "../ui/sidebar";
 import { Toaster } from "sonner";
-import { useUser } from "#root/features/users/hooks.ts";
+import { useUser } from "@/features/users/hooks.ts";
 import { Header } from "./Header";
 import { DashboardSidebar } from "./DashboardSidebar";
 

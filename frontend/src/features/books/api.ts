@@ -1,6 +1,5 @@
 import { AxiosError } from "axios";
-import { api } from "#root/lib/api.ts";
-import type { BookPropEntity } from "./type";
+import { api } from "@/lib/api.ts";
 
 export async function getBook(id: number) {
   try {

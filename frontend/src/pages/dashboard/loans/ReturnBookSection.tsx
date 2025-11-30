@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button.tsx";
 import { LoanTable } from "@/features/loans/components/loantable.tsx";
 import { useLoans } from "@/features/loans/hooks.ts";
-import { useBook } from "#root/features/books/hooks.ts/useBook.ts";
+import { useBook } from "@/features/books/hooks.ts/useBook.ts";
 import { returnLoans } from "@/features/loans/api.ts";
 import { DetailSection } from "./DetailSection";
 import type { Search } from "./LoansForm";

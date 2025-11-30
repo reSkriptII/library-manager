@@ -1,13 +1,13 @@
-import { Button } from "#root/components/ui/button.tsx";
-import { Input } from "#root/components/ui/input.tsx";
-import { Label } from "#root/components/ui/label.tsx";
-import { TagListSelect } from "#root/components/tagsselect.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { Input } from "@/components/ui/input.tsx";
+import { Label } from "@/components/ui/label.tsx";
+import { TagListSelect } from "@/components/tagsselect.tsx";
 import {
   useGenres,
   useAuthors,
-} from "#root/features/books/hooks.ts/useBookProps.ts";
-import { API_BASE_URL } from "#root/env.ts";
-import type { BookPropEntity } from "#root/features/books/type.ts";
+} from "@/features/books/hooks.ts/useBookProps.ts";
+import { API_BASE_URL } from "@/env.ts";
+import type { BookPropEntity } from "@/features/books/type.ts";
 
 type TitleFieldProp = {
   edit: boolean;

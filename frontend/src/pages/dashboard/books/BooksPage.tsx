@@ -1,13 +1,13 @@
 import { useRef, useState } from "react";
+import { Button } from "@/components/ui/button.tsx";
 import {
   SearchBook,
   filterDefault,
 } from "@/features/books/components/searchbook.tsx";
+import { BookTable } from "@/features/books/components/booktable.tsx";
 import { useBookList } from "@/features/books/hooks.ts/useBookList.ts";
-import type { BookData, BookFilter } from "#root/features/books/type.ts";
-import { BookTable } from "#root/features/books/components/booktable.tsx";
 import { EditBookModal } from "./EditBookModal";
-import { Button } from "#root/components/ui/button.tsx";
+import type { BookData, BookFilter } from "@/features/books/type.ts";
 
 export function BooksPage() {
   const [filter, setFilter] = useState<BookFilter>(filterDefault);

@@ -17,7 +17,7 @@ export function BorrowBookSection({ search, setSearch }: BorrowSectionProps) {
   const selectedBook = useBook(search.bookId);
   const refreshBook = useRef(0);
   const books = useBookList(
-    { title: search.bookTitle },
+    { title: search.bookTitle, genres: [], author: null },
     refreshBook.current,
   ).filter((book) => !(book.reserveQueue || book.lent));
 
