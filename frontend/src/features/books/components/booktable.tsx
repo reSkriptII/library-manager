@@ -23,12 +23,12 @@ export function BookTable({ books, onSelect, caption }: BookTableProps) {
         <TableCaption>{caption}</TableCaption>
         <TableHeader>
           <TableRow className="flex">
-            <TableHead className="min-w-20 text-center">Cover</TableHead>
-            <TableHead className="min-w-8 text-center">ID</TableHead>
-            <TableHead className="min-w-52 text-center">Title</TableHead>
-            <TableHead className="min-w-24 text-center">Genres</TableHead>
-            <TableHead className="min-w-32 text-center">Authors</TableHead>
-            <TableHead className="min-w-32 text-center">Available</TableHead>
+            <TableHead className="w-20 text-center">Cover</TableHead>
+            <TableHead className="w-8 text-center">ID</TableHead>
+            <TableHead className="w-52 text-center lg:w-72">Title</TableHead>
+            <TableHead className="w-24 text-center">Genres</TableHead>
+            <TableHead className="w-32 text-center">Authors</TableHead>
+            <TableHead className="w-32 text-center">Available</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -48,9 +48,11 @@ export function BookTable({ books, onSelect, caption }: BookTableProps) {
                   }}
                 />
               </TableCell>
-              <TableCell className="min-w-8 text-center">{book.id}</TableCell>
-              <TableCell className="min-w-52">{book.title}</TableCell>
-              <TableCell className="min-w-24">
+              <TableCell className="w-8 text-center">{book.id}</TableCell>
+              <TableCell className="w-52 lg:w-72">
+                <span className="text-wrap">{book.title}</span>
+              </TableCell>
+              <TableCell className="w-24">
                 <ul>
                   {book.genres.map((genre) => (
                     <li className="list-none" key={genre.id}>
@@ -59,7 +61,7 @@ export function BookTable({ books, onSelect, caption }: BookTableProps) {
                   ))}
                 </ul>
               </TableCell>
-              <TableCell className="min-w-32">
+              <TableCell className="w-32">
                 <ul>
                   {book.authors.map((author) => (
                     <li className="list-none" key={author.id}>
@@ -68,7 +70,7 @@ export function BookTable({ books, onSelect, caption }: BookTableProps) {
                   ))}
                 </ul>
               </TableCell>
-              <TableCell className="min-w-32">
+              <TableCell className="w-32">
                 {book.reserveQueue || book.lent ? "not available" : "available"}
               </TableCell>
             </TableRow>

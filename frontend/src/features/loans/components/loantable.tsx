@@ -1,4 +1,3 @@
-import type { LoanData } from "@/features/loans/types.ts";
 import {
   Table,
   TableBody,
@@ -9,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table.tsx";
 import { API_BASE_URL } from "@/env.ts";
+import type { LoanData } from "@/features/loans/types.ts";
 
 type LoanTableProps = {
   loans: LoanData[];
@@ -25,7 +25,7 @@ export function LoanTable({ loans, onSelect }: LoanTableProps) {
             <TableHead className="w-20 text-center">Cover</TableHead>
             <TableHead className="w-6 text-center">ID</TableHead>
             <TableHead className="w-14 text-center">BookID</TableHead>
-            <TableHead className="w-52 text-center">Title</TableHead>
+            <TableHead className="w-52 text-center lg:w-72">Title</TableHead>
             <TableHead className="w-32 text-center">Borrow date</TableHead>
             <TableHead className="w-32 text-center">due date</TableHead>
           </TableRow>
@@ -49,7 +49,7 @@ export function LoanTable({ loans, onSelect }: LoanTableProps) {
               </TableCell>
               <TableCell className="w-6 text-center">{loan.id}</TableCell>
               <TableCell className="w-14 text-center">{loan.bookId}</TableCell>
-              <TableCell className="w-52">{loan.bookTitle}</TableCell>
+              <TableCell className="w-52 lg:w-72">{loan.bookTitle}</TableCell>
               <TableCell className="w-32">
                 {loan?.borrowTime
                   ? new Date(loan.borrowTime).toDateString()

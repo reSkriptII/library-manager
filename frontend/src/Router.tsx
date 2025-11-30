@@ -6,6 +6,7 @@ import { LoansPage } from "./pages/dashboard/loans/LoansPage";
 import { MyLoansPage } from "./pages/myloans/MyLoansPage";
 import { RegisterPage } from "./pages/dashboard/RegisterPage";
 import { BooksPage } from "./pages/dashboard/books/BooksPage";
+import { UsersPage } from "./pages/dashboard/users/UsersPage";
 
 export function Router() {
   return (
@@ -18,6 +19,7 @@ export function Router() {
         <Route path="/dashboard/loans" element={<LoansPage />} />
         <Route path="/dashboard/register" element={<RegisterPage />} />
         <Route path="/dashboard/books" element={<BooksPage />} />
+        <Route path="/dashboard/users" element={<UsersPage />} />
       </Route>
     </Routes>
   );
