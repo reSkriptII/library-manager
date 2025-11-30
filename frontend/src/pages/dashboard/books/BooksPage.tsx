@@ -7,6 +7,7 @@ import { useBookList } from "@/features/books/hooks.ts/useBookList.ts";
 import type { BookData, BookFilter } from "#root/features/books/type.ts";
 import { BookTable } from "#root/features/books/components/booktable.tsx";
 import { EditBookModal } from "./EditBookModal";
+import { Button } from "#root/components/ui/button.tsx";
 
 export function BooksPage() {
   const [filter, setFilter] = useState<BookFilter>(filterDefault);
@@ -28,6 +29,15 @@ export function BooksPage() {
       <div>
         <h1 className="mt-8 mb-4 text-2xl font-bold">Books</h1>
         <SearchBook filter={filter} setFilter={setFilter} />
+        <Button
+          className="my-4"
+          onClick={() => {
+            setEditingBook(null);
+            setEditing(true);
+          }}
+        >
+          Create Book
+        </Button>
         <BookTable
           books={books}
           caption="books"

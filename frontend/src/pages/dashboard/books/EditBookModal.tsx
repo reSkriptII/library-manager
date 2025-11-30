@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button.tsx";
 import {
   Dialog,
   DialogHeader,
@@ -5,26 +7,26 @@ import {
   DialogTitle,
   DialogOverlay,
   DialogFooter,
-} from "#root/components/ui/dialog.tsx";
-import { Input } from "#root/components/ui/input.tsx";
-import type { BookData } from "#root/features/books/type.ts";
-import { Label } from "@radix-ui/react-label";
-import { useEffect, useState } from "react";
-import type { BookPropEntity } from "#root/features/books/type.ts";
-import { TagListSelect } from "#root/components/tagsselect.tsx";
-import {
-  useAuthors,
-  useGenres,
-} from "#root/features/books/hooks.ts/useBookProps.ts";
-import { Button } from "#root/components/ui/button.tsx";
+} from "@/components/ui/dialog.tsx";
 import { Pen, TriangleAlert } from "lucide-react";
+import { toast } from "sonner";
 import {
+  createBook,
   deleteBook,
   updateBook,
   updateBookCover,
-} from "#root/features/books/api.ts";
-import { toast } from "sonner";
-import { API_BASE_URL } from "#root/env.ts";
+} from "@/features/books/api.ts";
+import {
+  TitleField,
+  GenresField,
+  AuthorsField,
+  CoverImgDiv,
+  CoverImgField,
+  DeleteButton,
+} from "./ModalComponents";
+import type { BookPropEntity } from "@/features/books/type.ts";
+import type { BookData } from "@/features/books/type.ts";
+
 type EditBookModalProps = {
   open: boolean;
   book: BookData | null;
@@ -44,59 +46,77 @@ export function EditBookModal({
   const [authors, setAuthors] = useState<BookPropEntity[]>(book?.authors ?? []);
   const [coverImg, setCoverImg] = useState<File>();
   const [deleting, setDeleting] = useState(false);
-  const genreList = useGenres();
-  const authorList = useAuthors();
 
-  const newCoverUrl = coverImg && URL.createObjectURL(coverImg);
   function resetEditor() {
-    if (book) {
-      setEditing(false);
-      setDeleting(false);
-      setTitle(book.title);
-      setGenres(book.genres);
-      setAuthors(book.authors);
-      setCoverImg(undefined);
-    }
+    setDeleting(false);
+    setTitle(book?.title ?? "");
+    setGenres(book?.genres ?? []);
+    setAuthors(book?.authors ?? []);
+    setCoverImg(undefined);
+    setEditing(!book);
   }
 
   useEffect(() => {
     resetEditor();
   }, [book]);
 
-  async function handleSave() {
-    if (!book) return toast.error("no book to edit");
-
-    if (deleting) {
-      const res = await deleteBook(book.id);
-      if (res?.ok) {
-        toast.success("Successfully delete book");
-      } else {
-        console.log(res?.message);
-        toast.error("Error deleting book: " + (res?.message ?? "unknow error"));
-      }
-      onSave();
-      return setClose();
+  async function handleCreate() {
+    const res = await createBook(transformBookData({ title, genres, authors }));
+    if (res?.ok) {
+      toast.success("Successfully create book");
+    } else {
+      toast.error("Error creating book: " + (res?.message ?? "unknow error"));
     }
 
-    const bookUpdate = await updateBook(book.id, {
-      title,
-      genres: genres.map((genre) => genre.id),
-      authors: authors.map((author) => author.id),
-    });
+    onSave();
+    return setClose();
+  }
+
+  async function handleDelete() {
+    if (!book) return;
+
+    const res = await deleteBook(book.id);
+    if (res?.ok) {
+      toast.success("Successfully delete book");
+    } else {
+      toast.error("Error deleting book: " + (res?.message ?? "unknow error"));
+    }
+
+    onSave();
+    return setClose();
+  }
+
+  async function handleUpdateBook() {
+    if (!book) return;
+
+    const bookUpdate = await updateBook(
+      book.id,
+      transformBookData({ title, genres, authors }),
+    );
     if (!bookUpdate?.ok) {
       toast.error(bookUpdate?.message ?? "unknow error");
       onSave();
       return setEditing(false);
     }
+  }
 
-    if (coverImg) {
-      const coverUpdate = await updateBookCover(book.id, coverImg);
-      if (!coverUpdate?.ok) {
-        toast.error(coverUpdate?.message ?? "unknow error");
-        onSave();
-        return setEditing(false);
-      }
+  async function handleUpdateCover() {
+    if (!book || !coverImg) return;
+
+    const coverUpdate = await updateBookCover(book.id, coverImg);
+    if (!coverUpdate?.ok) {
+      toast.error(coverUpdate?.message ?? "unknow error");
+      onSave();
+      return setEditing(false);
     }
+  }
+
+  async function handleSave() {
+    if (!book) return await handleCreate();
+
+    if (deleting) return await handleDelete();
+    await handleUpdateBook();
+    await handleUpdateCover();
 
     onSave();
     setEditing(false);
@@ -107,7 +127,10 @@ export function EditBookModal({
     <Dialog
       open={open}
       onOpenChange={(open) => {
-        if (!open) setClose();
+        if (!open) {
+          resetEditor();
+          setClose();
+        }
       }}
     >
       <DialogOverlay />
@@ -115,91 +138,46 @@ export function EditBookModal({
       <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <div className="mr-8 flex justify-between">
-            <DialogTitle className="text-2xl font-bold">Edit book</DialogTitle>
+            <DialogTitle className="text-2xl font-bold">
+              {book ? "Edit Book" : "Create Book"}
+            </DialogTitle>
             {editing && <Pen />}
           </div>
         </DialogHeader>
+
         {deleting && (
           <p className="flex gap-2 font-bold">
             <TriangleAlert /> This book will be deleted on save
           </p>
         )}
-        <div>
-          <Label className="text-base font-normal">Title</Label>
-          <Input
-            id="title"
-            type="text"
-            readOnly={!editing}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </div>
-        <div className="flex">
-          <div>
-            {editing && (
-              <div>
-                <Label>Cover image</Label>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setCoverImg(e.target.files?.[0])}
-                />
-              </div>
-            )}
 
-            <TagListSelect
-              label="Genre"
-              selectedTags={genres}
-              name="genre"
+        <TitleField
+          edit={editing}
+          value={title}
+          onChange={(t) => setTitle(t)}
+        />
+        <div className="flex justify-between gap-2">
+          <div className="max-w-2/3">
+            {editing && <CoverImgField onChange={(img) => setCoverImg(img)} />}
+            <GenresField
               edit={editing}
-              options={genreList}
-              onSelect={(value) => setGenres([...genres, value])}
-              onRemove={(genre) =>
-                setGenres(
-                  genres.filter((currentGenre) => genre.id !== currentGenre.id),
-                )
-              }
+              selected={genres}
+              setField={setGenres}
             />
-            <TagListSelect
-              label="Author"
-              selectedTags={authors}
-              name="author"
+            <AuthorsField
               edit={editing}
-              options={authorList}
-              onSelect={(value) => setAuthors([...authors, value])}
-              onRemove={(genre) =>
-                setAuthors(
-                  authors.filter(
-                    (currentGenre) => genre.id !== currentGenre.id,
-                  ),
-                )
-              }
+              selected={authors}
+              setField={setAuthors}
             />
-            {editing && (
-              <Button
-                className="mt-4 w-32"
-                variant={deleting ? "outline" : "default"}
-                onClick={() => setDeleting(!deleting)}
-              >
-                {deleting ? "Cancel Delete" : "Delete Book"}
-              </Button>
+            {editing && book && (
+              <DeleteButton deleting={deleting} setDeleting={setDeleting} />
             )}
           </div>
-          <div className="flex size-52 items-center justify-center">
-            <img
-              src={
-                editing && coverImg
-                  ? newCoverUrl
-                  : API_BASE_URL + `/books/${book?.id}/cover`
-              }
-              className="max-h-full max-w-full"
-              alt="cover image"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = "/book.svg";
-              }}
-            />
-          </div>
+          <CoverImgDiv
+            edit={editing}
+            bookId={book?.id}
+            changingImg={coverImg}
+          />
         </div>
         <DialogFooter>
           {editing ? (
@@ -208,8 +186,9 @@ export function EditBookModal({
                 className="w-20"
                 variant="outline"
                 onClick={() => {
-                  setEditing(false);
                   resetEditor();
+                  if (book) setEditing(false);
+                  else setClose();
                 }}
               >
                 Cancel
@@ -232,4 +211,18 @@ export function EditBookModal({
       </DialogContent>
     </Dialog>
   );
+}
+
+type ToTransForm = {
+  title: string;
+  genres: BookPropEntity[];
+  authors: BookPropEntity[];
+};
+
+function transformBookData({ title, genres, authors }: ToTransForm) {
+  return {
+    title,
+    genres: genres.map((genre) => genre.id),
+    authors: authors.map((author) => author.id),
+  };
 }

@@ -11,6 +11,34 @@ export async function getBook(id: number) {
   }
 }
 
+type CreateBookDetails = {
+  title: string;
+  genres: number[];
+  authors: number[];
+};
+
+export async function createBook(details: CreateBookDetails, cover?: File) {
+  const detailsJson = JSON.stringify(details);
+  const form = new FormData();
+  form.append("details", detailsJson);
+  if (cover) form.append("coverImage", cover);
+
+  try {
+    await api.post("/books", form);
+    return { ok: true };
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const status = error.status as number;
+      if (status >= 400) {
+        return {
+          ok: false,
+          message: error.response?.data.message,
+        };
+      }
+    }
+  }
+}
+
 export async function updateBook(
   id: number,
   bookData: { title: string; genres: number[]; authors: number[] },
