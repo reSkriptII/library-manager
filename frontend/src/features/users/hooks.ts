@@ -1,4 +1,6 @@
 import { useContext, useEffect, useState } from "react";
+import { AxiosError } from "axios";
+import { api } from "@/lib/api.ts";
 import { UserContext } from "./contexts.tsx";
 import type { User } from "./types";
 import { getUser } from "./api";
@@ -38,4 +40,25 @@ export function useGetUser(id?: number) {
   }, [id]);
 
   return user;
+}
+
+export function useUserList() {
+  const [users, setUsers] = useState<User[]>([]);
+  useEffect(() => {
+    let isMount = true;
+
+    (async () => {
+      try {
+        const res = await api.get("/users");
+        if (isMount) setUsers(res.data);
+      } catch (error) {
+        if (isMount) setUsers([]);
+      }
+    })();
+    return () => {
+      isMount = false;
+    };
+  }, []);
+
+  return users;
 }

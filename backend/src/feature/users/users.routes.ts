@@ -18,13 +18,13 @@ router.get("/me/loans", controllers.getMyLoan);
 
 router.use(checkRole("librarian"));
 
-router.get("/");
 router.get("/:id", controllers.getUserById);
 router.get("/:id/avatar", controllers.getAvatar);
 router.post("/", controllers.registerUser);
 
 router.use(checkRole("admin"));
 
+router.get("/", controllers.getUsers);
 router.put("/:id/name", controllers.setUserName);
 router.put("/:id/role", controllers.setUserRole);
 router.delete("/:id", controllers.deleteUser);

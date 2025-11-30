@@ -3,6 +3,11 @@ import type { UserData } from "./users.types.js";
 
 export { isUserExist } from "../../models/users.js";
 
+export function getUsers() {
+  return psqlPool
+    .query("SELECT user_id as id, name, email, role FROM users")
+    .then((r) => r.rows as UserData[]);
+}
 export function getUserById(id: number) {
   return psqlPool
     .query(

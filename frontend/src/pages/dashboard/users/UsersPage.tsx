@@ -1,6 +1,9 @@
 import { UserTabel } from "#root/features/users/components/usertable.tsx";
+import { useUserList } from "#root/features/users/hooks.ts";
 
 export function UsersPage() {
+  const users = useUserList();
+  console.log(users);
   return (
     <>
       <h1 className="mt-8 mb-4 text-2xl font-bold">Uses</h1>

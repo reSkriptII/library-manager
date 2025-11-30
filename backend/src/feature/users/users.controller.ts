@@ -18,6 +18,15 @@ export const getMe: Users.GetMeCtrler = async function (req, res, next) {
   }
 };
 
+export const getUsers: Controller = async function (req, res, next) {
+  try {
+    const users = await models.getUsers();
+    return res.status(200).send(users);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 export const getUserById: Users.GetUserCtrler = async function (
   req,
   res,
