@@ -30,3 +30,41 @@ export async function updateBook(
     }
   }
 }
+
+export async function deleteBook(id: number) {
+  try {
+    await api.delete(`/books/${id}`);
+    return { ok: true };
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const status = error.status as number;
+      if (status >= 400) {
+        return {
+          ok: false,
+          message: error.response?.data.message,
+        };
+      }
+    }
+  }
+}
+
+export async function updateBookCover(id: number, cover: File) {
+  if (!cover) return;
+  try {
+    const form = new FormData();
+    form.append("coverImage", cover);
+
+    await api.put(`/books/${id}/cover`, form);
+    return { ok: true };
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const status = error.status as number;
+      if (status >= 400) {
+        return {
+          ok: false,
+          message: error.response?.data.message,
+        };
+      }
+    }
+  }
+}

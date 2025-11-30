@@ -40,7 +40,7 @@ export function BookTable({ books, onSelect, caption }: BookTableProps) {
             >
               <TableCell className="flex h-24 w-20 items-center justify-center overflow-hidden">
                 <img
-                  src={API_BASE_URL + `/books/${book.id}/cover`}
+                  src={API_BASE_URL + `/books/${book.id}/cover?t=${Date.now()}`}
                   className="object-contain"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;

@@ -20,7 +20,7 @@ export function BooksPage() {
       <EditBookModal
         book={editingBook}
         open={editing}
-        onClose={() => setEditing(false)}
+        setClose={() => setEditing(false)}
         onSave={() => {
           ++refreshRef.current;
         }}

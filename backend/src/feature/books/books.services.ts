@@ -104,7 +104,8 @@ export async function deleteBook(id: number): Promise<DeleteBookResult> {
     return { ok: false, status: 404, message: "Book not found" };
   }
 
-  if (!(await bookModels.isBookAvailable(id))) {
+  const isBookAvailable = await bookModels.isBookAvailable(id);
+  if (!isBookAvailable) {
     return { ok: false, status: 400, message: "Book is being used" };
   }
 
@@ -112,6 +113,7 @@ export async function deleteBook(id: number): Promise<DeleteBookResult> {
     await models.deleteBook(id);
     return { ok: true };
   } catch (err) {
+    console.log(err);
     if (err instanceof Error && "code" in err) {
       if (String(err.code).startsWith("23")) {
         return { ok: false, status: 400, message: "Book is being used" };
@@ -164,8 +166,9 @@ export async function updateBookCover(
     const imgDir = await readdir(ENV.COVER_IMAGE_DIR_PATH);
 
     const filteredImgNames = imgDir.filter(
-      (file) => path.parse(file).name === id
+      (file) => path.parse(file).name === String(id)
     );
+
     filteredImgNames.forEach((img) =>
       rm(path.join(ENV.COVER_IMAGE_DIR_PATH, img))
     );
@@ -174,7 +177,6 @@ export async function updateBookCover(
       const destFileName = id + "." + mime.extension(file.mimetype);
       const srcFilePath = path.resolve(file.path);
       const destFilePath = path.join(ENV.COVER_IMAGE_DIR_PATH, destFileName);
-
       await copyFile(srcFilePath, destFilePath);
     }
   } catch (err) {

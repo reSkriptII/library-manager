@@ -135,8 +135,24 @@ export async function updateBook(id: number, options: BookDetail) {
 }
 
 export async function deleteBook(id: number) {
-  await psqlPool.query("DELETE FROM books WHERE book_id = $1", [id]);
-  psqlPool.query("REFRESH MATERIALIZED VIEW book_details");
+  const client = await psqlPool.connect();
+  try {
+    await client.query("BEGIN");
+
+    await client.query(
+      "DELETE FROM loans WHERE book_id = $1 AND return_time IS NOT NULL",
+      [id]
+    );
+    await client.query("DELETE FROM books WHERE book_id = $1", [id]);
+    await client.query("REFRESH MATERIALIZED VIEW book_details");
+
+    await client.query("COMMIT");
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
 export async function isGenreIdsExist(ids: number[]) {

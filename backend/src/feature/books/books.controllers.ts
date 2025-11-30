@@ -152,7 +152,9 @@ export const deleteBook: Controller = async function (req, res, next) {
   try {
     const deleteResult = await services.deleteBook(bookId);
     if (!deleteResult.ok) {
-      return res.status(deleteResult.status).send(deleteResult.message);
+      return res
+        .status(deleteResult.status)
+        .send({ message: deleteResult.message });
     }
 
     res.status(204).send();
