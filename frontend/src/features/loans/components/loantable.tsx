@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { ThemeProviderContext } from "@/contexts/ThemeContext";
 import {
   Table,
   TableBody,
@@ -16,6 +18,7 @@ type LoanTableProps = {
 };
 
 export function LoanTable({ loans, onSelect }: LoanTableProps) {
+  const { theme } = useContext(ThemeProviderContext);
   return (
     <>
       <Table className="mt-4">
@@ -43,7 +46,8 @@ export function LoanTable({ loans, onSelect }: LoanTableProps) {
                   className="object-contain"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    target.src = "/book.svg";
+                    target.src =
+                      theme === "dark" ? "/book-dark.svg" : "/book.svg";
                   }}
                 />
               </TableCell>

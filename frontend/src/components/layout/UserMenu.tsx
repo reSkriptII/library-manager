@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { ThemeProviderContext } from "@/contexts/ThemeContext";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import {
   DropdownMenu,
@@ -12,8 +14,10 @@ import { changeAvatar, logout } from "@/features/users/api.ts";
 import { useUser } from "@/features/users/hooks.ts";
 import { Label } from "../ui/label";
 import { useState } from "react";
+import { LogOut, UserRound } from "lucide-react";
 
 export function UserMenu() {
+  const { theme } = useContext(ThemeProviderContext);
   const [lastAvatarUpdate, setLastAvatarUpdate] = useState(0);
   const { setUser } = useUser();
 
@@ -40,7 +44,7 @@ export function UserMenu() {
   }
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="size-10 overflow-hidden rounded-full border bg-black">
+      <DropdownMenuTrigger className="bg-accent size-10 overflow-hidden rounded-full">
         <Avatar>
           <AvatarImage
             src={API_BASE_URL + "/users/me/avatar?t=" + lastAvatarUpdate}
@@ -48,14 +52,18 @@ export function UserMenu() {
             className="size-10 object-cover"
           />
           <AvatarFallback>
-            <img src="/avatar-icon-dark.svg" alt="no avatar" />
+            <img
+              src={
+                theme === "dark" ? "/avatar-icon-dark.svg" : "/avatar-icon.svg"
+              }
+            />
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-52">
         <DropdownMenuItem asChild>
           <Label className="text-sm font-normal" htmlFor="avatar-file">
-            <img src="/avatar-icon.svg" className="size-4" aria-hidden />
+            <UserRound />
             Change avatar image
           </Label>
         </DropdownMenuItem>
@@ -66,7 +74,7 @@ export function UserMenu() {
           Remove avatar image
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleLogout}>
-          <img src="/logout.svg" className="size-4" aria-hidden />
+          <LogOut />
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>

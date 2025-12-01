@@ -6,7 +6,7 @@ export function Layout() {
     <>
       <Toaster position="top-center" />
       <Header />
-      <main className="mt-14 flex flex-grow flex-col">
+      <main className="mt-14 flex w-full flex-grow flex-col overflow-hidden">
         <div className="container mx-auto flex flex-grow flex-col px-4 md:px-8">
           <Outlet />
         </div>

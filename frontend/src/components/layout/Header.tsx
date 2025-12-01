@@ -1,10 +1,14 @@
+import { useContext } from "react";
 import { NavLink } from "react-router";
+import { ThemeProviderContext } from "@/contexts/ThemeContext";
 import { Logo } from "../logo";
 import { LoginButton } from "./LoginButton";
 import { UserMenu } from "./UserMenu";
 import { useUser } from "@/features/users/hooks.ts";
+import { Moon, Sun } from "lucide-react";
 
 export function Header() {
+  const { theme, setTheme } = useContext(ThemeProviderContext);
   const { user } = useUser();
 
   return (
@@ -15,6 +19,9 @@ export function Header() {
         </NavLink>
 
         <div className="flex flex-1 items-center justify-end gap-8">
+          <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+            {theme === "dark" ? <Moon /> : <Sun />}
+          </button>
           {user ? (
             <>
               <NavLink to="/myloans">My loan</NavLink>

@@ -5,7 +5,7 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover.tsx";
-import { ChevronsUpDown, CirclePlus, CircleX, X } from "lucide-react";
+import { ChevronsUpDown, CircleX, Menu } from "lucide-react";
 import { TagListSelect, TagsSelect } from "@/components/tagsselect.tsx";
 import { useGenres, useAuthors } from "../hooks.ts/useBookProps";
 import type { BookFilter } from "../type";
@@ -25,11 +25,7 @@ export function SearchBook({ filter, setFilter }: SearchBookProps) {
     <div className="flex items-center gap-6">
       <Popover>
         <PopoverTrigger className="size-fit rounded-xl border px-3 py-2">
-          <img
-            className="size-6"
-            src="/hamburger-icon.svg"
-            aria-description="More search option"
-          />
+          <Menu />
         </PopoverTrigger>
         <PopoverContent align="start">
           <TagListSelect

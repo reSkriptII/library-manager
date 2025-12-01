@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button } from "./ui/button";
 import {
   Command,
   CommandEmpty,
@@ -12,6 +13,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { X, CirclePlus } from "lucide-react";
+import type { BookPropEntity } from "@/features/books/type.ts";
 
 type TagsSelectProps = {
   children: React.ReactNode;
@@ -59,10 +62,6 @@ export function TagsSelect({
     </Popover>
   );
 }
-
-import { Button } from "./ui/button";
-import type { BookPropEntity } from "#root/features/books/type.ts";
-import { X, CirclePlus } from "lucide-react";
 
 type TagListSelectProps = {
   label?: string;

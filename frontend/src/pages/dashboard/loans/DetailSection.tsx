@@ -1,5 +1,6 @@
+import { useContext } from "react";
 import { API_BASE_URL } from "@/env.ts";
-import type { User } from "@/features/users/types.ts";
+import { ThemeProviderContext } from "@/contexts/ThemeContext.tsx";
 import {
   Avatar,
   AvatarFallback,
@@ -8,7 +9,7 @@ import {
 import { Card, CardContent, CardTitle } from "@/components/ui/card.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
-import { useGetUser } from "#root/features/users/hooks.ts";
+import { useGetUser } from "@/features/users/hooks.ts";
 
 type DetailSectionProps = {
   borrowerId: number;
@@ -53,6 +54,7 @@ function BookCard({
   showDisclaimer,
   disclaimer,
 }: BookCardProps) {
+  const { theme } = useContext(ThemeProviderContext);
   return (
     <Card>
       <CardContent className="h-38">
@@ -61,12 +63,16 @@ function BookCard({
           <div className="flex h-28 w-16 items-center justify-center overflow-hidden lg:size-24">
             <img
               src={
-                book ? API_BASE_URL + `/books/${book.id}/cover` : "/book.svg"
+                book
+                  ? API_BASE_URL + `/books/${book.id}/cover`
+                  : theme === "dark"
+                    ? "/book-dark.svg"
+                    : "/book.svg"
               }
               className="max-h-full max-w-full object-contain"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
-                target.src = "/book.svg";
+                target.src = theme === "dark" ? "/book-dark.svg" : "/book.svg";
               }}
             />
           </div>
@@ -94,8 +100,8 @@ function BookCard({
 }
 
 function BorrowerCard({ borrowerId }: { borrowerId: number }) {
+  const { theme } = useContext(ThemeProviderContext);
   const borrower = useGetUser(borrowerId);
-
   return (
     <Card className="h-full">
       <CardContent>
@@ -106,11 +112,19 @@ function BorrowerCard({ borrowerId }: { borrowerId: number }) {
               src={
                 borrower
                   ? API_BASE_URL + `/users/${borrower.id}/avatar`
-                  : "/avatar-icon.svg"
+                  : theme === "dark"
+                    ? "/avatar-icon-dark.svg"
+                    : "/avatar-icon.svg"
               }
             />
             <AvatarFallback>
-              <img src="/avatar-icon.svg" />
+              <img
+                src={
+                  theme === "dark"
+                    ? "/avatar-icon-dark.svg"
+                    : "/avatar-icon.svg"
+                }
+              />
             </AvatarFallback>
           </Avatar>
           <div className="grow">

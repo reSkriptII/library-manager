@@ -1,4 +1,5 @@
-import type { LoanData } from "@/features/loans/types.ts";
+import { useContext } from "react";
+import { ThemeProviderContext } from "@/contexts/ThemeContext";
 import {
   Table,
   TableBody,
@@ -14,7 +15,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "#root/components/ui/avatar.tsx";
+} from "@/components/ui/avatar.tsx";
 
 type UserTabelProps = {
   users: User[];
@@ -22,6 +23,7 @@ type UserTabelProps = {
 };
 
 export function UserTabel({ users, onSelect }: UserTabelProps) {
+  const { theme } = useContext(ThemeProviderContext);
   return (
     <>
       <Table>
@@ -49,7 +51,11 @@ export function UserTabel({ users, onSelect }: UserTabelProps) {
                   />
                   <AvatarFallback>
                     <img
-                      src="/avatar-icon.svg"
+                      src={
+                        theme === "dark"
+                          ? "/avatar-icon-dark.svg"
+                          : "/avatar-icon.svg"
+                      }
                       className="size-10 object-cover"
                     />
                   </AvatarFallback>

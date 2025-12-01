@@ -8,8 +8,11 @@ import {
 } from "@/components/ui/card.tsx";
 import { CircleCheck, CircleMinus } from "lucide-react";
 import type { BookData } from "../type";
+import { useContext } from "react";
+import { ThemeProviderContext } from "@/contexts/ThemeContext.tsx";
 
 export function BookCard({ book }: { book: BookData }) {
+  const { theme } = useContext(ThemeProviderContext);
   const isAvailable = !book.lent && !book.reserveQueue;
   return (
     <Card>
@@ -34,7 +37,8 @@ export function BookCard({ book }: { book: BookData }) {
             alt={`cover image of ${book.title}`}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              target.src = "/book.svg";
+              console.log(theme);
+              target.src = theme === "dark" ? "/book-dark.svg" : "/book.svg";
             }}
           />
         </div>
