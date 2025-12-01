@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/dialog.tsx";
 import { TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
-import type { User } from "#root/features/users/types.ts";
-import { Label } from "#root/components/ui/label.tsx";
-import { Input } from "#root/components/ui/input.tsx";
-import { API_BASE_URL } from "#root/env.ts";
-import { Avatar, AvatarImage } from "#root/components/ui/avatar.tsx";
+import type { User } from "@/features/users/types.ts";
+import { Label } from "@/components/ui/label.tsx";
+import { Input } from "@/components/ui/input.tsx";
+import { API_BASE_URL } from "@/env.ts";
+import { Avatar, AvatarImage } from "@/components/ui/avatar.tsx";
 import {
   Select,
   SelectContent,
