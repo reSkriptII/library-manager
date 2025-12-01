@@ -8,6 +8,7 @@ export function useBookList(filter: BookFilter, refresh?: any) {
   const [books, setBooks] = useState<BookData[]>([]);
 
   useEffect(() => {
+    console.log(filter, refresh);
     let isMount = true;
 
     const params = {
@@ -35,7 +36,12 @@ export function useBookList(filter: BookFilter, refresh?: any) {
     return () => {
       isMount = false;
     };
-  }, [filter.title, filter.author, filter.genres, refresh]);
+  }, [
+    filter.title,
+    filter.author?.id,
+    filter.genres.reduce((prev, genre) => prev + "," + genre.id, ""),
+    refresh,
+  ]);
 
   return books;
 }
