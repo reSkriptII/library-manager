@@ -7,6 +7,7 @@ import { MyLoansPage } from "./pages/myloans/MyLoansPage";
 import { RegisterPage } from "./pages/dashboard/RegisterPage";
 import { BooksPage } from "./pages/dashboard/books/BooksPage";
 import { UsersPage } from "./pages/dashboard/users/UsersPage";
+import { ErrorPage } from "./pages/ErrorPage";
 
 export function Router() {
   return (
@@ -21,6 +22,8 @@ export function Router() {
         <Route path="/dashboard/books" element={<BooksPage />} />
         <Route path="/dashboard/users" element={<UsersPage />} />
       </Route>
+      <Route path="/servererror" element={<ErrorPage code={500} />} />
+      <Route path="*" element={<ErrorPage code={404} />} />
     </Routes>
   );
 }

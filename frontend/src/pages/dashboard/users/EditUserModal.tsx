@@ -22,9 +22,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "#root/components/ui/select.tsx";
+} from "@/components/ui/select.tsx";
 import { AvatarFallback } from "@radix-ui/react-avatar";
-import { deleteUser, UpdateUser } from "#root/features/users/api.ts";
+import { deleteUser, UpdateUser } from "@/features/users/api.ts";
 
 type EditUserModalProps = {
   open: boolean;
