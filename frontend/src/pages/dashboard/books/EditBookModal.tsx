@@ -7,6 +7,7 @@ import {
   DialogTitle,
   DialogOverlay,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog.tsx";
 import { Pen, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
@@ -23,7 +24,7 @@ import {
   CoverImgDiv,
   CoverImgField,
   DeleteButton,
-} from "./ModalComponents";
+} from "./modalcomponents";
 import type { BookPropEntity } from "@/features/books/type.ts";
 import type { BookData } from "@/features/books/type.ts";
 
@@ -87,7 +88,13 @@ export function EditBookModal({
   }
 
   async function handleUpdateBook() {
-    if (!book) return;
+    if (
+      !book ||
+      book.title != title ||
+      genres.every((genre, index) => genre.id === book.genres[index]?.id) ||
+      authors.every((author, index) => author.id === book.authors[index]?.id)
+    )
+      return;
 
     const bookUpdate = await updateBook(
       book.id,
@@ -115,6 +122,7 @@ export function EditBookModal({
     if (!book) return await handleCreate();
 
     if (deleting) return await handleDelete();
+
     await handleUpdateBook();
     await handleUpdateCover();
 
@@ -143,11 +151,14 @@ export function EditBookModal({
             </DialogTitle>
             {editing && <Pen />}
           </div>
+          <DialogDescription className="sr-only">
+            A form for {book ? "editing a book" : "creating a book"}
+          </DialogDescription>
         </DialogHeader>
 
         {deleting && (
           <p className="flex gap-2 font-bold">
-            <TriangleAlert /> This book will be deleted on save
+            <TriangleAlert /> This book will be deleted after save
           </p>
         )}
 

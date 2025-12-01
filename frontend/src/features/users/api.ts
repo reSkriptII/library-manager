@@ -67,3 +67,41 @@ export async function registerUser(registerReqBody: RegisterReqBody) {
     }
   }
 }
+
+export async function UpdateUser(
+  id: number,
+  field: "name" | "role",
+  value: string,
+) {
+  try {
+    await api.put(`/users/${id}/${field}`, { [field]: value });
+    return { ok: true };
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      const status = err.status as number;
+      if (status >= 400) {
+        return {
+          ok: false,
+          message: err.response?.data.message,
+        };
+      }
+    }
+  }
+}
+
+export async function deleteUser(id: number) {
+  try {
+    await api.delete(`/users${id}`);
+    return { ok: true };
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      const status = err.status as number;
+      if (status >= 400) {
+        return {
+          ok: false,
+          message: err.response?.data.message,
+        };
+      }
+    }
+  }
+}

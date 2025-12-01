@@ -10,7 +10,11 @@ import {
 } from "@/components/ui/table.tsx";
 import { API_BASE_URL } from "@/env.ts";
 import type { User } from "../types";
-import { Avatar, AvatarImage } from "#root/components/ui/avatar.tsx";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "#root/components/ui/avatar.tsx";
 
 type UserTabelProps = {
   users: User[];
@@ -19,21 +23,36 @@ type UserTabelProps = {
 
 export function UserTabel({ users, onSelect }: UserTabelProps) {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow className="flex">
-          <TableHead className="w-16 text-center">avatar</TableHead>
-          <TableHead className="w-8 text-center">ID</TableHead>
-          <TableHead className="w-36 text-center md:w-48">name</TableHead>
-          <TableHead className="w-48 text-center md:w-56">email</TableHead>
-          <TableHead className="w-16 text-center">role</TableHead>
-        </TableRow>
+    <>
+      <Table>
+        <TableCaption>Users</TableCaption>
+        <TableHeader>
+          <TableRow className="flex">
+            <TableHead className="w-16 text-center">avatar</TableHead>
+            <TableHead className="w-8 text-center">ID</TableHead>
+            <TableHead className="w-36 text-center md:w-48">name</TableHead>
+            <TableHead className="w-48 text-center md:w-56">email</TableHead>
+            <TableHead className="w-16 text-center">role</TableHead>
+          </TableRow>
+        </TableHeader>
         <TableBody>
           {users.map((user) => (
-            <TableRow>
+            <TableRow
+              key={user.id}
+              className="flex items-center"
+              onClick={() => onSelect(user)}
+            >
               <TableCell className="w-16">
                 <Avatar className="size-12">
-                  <AvatarImage src="/avatar-icon.svg" />
+                  <AvatarImage
+                    src={API_BASE_URL + `/users/${user.id}/avatar`}
+                  />
+                  <AvatarFallback>
+                    <img
+                      src="/avatar-icon.svg"
+                      className="size-10 object-cover"
+                    />
+                  </AvatarFallback>
                 </Avatar>
               </TableCell>
               <TableCell className="w-8 text-center">{user.id}</TableCell>
@@ -47,7 +66,8 @@ export function UserTabel({ users, onSelect }: UserTabelProps) {
             </TableRow>
           ))}
         </TableBody>
-      </TableHeader>
-    </Table>
+      </Table>
+      {!users[0] && <p className="border-b p-2 text-center">no user found</p>}
+    </>
   );
 }

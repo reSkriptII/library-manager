@@ -24,7 +24,7 @@ export function DashboardLayout() {
       <SidebarProvider defaultOpen={true}>
         <DashboardSidebar />
 
-        <main className="flex flex-grow flex-col">
+        <main className="mt-14 flex flex-grow flex-col">
           <SidebarTrigger className="fixed rounded-l-none border border-l-0" />
           <div className="container mx-auto flex flex-grow flex-col px-4 md:px-8">
             <Outlet />

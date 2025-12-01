@@ -49,7 +49,9 @@ export function LoanTable({ loans, onSelect }: LoanTableProps) {
               </TableCell>
               <TableCell className="w-6 text-center">{loan.id}</TableCell>
               <TableCell className="w-14 text-center">{loan.bookId}</TableCell>
-              <TableCell className="w-52 lg:w-72">{loan.bookTitle}</TableCell>
+              <TableCell className="w-52 lg:w-72">
+                <span className="text-wrap">{loan.bookTitle}</span>
+              </TableCell>
               <TableCell className="w-32">
                 {loan?.borrowTime
                   ? new Date(loan.borrowTime).toDateString()

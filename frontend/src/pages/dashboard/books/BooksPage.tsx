@@ -11,7 +11,7 @@ import type { BookData, BookFilter } from "@/features/books/type.ts";
 
 export function BooksPage() {
   const [filter, setFilter] = useState<BookFilter>(filterDefault);
-  const [editing, setEditing] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const refreshRef = useRef(0);
   const books = useBookList(filter, refreshRef.current);
   const [editingBook, setEditingBook] = useState<BookData | null>(null);
@@ -20,8 +20,8 @@ export function BooksPage() {
     <>
       <EditBookModal
         book={editingBook}
-        open={editing}
-        setClose={() => setEditing(false)}
+        open={modalOpen}
+        setClose={() => setModalOpen(false)}
         onSave={() => {
           ++refreshRef.current;
         }}
@@ -33,7 +33,7 @@ export function BooksPage() {
           className="my-4"
           onClick={() => {
             setEditingBook(null);
-            setEditing(true);
+            setModalOpen(true);
           }}
         >
           Create Book
@@ -43,7 +43,7 @@ export function BooksPage() {
           caption="books"
           onSelect={(book) => {
             setEditingBook(book);
-            setEditing(true);
+            setModalOpen(true);
           }}
         />
       </div>

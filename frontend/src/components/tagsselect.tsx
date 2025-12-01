@@ -88,7 +88,12 @@ export function TagListSelect({
       {label ?? name}
       <div className="flex flex-wrap gap-1">
         {selectedTags.map((tag) => (
-          <Button variant="outline" onClick={() => onRemove(tag)}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              if (edit) onRemove(tag);
+            }}
+          >
             {tag.name}
             {edit && <X />}
           </Button>

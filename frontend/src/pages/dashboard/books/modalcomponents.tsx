@@ -18,7 +18,9 @@ type TitleFieldProp = {
 export function TitleField({ edit, value, onChange }: TitleFieldProp) {
   return (
     <div>
-      <Label className="text-base font-normal">Title</Label>
+      <Label className="text-base font-normal" htmlFor="title">
+        Title
+      </Label>
       <Input
         id="title"
         type="text"
@@ -35,8 +37,9 @@ type CoverImgFieldProps = { onChange: (img: File | undefined) => void };
 export function CoverImgField({ onChange }: CoverImgFieldProps) {
   return (
     <div>
-      <Label>Cover image</Label>
+      <Label htmlFor="coverimage">Cover image</Label>
       <Input
+        id="coverimage"
         type="file"
         accept="image/*"
         onChange={(e) => onChange(e.target.files?.[0])}

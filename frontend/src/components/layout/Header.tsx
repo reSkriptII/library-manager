@@ -8,7 +8,7 @@ export function Header() {
   const { user } = useUser();
 
   return (
-    <header className="bg-background sticky top-0 z-50 w-full border-b">
+    <header className="bg-background fixed top-0 left-0 z-50 w-full border-b">
       <div className="container m-auto flex h-14 items-center px-4 md:px-12">
         <NavLink to="/">
           <Logo />
@@ -19,7 +19,7 @@ export function Header() {
             <>
               <NavLink to="/myloans">My loan</NavLink>
               {user.role !== "member" && (
-                <NavLink to="/dashboard">Dashboard</NavLink>
+                <NavLink to="/dashboard/loans">Dashboard</NavLink>
               )}
               <UserMenu />
             </>

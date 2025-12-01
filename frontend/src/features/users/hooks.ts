@@ -42,7 +42,7 @@ export function useGetUser(id?: number) {
   return user;
 }
 
-export function useUserList() {
+export function useUserList(refresh: any) {
   const [users, setUsers] = useState<User[]>([]);
   useEffect(() => {
     let isMount = true;
@@ -58,7 +58,7 @@ export function useUserList() {
     return () => {
       isMount = false;
     };
-  }, []);
+  }, [refresh]);
 
   return users;
 }
