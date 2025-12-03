@@ -1,6 +1,6 @@
 import type { Middleware } from "../../types/express.js";
-import type { LoanData } from "#src/types/app.js";
-export type { LoanObject } from "#src/types/models.js";
+import type { LoanData } from "../../types/app.js";
+export type { LoanObject } from "../../types/models.js";
 export type { LoanData };
 
 export namespace Getloans {

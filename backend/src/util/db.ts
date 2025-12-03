@@ -1,9 +1,10 @@
+import { ENV } from "../config/env.js";
 import { Pool } from "pg";
 import { createClient } from "redis";
 
 const redisClient = await createClient({
-  url: String(process.env.REDIS_URL),
-  password: process.env.REDIS_PASSWORD,
+  url: ENV.REDIS_URL,
+  password: ENV.REDIS_PASSWORD,
 })
   .on("error", (err) => {
     console.log("Redis Client Error", err);
