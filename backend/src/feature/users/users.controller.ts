@@ -1,5 +1,5 @@
 import { createReadStream } from "fs";
-import { CONFIG } from "#src/config/constant.js";
+import { CONFIG } from "../../config/constant.js";
 import { cleanFile } from "../../util/request.js";
 import * as models from "./users.models.js";
 import * as services from "./users.services.js";

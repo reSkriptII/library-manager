@@ -1,2 +1,3 @@
 import { app } from "./app.js";
-app.listen(5000);
+import { ENV } from "./config/env.js";
+app.listen(ENV.PORT);

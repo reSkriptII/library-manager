@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import { AxiosError } from "axios";
 import { api } from "@/lib/api.ts";
 import { UserContext } from "./contexts.tsx";
 import type { User } from "./types";
