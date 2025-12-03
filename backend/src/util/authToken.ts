@@ -48,10 +48,14 @@ export function setJwtCookie(
   res.cookie("access_token", accessToken, {
     httpOnly: true,
     expires: new Date(Date.now() + CONFIG.ACCESS_TOKEN_EXP_SECOND * 1000),
+    sameSite: "none",
+    secure: true,
   });
   res.cookie("refresh_token", refreshToken, {
     httpOnly: true,
     expires: new Date(Date.now() + CONFIG.REFRESH_TOKEN_EXP_SECOND * 1000),
+    sameSite: "none",
+    secure: true,
   });
 }
 export function clearJwtCookie(res: Response) {
