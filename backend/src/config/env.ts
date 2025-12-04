@@ -1,26 +1,58 @@
 import path from "path";
 import dotenv from "dotenv";
 dotenv.config();
+import { z } from "zod";
 
-function requireEnv(key: string) {
-  const value = process.env[key];
-  if (typeof value !== "string")
-    throw new Error("Missing environment variable: " + key);
-  return value;
+export const envSchema = z.object({
+  NODE_ENV: z.enum(["development", "production", "test"]).default("production"),
+  PORT: z.coerce.number().min(0).max(65535).default(5000),
+  CORS_ORIGIN: z.string(),
+
+  // database connection
+  DATABASE_URL: z.url(),
+  PGHOST: z.string(),
+  PGPORT: z.coerce.number().min(1000).max(65535).default(5432),
+  PGDATABASE: z.string(),
+  PGUSER: z.string(),
+  PGPASSWORD: z.string(),
+
+  REDIS_URL: z.url(),
+  REDIS_PASSWORD: z.string(),
+
+  // jwt secret
+  ACCESS_TOKEN_SECRET: z.string(),
+  REFRESH_TOKEN_SECRET: z.string(),
+
+  // resource storage path
+  AVATAR_IMAGE_DIR_PATH: z
+    .string()
+    .default(path.resolve("public", "image", "users")),
+  COVER_IMAGE_DIR_PATH: z
+    .string()
+    .default(path.resolve("public", "image", "books")),
+});
+
+export type Environment = z.infer<typeof envSchema>;
+
+let _env: Environment;
+
+export function loadEnv(): Environment | null {
+  try {
+    // Validate process.env against the schema
+    _env = envSchema.parse(process.env);
+    console.log(`Environment variables loaded successfully.`);
+    return _env;
+  } catch (error) {
+    // If validation fails, log error and return null
+    console.error("Invalid environment variable:");
+    console.error(error);
+    process.exit(1);
+  }
 }
 
-export const ENV = {
-  NODE_ENV: process.env.NODE_ENV ?? "development",
-  PORT: Number(process.env.PORT ?? 5000),
-
-  // DATABASE_URL: requireEnv("DATABASE_URL"),
-  REDIS_URL: process.env.REDIS_URL,
-  REDIS_PASSWORD: process.env.REDIS_PASSWORD,
-  ACCESS_TOKEN_SECRET: requireEnv("ACCESS_TOKEN_SECRET"),
-  REFRESH_TOKEN_SECRET: requireEnv("REFRESH_TOKEN_SECRET"),
-
-  CORS_ORIGIN: process.env.CORS_ORIGIN ?? "http://localhost:5173",
-
-  AVATAR_IMAGE_DIR_PATH: path.resolve("public", "image", "users"),
-  COVER_IMAGE_DIR_PATH: path.resolve("public", "image", "books"),
-};
+export function ENV() {
+  if (!_env) {
+    throw new Error("Environment variables not loaded.");
+  }
+  return _env;
+}

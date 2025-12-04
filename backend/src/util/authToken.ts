@@ -6,20 +6,16 @@ import { redisClient } from "./db.js";
 import type { Response } from "express";
 
 export function createAccessToken(userId: number) {
-  const accessToken = jwt.sign(
-    { sub: userId },
-    String(ENV.ACCESS_TOKEN_SECRET),
-    { expiresIn: CONFIG.ACCESS_TOKEN_EXP_SECOND * 1000 }
-  );
+  const accessToken = jwt.sign({ sub: userId }, ENV().ACCESS_TOKEN_SECRET, {
+    expiresIn: CONFIG.ACCESS_TOKEN_EXP_SECOND * 1000,
+  });
   return accessToken;
 }
 
 export function createRefreshToken(userId: number) {
-  const refreshToken = jwt.sign(
-    { sub: userId },
-    String(ENV.REFRESH_TOKEN_SECRET),
-    { expiresIn: CONFIG.REFRESH_TOKEN_EXP_SECOND * 1000 }
-  );
+  const refreshToken = jwt.sign({ sub: userId }, ENV().REFRESH_TOKEN_SECRET, {
+    expiresIn: CONFIG.REFRESH_TOKEN_EXP_SECOND * 1000,
+  });
   return refreshToken;
 }
 

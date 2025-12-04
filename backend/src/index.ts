@@ -1,3 +1,7 @@
-import { app } from "./app.js";
+import "./startup.js";
 import { ENV } from "./config/env.js";
-app.listen(ENV.PORT);
+import { app } from "./app.js";
+
+app.listen(ENV().PORT, () =>
+  console.log(`App listening on port ${ENV().PORT}`)
+);

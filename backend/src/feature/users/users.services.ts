@@ -9,7 +9,7 @@ import * as models from "./users.models.js";
 
 export async function getAvatarData(id: number) {
   try {
-    const imgDir = await readdir(ENV.AVATAR_IMAGE_DIR_PATH);
+    const imgDir = await readdir(ENV().AVATAR_IMAGE_DIR_PATH);
 
     const filteredImgNames = imgDir.filter(
       (file) => path.parse(file).name == String(id)
@@ -19,7 +19,7 @@ export async function getAvatarData(id: number) {
     }
 
     const coverImgPath = path.join(
-      ENV.AVATAR_IMAGE_DIR_PATH,
+      ENV().AVATAR_IMAGE_DIR_PATH,
       filteredImgNames[0]
     );
     const mimeType = mime.lookup(coverImgPath);
@@ -33,7 +33,7 @@ export async function getAvatarData(id: number) {
       if (err.code === "ENOENT" || err.code === "EACCES") {
         throw new FileError(
           err.code,
-          ENV.AVATAR_IMAGE_DIR_PATH,
+          ENV().AVATAR_IMAGE_DIR_PATH,
           "GET /books/:id/cover"
         );
       }
@@ -47,19 +47,19 @@ export async function updateAvatar(
   file?: Express.Multer.File | undefined
 ) {
   try {
-    const imgDir = await readdir(ENV.AVATAR_IMAGE_DIR_PATH);
+    const imgDir = await readdir(ENV().AVATAR_IMAGE_DIR_PATH);
 
     const filteredImgNames = imgDir.filter(
       (file) => path.parse(file).name === String(id)
     );
     filteredImgNames.forEach((img) =>
-      rm(path.join(ENV.AVATAR_IMAGE_DIR_PATH, img))
+      rm(path.join(ENV().AVATAR_IMAGE_DIR_PATH, img))
     );
 
     if (file != undefined) {
       const destFileName = id + "." + mime.extension(file.mimetype);
       const srcFilePath = path.resolve(file.path);
-      const destFilePath = path.join(ENV.AVATAR_IMAGE_DIR_PATH, destFileName);
+      const destFilePath = path.join(ENV().AVATAR_IMAGE_DIR_PATH, destFileName);
 
       await copyFile(srcFilePath, destFilePath);
     }
@@ -68,7 +68,7 @@ export async function updateAvatar(
       if (err.code === "ENOENT" || err.code === "EACCES") {
         throw new FileError(
           err.code,
-          ENV.AVATAR_IMAGE_DIR_PATH,
+          ENV().AVATAR_IMAGE_DIR_PATH,
           "GET /users/*/avartar"
         );
       }

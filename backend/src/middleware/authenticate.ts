@@ -66,8 +66,8 @@ function verifyToken(
     const payload = jwt.verify(
       accessToken,
       accessOrRefresh === "access"
-        ? ENV.ACCESS_TOKEN_SECRET
-        : ENV.REFRESH_TOKEN_SECRET
+        ? ENV().ACCESS_TOKEN_SECRET
+        : ENV().REFRESH_TOKEN_SECRET
     );
     if (!Number.isInteger(payload.sub)) {
       return { ok: false, message: "unexpected payload data" };

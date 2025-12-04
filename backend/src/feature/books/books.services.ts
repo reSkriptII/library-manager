@@ -125,7 +125,7 @@ export async function deleteBook(id: number): Promise<DeleteBookResult> {
 
 export async function getBookCoverData(id: number | string) {
   try {
-    const imgDir = await readdir(ENV.COVER_IMAGE_DIR_PATH);
+    const imgDir = await readdir(ENV().COVER_IMAGE_DIR_PATH);
 
     const filteredImgNames = imgDir.filter(
       (file) => path.parse(file).name == String(id)
@@ -135,7 +135,7 @@ export async function getBookCoverData(id: number | string) {
     }
 
     const coverImgPath = path.join(
-      ENV.COVER_IMAGE_DIR_PATH,
+      ENV().COVER_IMAGE_DIR_PATH,
       filteredImgNames[0]
     );
     const mimeType = mime.lookup(coverImgPath);
@@ -149,7 +149,7 @@ export async function getBookCoverData(id: number | string) {
       if (err.code === "ENOENT" || err.code === "EACCES") {
         throw new FileError(
           err.code,
-          ENV.COVER_IMAGE_DIR_PATH,
+          ENV().COVER_IMAGE_DIR_PATH,
           "GET /books/:id/cover"
         );
       }
@@ -163,20 +163,20 @@ export async function updateBookCover(
   file?: Express.Multer.File | undefined
 ) {
   try {
-    const imgDir = await readdir(ENV.COVER_IMAGE_DIR_PATH);
+    const imgDir = await readdir(ENV().COVER_IMAGE_DIR_PATH);
 
     const filteredImgNames = imgDir.filter(
       (file) => path.parse(file).name === String(id)
     );
 
     filteredImgNames.forEach((img) =>
-      rm(path.join(ENV.COVER_IMAGE_DIR_PATH, img))
+      rm(path.join(ENV().COVER_IMAGE_DIR_PATH, img))
     );
 
     if (file != undefined) {
       const destFileName = id + "." + mime.extension(file.mimetype);
       const srcFilePath = path.resolve(file.path);
-      const destFilePath = path.join(ENV.COVER_IMAGE_DIR_PATH, destFileName);
+      const destFilePath = path.join(ENV().COVER_IMAGE_DIR_PATH, destFileName);
       await copyFile(srcFilePath, destFilePath);
     }
   } catch (err) {
@@ -184,7 +184,7 @@ export async function updateBookCover(
       if (err.code === "ENOENT" || err.code === "EACCES") {
         throw new FileError(
           err.code,
-          ENV.COVER_IMAGE_DIR_PATH,
+          ENV().COVER_IMAGE_DIR_PATH,
           "GET /books/:id/cover"
         );
       }

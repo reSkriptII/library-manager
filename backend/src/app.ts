@@ -10,7 +10,7 @@ import { ENV } from "./config/env.js";
 
 const app = express();
 
-app.use(cors({ origin: ENV.CORS_ORIGIN, credentials: true }));
+app.use(cors({ origin: ENV().CORS_ORIGIN, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -22,9 +22,9 @@ app.use("/auth", authRoutes);
 app.use((req, res) => {
   res.status(404).send({ message: "Route not found" });
 });
-app.use((err: unknown, req: unknown, res: express.Response, next: unknown) => {
+app.use((err: any, req: any, res: express.Response, next: any) => {
   console.log(err);
-  return res.status(500);
+  return res.status(500).send();
 });
 
 export { app };
