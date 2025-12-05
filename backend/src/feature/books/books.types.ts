@@ -3,10 +3,10 @@ import type { Middleware } from "../../types/express.js";
 export type BookObject = {
   id: number;
   title: string;
-  author_ids: number[];
-  author_names: string[];
-  genre_ids: number[];
-  genre_names: string[];
+  author_ids: number[] | null;
+  author_names: string[] | null;
+  genre_ids: number[] | null;
+  genre_names: string[] | null;
   lent: boolean;
   reserve_queue: number;
 };

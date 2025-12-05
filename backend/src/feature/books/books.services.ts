@@ -237,14 +237,16 @@ export async function createAuthor(author: string): Promise<CreatePropResult> {
 function structureBook(book: models.BookObject) {
   const genreId = book.genre_ids as number[];
   const genres: { id: number; name: string }[] = [];
-  genreId.forEach((id, index) =>
-    genres.push({ id, name: book.genre_names[index] })
+  genreId?.forEach(
+    (id, index) =>
+      book.genre_names && genres.push({ id, name: book.genre_names[index] })
   );
 
   const authorId = book.author_ids as number[];
   const authors: { id: number; name: string }[] = [];
-  authorId.forEach((id, index) =>
-    authors.push({ id, name: book.author_names[index] })
+  authorId?.forEach(
+    (id, index) =>
+      book.author_names && authors.push({ id, name: book.author_names[index] })
   );
   return {
     id: book.id,
