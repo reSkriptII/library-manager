@@ -8,6 +8,11 @@ type UserData = {
   role: "member" | "librarian" | "admin";
 };
 
+/** ge user data from database filtered by by unique email in WHERE clause
+ *
+ * @param {string} email - an unique email of an user
+ * @return {UserData} an user data object from database
+ */
 export function getUserByEmail(email: string) {
   return psqlPool
     .query(
@@ -17,28 +22,13 @@ export function getUserByEmail(email: string) {
     .then((r) => r.rows[0] as UserData);
 }
 
-export type CreatUserDetails = {
-  name: string;
-  email: string;
-  hashedPassword: string;
-  role: UserRole;
-};
-export function createUser({
-  name,
-  email,
-  hashedPassword,
-  role,
-}: CreatUserDetails) {
-  return psqlPool
-    .query(
-      `INSERT INTO users (name, email, hashed_password, role)
-    VALUES ($1, $2, $3, $4)
-    RETURNING user_id as id`,
-      [name, email, hashedPassword, role]
-    )
-    .then((r) => r.rows[0].id as number);
-}
-
+/** check to database if user with exact email or name exist
+ *
+ * email and name search are default to null and ignored if not provide
+ * @param {string} email - an unique email of an user
+ * @param {string} name -a name of an user
+ * @return {boolean}
+ */
 export function isUserUsed({ email, name }: { email: string; name: string }) {
   return psqlPool
     .query("SELECT 1 FROM users WHERE email = $1 OR name = $2", [

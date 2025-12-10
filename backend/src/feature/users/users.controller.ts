@@ -6,6 +6,10 @@ import * as services from "./users.services.js";
 import * as Users from "./users.types.js";
 import type { Controller } from "../../types/express.js";
 
+/** send user data for current, logged in user
+ *
+ * rely on req.user.id. call authenticate middleware first
+ */
 export const getMe: Users.GetMeCtrler = async function (req, res, next) {
   try {
     const user = await models.getUserById(req.user.id);
@@ -18,6 +22,7 @@ export const getMe: Users.GetMeCtrler = async function (req, res, next) {
   }
 };
 
+/** send an array of all users */
 export const getUsers: Controller = async function (req, res, next) {
   try {
     const users = await models.getUsers();
@@ -27,6 +32,10 @@ export const getUsers: Controller = async function (req, res, next) {
   }
 };
 
+/** send an user data with specific id
+ *
+ * @param {string} req.param.id - user id. internally convert to integer
+ */
 export const getUserById: Users.GetUserCtrler = async function (
   req,
   res,
@@ -50,6 +59,10 @@ export const getUserById: Users.GetUserCtrler = async function (
   return res.status(200).send(user);
 };
 
+/** send user avatar image for current, logged in user
+ *
+ * rely on req.user.id. call authenticate middleware first
+ */
 export const getMyAvatar: Controller = async function (req, res, next) {
   let bookCoverImgData;
   try {
@@ -65,6 +78,11 @@ export const getMyAvatar: Controller = async function (req, res, next) {
   createReadStream(bookCoverImgData.path).pipe(res);
   return;
 };
+
+/** send user avatar image for user at /:id
+ *
+ * @param {string} req.param.id - user id. internally convert to integer
+ */
 export const getAvatar: Controller = async function (req, res, next) {
   const userId = Number(req.params.id);
   if (!Number.isInteger(userId)) {
@@ -86,6 +104,14 @@ export const getAvatar: Controller = async function (req, res, next) {
   createReadStream(bookCoverImgData.path).pipe(res);
 };
 
+/** replace user avatar image for current, logged in user
+ *
+ * rely on req.user.id. call authenticate middleware first.
+ *
+ * delete avatar image if no file founded
+ *
+ * @param {Express.Multer.File} req.file - an avatar image file parsed by multer
+ */
 export const updateAvatar: Controller = async function (req, res, next) {
   try {
     if (req.file && !req.file.mimetype.startsWith("image/")) {
@@ -104,6 +130,11 @@ export const updateAvatar: Controller = async function (req, res, next) {
 const EMAIL_REGEXP =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
+/**
+ * @param {string} req.body.name
+ * @param {string} req.body.email
+ * @param {string} req.body.password
+ */
 export const registerUser: Users.RegisterUserCtrler = async function (
   req,
   res,
@@ -111,7 +142,7 @@ export const registerUser: Users.RegisterUserCtrler = async function (
 ) {
   try {
     const { name, email, password } = req.body;
-    console.log(req.body);
+
     const isNameInvalid = typeof name !== "string";
     const isEmailInvalid = !EMAIL_REGEXP.test(email);
     const isPasswordInvalid =
@@ -119,6 +150,7 @@ export const registerUser: Users.RegisterUserCtrler = async function (
       password.length < CONFIG.PASSWORD_MIN_LENGTH;
 
     if (isNameInvalid || isEmailInvalid || isPasswordInvalid) {
+      // generate error field details for error message
       const errorField = [];
       if (isNameInvalid) errorField.push("name");
       if (isEmailInvalid) errorField.push("email");
@@ -127,6 +159,8 @@ export const registerUser: Users.RegisterUserCtrler = async function (
         .status(400)
         .send({ message: "Invalid field: " + errorField.join(",") });
     }
+
+    // --- execute registeration ---
 
     const registration = await services.registerUser(name, email, password);
     if (!registration.ok) {
@@ -139,6 +173,10 @@ export const registerUser: Users.RegisterUserCtrler = async function (
   }
 };
 
+/** set user name for user at /:id
+ *
+ * @param {string} req.param.id - user id. internally convert to integer
+ */
 export const setUserName: Users.SetUserNameCtrler = async function (
   req,
   res,
@@ -161,6 +199,11 @@ export const setUserName: Users.SetUserNameCtrler = async function (
     return next(error);
   }
 };
+
+/** set user role for user at /:id
+ *
+ * @param {string} req.param.id - user id. internally convert to integer
+ */
 export const setUserRole: Users.SetUserRoleCtrler = async function (
   req,
   res,
@@ -183,6 +226,10 @@ export const setUserRole: Users.SetUserRoleCtrler = async function (
   }
 };
 
+/** delete user at /:id
+ *
+ * @param {string} req.param.id - user id. internally convert to integer
+ */
 export const deleteUser: Users.DeleteUserCtrler = async function (
   req,
   res,
@@ -202,6 +249,10 @@ export const deleteUser: Users.DeleteUserCtrler = async function (
   }
 };
 
+/** send all loans for current, logged in user
+ *
+ * rely on req.user.id. call authenticate middleware first
+ */
 export const getMyLoan: Users.GetMyLoanCtrler = async function (
   req,
   res,

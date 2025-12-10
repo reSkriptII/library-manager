@@ -8,11 +8,4 @@ const router = Router();
 router.post("/login", controllers.login);
 router.post("/logout", authenticate, controllers.logout);
 
-router.post(
-  "/register",
-  authenticate,
-  checkRole("librarian"),
-  controllers.registerUser
-);
-
 export default router;

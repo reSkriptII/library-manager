@@ -31,9 +31,9 @@ export const envSchema = z.object({
     .string()
     .default(path.resolve("public", "image", "books")),
 });
-
 export type Environment = z.infer<typeof envSchema>;
 
+// internal environment variable holder
 let _env: Environment;
 
 export function loadEnv(): Environment | null {

@@ -1,4 +1,7 @@
+// load config and setup: load environment variable and create directory
+// must run before  main application logic
 import "./startup.js";
+
 import { ENV } from "./config/env.js";
 import { app } from "./app.js";
 

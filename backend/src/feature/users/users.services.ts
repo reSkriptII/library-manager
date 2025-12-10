@@ -7,6 +7,12 @@ import { searchLoans } from "../../models/loans.js";
 import { FileError } from "../../util/error.js";
 import * as models from "./users.models.js";
 
+/** get a path to avatar image of a user and a file type
+ *
+ * @param id - user id.
+ * @returns {object | null} an object with structure {mimeType: string, path: string}.
+ * return null if not found
+ */
 export async function getAvatarData(id: number) {
   try {
     const imgDir = await readdir(ENV().AVATAR_IMAGE_DIR_PATH);
@@ -30,6 +36,7 @@ export async function getAvatarData(id: number) {
     return { mimeType, path: coverImgPath };
   } catch (err) {
     if (err instanceof Error && "code" in err) {
+      // directory not found or access error
       if (err.code === "ENOENT" || err.code === "EACCES") {
         throw new FileError(
           err.code,
@@ -42,6 +49,13 @@ export async function getAvatarData(id: number) {
   }
 }
 
+/** replace user avatar image of a user
+ *
+ * delete avatar image if no file founded
+ *
+ * @param {number} id - user id used as avatar file name
+ * @param {Express.Multer.File} req.file - an avatar image file parsed by multer
+ */
 export async function updateAvatar(
   id: number | string,
   file?: Express.Multer.File | undefined
@@ -52,10 +66,14 @@ export async function updateAvatar(
     const filteredImgNames = imgDir.filter(
       (file) => path.parse(file).name === String(id)
     );
+
+    // delete all exised image
+    // avoid duplication image for a user with different file extension
     filteredImgNames.forEach((img) =>
       rm(path.join(ENV().AVATAR_IMAGE_DIR_PATH, img))
     );
 
+    // write a file to storage
     if (file != undefined) {
       const destFileName = id + "." + mime.extension(file.mimetype);
       const srcFilePath = path.resolve(file.path);
@@ -66,6 +84,7 @@ export async function updateAvatar(
   } catch (err) {
     if (err instanceof Error && "code" in err) {
       if (err.code === "ENOENT" || err.code === "EACCES") {
+        // directory not found or access error
         throw new FileError(
           err.code,
           ENV().AVATAR_IMAGE_DIR_PATH,
@@ -77,6 +96,11 @@ export async function updateAvatar(
   }
 }
 
+/** create a new user.
+ *
+ * store a hashed password with bcrypt with round 10
+ * @return {object} an object with a flag 'ok: boolean' and new user id or error message
+ */
 export async function registerUser(
   name: string,
   email: string,
@@ -109,20 +133,39 @@ export async function registerUser(
   }
 }
 
+/** set name of a user
+ *
+ * @param {number} id - user id
+ * @param {string} name
+ * @returns an object with a flag 'ok: boolean' and, on error, http status and error message
+ */
 export async function setUserName(id: number, name: string) {
   if (!(await models.isUserExist(id))) {
     return { ok: false, status: 404, message: "User not found" };
   }
   await models.setUserName(id, name);
+  return { ok: true };
 }
 
+/** set role of a user
+ *
+ * @param {number} id - user id
+ * @param {UserRole} role
+ * @returns an object with a flag 'ok: boolean' and, on error, http status and error message
+ */
 export async function setUserRole(id: number, role: UserRole) {
   if (!(await models.isUserExist(id))) {
     return { ok: false, status: 404, message: "User not found" };
   }
   await models.setUserRole(id, role);
+  return { ok: true };
 }
 
+/** delete an user
+ *
+ * @param {number} id
+ * @returns {object} an object with a flag 'ok: boolean' and, on error, http status and error message
+ */
 export async function deleteUser(id: number) {
   if (!(await models.isUserExist(id))) {
     return { ok: false, status: 404, message: "User not found" };
@@ -138,6 +181,10 @@ export async function deleteUser(id: number) {
   return { ok: true };
 }
 
+/** search loans of a user and structure it for response
+ *
+ * @id - user id
+ */
 export async function getMyLoan(id: number) {
   const loans = await searchLoans({ borrowerId: id });
 

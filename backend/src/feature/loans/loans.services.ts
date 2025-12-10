@@ -3,6 +3,12 @@ import * as bookModels from "../../models/books.js";
 import * as userModels from "../../models/users.js";
 import { CONFIG } from "../../config/constant.js";
 
+/** get an array of loans filtered by search and structure for response
+ *
+ * @param {number} search.active - filter for active (not returned) loans
+ * @param {number} search.bookId - filter for loans of a book
+ * @param {number} search.borrowerId - filter for loans of a user
+ */
 export async function getSearchLoans(search: models.SearchLoans) {
   const loans = await models.searchLoans(search);
 
@@ -24,6 +30,12 @@ export type LoanBook =
   | { ok: true; id: number; dueDate: Date }
   | { ok: false; message: string };
 
+/** check and create a new loan
+ *
+ * use set due date with interval in in CONFIG.BORROW_INTERVAL
+ *
+ * @returns {object} an object with a flag 'ok: boolean' with loan id and due date or an error massage
+ */
 export async function loanBook(
   bookId: number,
   borrowerId: number
@@ -65,6 +77,10 @@ export type ReturnBook =
   | { ok: true; dueDate: Date; returnTime: Date; lateReturn: boolean }
   | { ok: false; status: number; message: string };
 
+/** set a loan as returned
+ *
+ * @returns {object} an object with a flag 'ok: boolean' with return time and late flag or an error massage
+ */
 export async function returnBook(
   loanId: number,
   checkProps?: { bookId: number; borrowerId: number }
@@ -97,9 +113,3 @@ export async function returnBook(
     lateReturn: return_time > due_date,
   };
 }
-
-export async function verifyLoan(
-  loanId: number,
-  bookId: number,
-  borrowerId: number
-) {}

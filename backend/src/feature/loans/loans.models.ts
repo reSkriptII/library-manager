@@ -4,6 +4,7 @@ import type { LoanObject } from "./loans.types.js";
 export { searchLoans } from "../../models/loans.js";
 export type { SearchLoans } from "../../models/loans.js";
 
+/** insert a new loan  */
 export function createLoans(
   bookId: number,
   borrowerId: number,
@@ -29,6 +30,7 @@ export function returnBook(loanId: number) {
     .then((r) => r.rows[0] as { return_time: Date; due_date: Date });
 }
 
+/** get a loan with specific id  */
 export function getLoanById(loanId: number): Promise<LoanObject | null> {
   return psqlPool
     .query(
@@ -37,12 +39,4 @@ export function getLoanById(loanId: number): Promise<LoanObject | null> {
       [loanId]
     )
     .then((r) => r.rows[0] ?? null);
-}
-
-export async function verifyLoan(
-  loanId: number,
-  bookId: number,
-  borrowerId: number
-) {
-  return psqlPool.query("");
 }

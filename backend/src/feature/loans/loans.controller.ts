@@ -1,6 +1,13 @@
 import * as services from "./loans.services.js";
 import * as Loans from "./loans.types.js";
 
+/** send an array of loan details filtered by query parameter
+ *
+ * @param {unknown} req.query.active - filter for active (not returned) loans.
+ * set to true if is in boolean flag format, empty value, "true", or "1"
+ * @param {string} req.query.bookId - filter for loans of a book. internally convert to integer
+ * @param req.query.borrowerId - filter for loans of an user. internally convert to integer
+ */
 export const getLoans: Loans.GetLoansCtrler = async function (req, res, next) {
   const active = req.query.active;
   const bookId = Number(req.query.bookId);
@@ -31,6 +38,11 @@ export const getLoans: Loans.GetLoansCtrler = async function (req, res, next) {
   }
 };
 
+/** save a new loan
+ *
+ * @param {number} req.body.bookId - a book id to be loan
+ * @param {number} req.body.borrowerId - a user id of a borrower
+ */
 export const loanBook: Loans.SubmitLoansCtrler = async function (
   req,
   res,
@@ -62,6 +74,12 @@ export const loanBook: Loans.SubmitLoansCtrler = async function (
     .send({ id: loan.id, dueDate: loan.dueDate.toISOString() });
 };
 
+/** set a loan with /:id as returned.
+ *
+ * @param {string} req.param.loanId - a loan id to be returned. internally convert to integer
+ * @param {number} req.body.bookId - an optional check for book id to match a book in the loan
+ * @param {number} req.body.borrowerId - an optional check for borrower id to match a user in the loan
+ */
 export const returnBook: Loans.SubmitReturnCrler = async function (
   req,
   res,

@@ -5,7 +5,14 @@ import * as models from "./books.models.js";
 import * as Books from "./books.types.js";
 import type { Controller } from "../../types/express.js";
 
-// book data
+// --------------- get book data ---------------
+
+/** Send an array of book data filtered by query params
+ *
+ * @param {string} req.query.title - filter by book title
+ * @param {string | string[]} req.query.genre - filter by genre(s) id. intenally convert to int[]
+ * @param {string | string[]} req.query.author - filter by author(s) id. intenally convert to int[]
+ */
 export const getBookList: Books.GetBooksListCtrler = async function (
   req,
   res,
@@ -32,6 +39,10 @@ export const getBookList: Books.GetBooksListCtrler = async function (
   }
 };
 
+/** Send a book data by id in url param
+ *
+ * @param {string} req.param.id - book id, convert to int
+ */
 export const getBookById: Books.GetBookByIdCtrler = async function (
   req,
   res,
@@ -54,6 +65,19 @@ export const getBookById: Books.GetBookByIdCtrler = async function (
   }
 };
 
+// --------------- book details operation ---------------
+
+/** create book with details in req.body.details JSON and cover image in req.body.coverImage
+ *
+ * @param {object} req.body - multipart/form-data format
+ * @param {string} req.body.details - a JSON string of book data.
+ * @param req.body.coverImage - an optional field for cover image.
+ *
+ * @param req.body.details.title - book title
+ * @param req.body.details.genres - genre(s) id. internally convert to int[]
+ * @param req.body.details.authors - author(s) id. internally convert to int[]
+ * @param {Express.Multer.File} req.file - a cover image parse from req.body.coverImage
+ */
 export const createBook: Books.CreateBookCtrler = async function (
   req,
   res,
@@ -63,6 +87,8 @@ export const createBook: Books.CreateBookCtrler = async function (
     if (!req.body?.details) {
       return res.status(400).send({ message: "Invalid book details" });
     }
+
+    // --- parse JSON and validate book details ---
 
     let bookDetails;
     try {
@@ -76,6 +102,7 @@ export const createBook: Books.CreateBookCtrler = async function (
     const authors = normalizedToIntArray(bookDetails.authors);
 
     if (typeof title !== "string" || !genres.valid || !authors.valid) {
+      // generate error field details for error message
       let invalidFields: string[] = [];
       if (typeof title !== "string") invalidFields.push("title");
       if (!genres.valid) invalidFields.push("genres");
@@ -85,6 +112,8 @@ export const createBook: Books.CreateBookCtrler = async function (
         .status(400)
         .send({ message: "Invalid book details: " + invalidFields.join(",") });
     }
+
+    // --- create a book and send response ---
 
     const createResult = await services.createBook(
       { title, genres: genres.value, authors: authors.value },
@@ -98,9 +127,18 @@ export const createBook: Books.CreateBookCtrler = async function (
   } catch (error) {
     return next(error);
   } finally {
+    // garanteer deletion temporary file from request
     cleanFile(req.file);
   }
 };
+
+/** Replace book data at /:id with data in req.body
+ *
+ * @param {string} req.param.id - book id
+ * @param {string} req.body.title - book title
+ * @param {string | string[]} req.body.genres - genre(s) id. internally convert to int[]
+ * @param {string | string[]} req.body.authors - author(s) id. internally convert to int[]
+ */
 export const updateBook: Books.UpdateBookCtrler = async function (
   req,
   res,
@@ -116,6 +154,7 @@ export const updateBook: Books.UpdateBookCtrler = async function (
   const authors = normalizedToIntArray(req.body.authors);
 
   if (typeof title !== "string" || !genres.valid || !authors.valid) {
+    // generate error field details for error message
     let invalidFields: string[] = [];
     if (typeof title !== "string") invalidFields.push("title");
     if (!genres.valid) invalidFields.push("genres");
@@ -125,6 +164,8 @@ export const updateBook: Books.UpdateBookCtrler = async function (
       .status(400)
       .send({ message: "Invalid book details: " + invalidFields.join(",") });
   }
+
+  // --- update a book and send response ---
 
   try {
     const updateResult = await services.updateBook(bookId, {
@@ -143,6 +184,11 @@ export const updateBook: Books.UpdateBookCtrler = async function (
 
   return res.status(204).send();
 };
+
+/** delete book data at /:id
+ *
+ * @param {string} req.param.id - book id
+ */
 export const deleteBook: Controller = async function (req, res, next) {
   const bookId = Number(req.params.id);
   if (!Number.isInteger(bookId)) {
@@ -163,7 +209,12 @@ export const deleteBook: Controller = async function (req, res, next) {
   }
 };
 
-// cover
+// --------------- cover image operation ---------------
+
+/** send cover image of book /:id with content-type: image/*
+ *
+ * @param {string} req.param.id - book id
+ */
 export const getBookCover: Controller = async function (req, res, next) {
   const bookId = Number(req.params.id);
   if (!Number.isInteger(bookId)) {
@@ -180,10 +231,22 @@ export const getBookCover: Controller = async function (req, res, next) {
     return next(error);
   }
 
-  res.setHeader("Content-Type", bookCoverImgData?.mimeType);
+  res.setHeader("Content-Type", bookCoverImgData.mimeType);
+  // stream image file content directly to response object and end response lifecycle
+  // use node.js stream for efficiency and avoid loading entire file into memory
   createReadStream(bookCoverImgData.path).pipe(res);
   return;
 };
+
+/** replace book cover image of book /:id
+ *
+ * check field 'coverImage' for content-type: image/*
+ *
+ * delete cover image of book id if no file founded
+ *
+ * @param {number | null} req.param.id - book id
+ * @param {Express.Multer.File} req.file - a cover image file parsed by multer
+ */
 export const updateBookCover: Controller = async function (req, res, next) {
   try {
     const bookId = Number(req.params.id);
@@ -206,7 +269,9 @@ export const updateBookCover: Controller = async function (req, res, next) {
   }
 };
 
-//book property
+// --------------- book property operation ---------------
+
+/** send an array of genres in format { id: int, name: string } */
 export const getGenreList: Books.GetGenresCtrler = async function (
   req,
   res,
@@ -224,6 +289,8 @@ export const getGenreList: Books.GetGenresCtrler = async function (
     return next(error);
   }
 };
+
+/** send an array of genres in format { id: int, name: string } */
 export const getAuthorList: Books.GetAuthorsCtrler = async function (req, res) {
   const search = req.query.search;
   if (search != undefined && typeof search !== "string") {
@@ -234,6 +301,10 @@ export const getAuthorList: Books.GetAuthorsCtrler = async function (req, res) {
   return res.status(200).send(authors);
 };
 
+/** create a new genre
+ *
+ * @param {string} req.body.genre - a name of new genre
+ */
 export const createGenre: Books.CreateGenreCtrler = async function (req, res) {
   const genre = req.body.genre;
   if (typeof genre !== "string") {
@@ -247,6 +318,10 @@ export const createGenre: Books.CreateGenreCtrler = async function (req, res) {
   return res.status(200).send({ id: createResult.id, name: genre });
 };
 
+/** create a new author
+ *
+ * @param {string} req.body.genre - a name of new author
+ */
 export const createAuthor: Books.CreateAuthorCtrler = async function (
   req,
   res

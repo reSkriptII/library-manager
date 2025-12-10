@@ -19,11 +19,14 @@ export function createRefreshToken(userId: number) {
   return refreshToken;
 }
 
+// set JWT refresh token as active in redis database
 export function setActiveRefreshToken(userId: number, refreshToken: string) {
   return redisClient.set("auth:refresh:" + hashToken(refreshToken), userId, {
     expiration: { type: "EX", value: CONFIG.REFRESH_TOKEN_EXP_SECOND },
   });
 }
+
+// delete JWT refresh token from redis database to disallow next usage
 export async function delActiveRefreshToken(refreshToken?: string) {
   if (refreshToken == undefined) return;
 
@@ -36,6 +39,7 @@ export async function delActiveRefreshToken(refreshToken?: string) {
   }
 }
 
+// set access_token and refresh_token to request origin
 export function setJwtCookie(
   res: Response,
   accessToken: string,
@@ -54,6 +58,8 @@ export function setJwtCookie(
     secure: true,
   });
 }
+
+// remove access_token and refresh_token from request origin
 export function clearJwtCookie(res: Response) {
   res.clearCookie("access_token", { httpOnly: true });
   res.clearCookie("refresh_token", { httpOnly: true });

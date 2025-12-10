@@ -9,6 +9,15 @@ import * as models from "./auth.models.js";
 type Login =
   | { ok: true; accessToken: string; refreshToken: string }
   | { ok: false; status: number; message: string };
+
+/** log in using email and password.
+ *
+ * compare password using bcrypt
+ *
+ * return status 401 on password incorrect
+ *
+ * @returns an object with flag 'ok: boolean' and JWT tokens or http status and error message
+ */
 export async function login(email: string, password: string): Promise<Login> {
   const user = await models.getUserByEmail(email);
   if (!user) {
@@ -25,27 +34,7 @@ export async function login(email: string, password: string): Promise<Login> {
 
   const accessToken = createAccessToken(user.id);
   const refreshToken = createRefreshToken(user.id);
+  // set refresh token in redis as activing
   await setActiveRefreshToken(user.id, refreshToken);
   return { ok: true, accessToken, refreshToken };
-}
-
-type RegisterDetails = {
-  name: string;
-  email: string;
-  password: string;
-  role: UserRole;
-};
-export async function registerUser({
-  name,
-  email,
-  password,
-  role,
-}: RegisterDetails) {
-  if (await models.isUserUsed({ name, email })) {
-    return { ok: false, message: "Email or name has been used" };
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const id = await models.createUser({ name, email, hashedPassword, role });
-  return { ok: true, id };
 }

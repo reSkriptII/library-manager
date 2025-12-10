@@ -2,6 +2,8 @@ import { ENV } from "../config/env.js";
 import { Pool } from "pg";
 import { createClient } from "redis";
 
+// --- redis ---
+
 const redisClient = await createClient({
   url: ENV().REDIS_URL,
   password: ENV().REDIS_PASSWORD,
@@ -11,6 +13,8 @@ const redisClient = await createClient({
     process.abort();
   })
   .connect();
+
+// --- postgreSQL ---
 
 const psqlPool = new Pool({
   connectionString: ENV().DATABASE_URL,

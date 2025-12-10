@@ -11,6 +11,13 @@ import type { Controller } from "../../types/express.js";
 const EMAIL_REGEXP =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
+/** authenticate and generate JWT
+ *
+ * set access_token and refresh_token as HTTPOnly cookies in response on success
+ *
+ * @param {string} req.body.email
+ * @param {string} req.body.password
+ */
 export const login: Auth.LoginCntrler = async function (req, res, next) {
   const email = req.body?.email;
   const password = req.body?.password;
@@ -36,58 +43,10 @@ export const login: Auth.LoginCntrler = async function (req, res, next) {
   return res.status(204).send();
 };
 
+/** log out by clearing JWT in cookie */
 export const logout: Controller = async function (req, res) {
   delActiveRefreshToken(req.cookies?.refresh_token);
   clearJwtCookie(res);
 
   return res.status(204).send();
-};
-
-export const registerUser: Auth.RegisterUserCtrler = async function (
-  req,
-  res,
-  next
-) {
-  if (!req.body?.details) {
-    return res.status(400).send({ message: "Invalid new user details" });
-  }
-
-  let bookDetails;
-  try {
-    bookDetails = JSON.parse(req.body?.details) as Auth.Register.newUserDetails;
-  } catch {
-    return res.status(400).send({ message: "Invalid new user details" });
-  }
-
-  const { name, email, password, role } = bookDetails;
-  const isEmailValid = EMAIL_REGEXP.test(email);
-  const isPasswordValid = password?.length >= CONFIG.PASSWORD_MIN_LENGTH;
-  const isRoleValid = role === "member" || role === "librarian";
-  if (
-    typeof name !== "string" ||
-    !isEmailValid ||
-    !isPasswordValid ||
-    !isRoleValid
-  ) {
-    let invalidFields: string[] = [];
-    if (typeof name !== "string") invalidFields.push("name");
-    if (!isEmailValid) invalidFields.push("email");
-    if (!isPasswordValid) invalidFields.push("password");
-    if (!isRoleValid) invalidFields.push("role");
-    return res
-      .status(400)
-      .send({ message: "Invalid book details: " + invalidFields.join(",") });
-  }
-
-  let result;
-  try {
-    result = await services.registerUser({ name, email, password, role });
-  } catch (error) {
-    return next(error);
-  }
-
-  if (!result.ok) {
-    return res.status(400).send({ message: result.message });
-  }
-  res.status(201).send({ id: result.id });
 };
