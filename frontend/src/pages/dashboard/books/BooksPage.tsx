@@ -6,7 +6,7 @@ import {
 } from "@/features/books/components/searchbook.tsx";
 import { BookTable } from "@/features/books/components/booktable.tsx";
 import { useBookList } from "@/features/books/hooks.ts/useBookList.ts";
-import { EditBookModal } from "./EditBookModal";
+import { EditBookModal } from "./modal/EditBookModal";
 import type { BookData, BookFilter } from "@/features/books/type.ts";
 
 export function BooksPage() {

@@ -37,7 +37,6 @@ export function BookCard({ book }: { book: BookData }) {
             alt={`cover image of ${book.title}`}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              console.log(theme);
               target.src = theme === "dark" ? "/book-dark.svg" : "/book.svg";
             }}
           />

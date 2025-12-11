@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Button } from "./ui/button";
 import {
   Command,
@@ -21,6 +21,7 @@ type TagsSelectProps = {
   name: string;
   options: { id: number; name: string }[] | null;
   onSelect: (value: { id: number; name: string }) => void;
+  CreateField?: ReactNode;
 };
 
 export function TagsSelect({
@@ -28,6 +29,7 @@ export function TagsSelect({
   name,
   options,
   onSelect,
+  CreateField,
 }: TagsSelectProps) {
   const [open, setOpen] = useState(false);
 
@@ -41,6 +43,7 @@ export function TagsSelect({
           <CommandInput placeholder={`Search ${name}...`} className="h-9" />
           <CommandList>
             <CommandEmpty>No {` ${name} `} found.</CommandEmpty>
+            <CommandItem>{CreateField && <CreateField />}</CommandItem>
             <CommandGroup>
               {options &&
                 options.map((option) => (
@@ -88,6 +91,7 @@ export function TagListSelect({
       <div className="flex flex-wrap gap-1">
         {selectedTags.map((tag) => (
           <Button
+            key={tag.id}
             variant="outline"
             onClick={() => {
               if (edit) onRemove(tag);

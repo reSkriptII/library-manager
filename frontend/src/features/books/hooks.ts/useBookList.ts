@@ -8,7 +8,6 @@ export function useBookList(filter: BookFilter, refresh?: any) {
   const [books, setBooks] = useState<BookData[]>([]);
 
   useEffect(() => {
-    console.log(filter, refresh);
     let isMount = true;
 
     const params = {
