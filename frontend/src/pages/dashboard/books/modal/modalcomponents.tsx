@@ -10,6 +10,8 @@ import { API_BASE_URL } from "@/env.ts";
 import type { BookModalEditor } from "./hooks/useEditor";
 import { useContext } from "react";
 import { ThemeProviderContext } from "@/contexts/ThemeContext";
+import { createAuthor, createGenre } from "@/features/books/api";
+import { toast } from "sonner";
 
 type BookModalComponentProps = { editor: BookModalEditor };
 export function TitleField({ editor }: BookModalComponentProps) {
@@ -49,6 +51,18 @@ export function GenresField({ editor }: BookModalComponentProps) {
   const { editing, genres, setGenres } = editor;
   const genreList = useGenres();
 
+  async function handleCreateGenre(value: string) {
+    const res = await createGenre(value);
+    if (!res?.ok) {
+      return toast.error(
+        "error creating genre: " + (res?.message ?? "unknow error"),
+      );
+    }
+
+    toast.success("created genre successfully");
+    editor.setGenres([...editor.genres, res.genre]);
+  }
+
   return (
     <TagListSelect
       label="Genre"
@@ -60,6 +74,7 @@ export function GenresField({ editor }: BookModalComponentProps) {
       onRemove={(genre) =>
         setGenres(genres.filter((currentGenre) => genre.id !== currentGenre.id))
       }
+      onCreate={handleCreateGenre}
     />
   );
 }
@@ -67,7 +82,14 @@ export function GenresField({ editor }: BookModalComponentProps) {
 export function AuthorsField({ editor }: BookModalComponentProps) {
   const { editing, authors, setAuthors } = editor;
   const authorList = useAuthors();
-
+  async function handleCreateAuthor(value: string) {
+    const res = await createAuthor(value);
+    if (!res?.ok) {
+      return toast.error(
+        "error creating author: " + (res?.message ?? "unknow error"),
+      );
+    }
+  }
   return (
     <TagListSelect
       label="Author"
@@ -81,6 +103,7 @@ export function AuthorsField({ editor }: BookModalComponentProps) {
           authors.filter((currentAuthor) => author.id !== currentAuthor.id),
         )
       }
+      onCreate={createAuthor}
     />
   );
 }
