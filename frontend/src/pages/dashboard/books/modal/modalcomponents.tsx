@@ -103,7 +103,7 @@ export function AuthorsField({ editor }: BookModalComponentProps) {
           authors.filter((currentAuthor) => author.id !== currentAuthor.id),
         )
       }
-      onCreate={createAuthor}
+      onCreate={handleCreateAuthor}
     />
   );
 }
