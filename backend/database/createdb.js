@@ -8,7 +8,9 @@ dotenv.config();
 const schemaPath = path.join(import.meta.dirname, "schema.sql");
 const schema = readFileSync(schemaPath, { encoding: "utf-8" });
 
-const client = new Client();
+const client = new Client({ connectionString: 'postgresql://librarymanager:jB4KOPLyox8psFkhliKgPWQfKQDWWcji@dpg-d7jvtsf7f7vs738ikhs0-a.ohio-postgres.render.com/library_0pjo',
+  ssl: true
+});
 await client.connect();
 
 await client.query(schema);
