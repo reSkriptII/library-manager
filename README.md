@@ -32,7 +32,7 @@ Libman is a full-stack web application for manage essential operations for a mod
 
 ## Architecture
 
-using 3 layers architecture (controller, service, model) seperate by layer
+using 3 layers architecture (controller, service, model) seperate by feature
 
 ## Challenges & Solutions
 - Env issue -> solved with Zod validation
