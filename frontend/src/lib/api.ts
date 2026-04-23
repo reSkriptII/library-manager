@@ -25,11 +25,12 @@ api.interceptors.response.use(
         toast.error("You're offline. Please connect to internet");
       } else if (err.code == "ECONNABORTED") {
         toast.error("Request time out");
-      } else {
-        if (isErrorPage) return;
-        isErrorPage = true;
-        window.location.pathname = "/servererror";
       }
+      // } else {
+      //   if (isErrorPage) return;
+      //   isErrorPage = true;
+      //   window.location.pathname = "/servererror";
+      // }
       return Promise.reject(err);
     }
 
